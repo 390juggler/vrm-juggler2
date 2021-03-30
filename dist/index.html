@@ -26,8 +26,11 @@
     
     <script src="./vrm-juggler.min.js"></script>
     <script>
+      <input type="file" name="fl01" accept="vrm" disabled>
+        objectURL = URL.createObjectURL(f101);
+      
       document.addEventListener('DOMContentLoaded', () => {
-        new VRMJuggler('#vrm-juggler','https://cdn.glitch.com/39175249-54e7-4374-bfe8-6adea8461be3%2F0330%E3%82%B9%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A3%E3%83%84.vrm?v=1617073232930');
+        new VRMJuggler('#vrm-juggler',objectURL);
       });
     </script>
   </body>
