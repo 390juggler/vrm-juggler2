@@ -86,17 +86,17 @@ export default class VRMJuggler {
   createGUI() {
     this.gui = new dat.GUI({});
 
-    const siteswap = this.gui.addFolder('ジャグリング');
+    const siteswap = this.gui.addFolder('Juggling');
     siteswap
       .add(this.options, 'siteswapNums')
-      .name('サイトスワップ数')
+      .name('SiteswapNums')
       .onFinishChange((value: string) => {
         this.setOptions();
       });
 
     siteswap
       .add(this.options.siteswap, 'beatDuration', 0.05, 0.5)
-      .name('高さ')
+      .name('Height')
       .listen()
       .onFinishChange((value: number) => {
         this.options.siteswap.beatDurationAltitude = String(value);
@@ -105,7 +105,7 @@ export default class VRMJuggler {
 
     siteswap
       .add(this.options.siteswap.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
-      .name('小道具')
+      .name('Prop')
       .listen()
       .onFinishChange((value: string) => {
         this.options.siteswap.props.map((prop: { type: string; color: string; radius: number; C: number }) => {
@@ -129,10 +129,10 @@ export default class VRMJuggler {
         this.setOptions();
       });
 
-    const altitude = this.gui.addFolder('ジャグリング(高度な設定)');
+    const altitude = this.gui.addFolder('Advanced Settings');
     altitude
       .add(this.options.siteswap, 'beatDurationAltitude')
-      .name('高さ')
+      .name('Height')
       .listen()
       .onChange((value: string) => {
         this.options.siteswap.beatDuration = value;
@@ -141,7 +141,7 @@ export default class VRMJuggler {
 
     altitude
       .addColor(this.options.siteswap, 'propsColor')
-      .name('小道具の色')
+      .name('Prop color')
       .onChange((value: any) => {
         this.options.siteswap.props = this.options.siteswap.props.map((prop: { color: string }) => {
           prop.color = value;
@@ -152,7 +152,7 @@ export default class VRMJuggler {
 
     altitude
       .add(this.options.siteswap, 'propsRadius')
-      .name('小道具の大きさ')
+      .name('Prop Size')
       .onChange((value: any) => {
         this.options.siteswap.props = this.options.siteswap.props.map((prop: { radius: string }) => {
           prop.radius = value;
@@ -195,7 +195,7 @@ export default class VRMJuggler {
 
     altitude
       .addColor(this.options, 'backgroundColor')
-      .name('背景色')
+      .name('Back Ground Color')
       .onChange((value: string) => {
         this.renderer.scene.background = new THREE.Color(value);
       });
