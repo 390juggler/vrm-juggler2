@@ -22,7 +22,7 @@ export default class VRMJuggler {
   private blink?: any;
   private facial?: any;
   private options?: any;
-  private showGui?: boolean = true;
+  private showGui?: boolean = false;
   private gui?: any;
 
   constructor(selector: string = '', modelPath: string = '') {
@@ -51,7 +51,6 @@ export default class VRMJuggler {
     //this.renderer.scene.add(res.scene);
 
     this.createGUI();
- 
     document.addEventListener('keyup', this.switchGUI.bind(this), false);
   }
 
@@ -69,7 +68,6 @@ export default class VRMJuggler {
 
         this.facial.init(vrm);
         this.addAnimates(this.facial.update);
-  
       });
     });
   }
@@ -98,7 +96,7 @@ export default class VRMJuggler {
 
     siteswap
       .add(this.options.siteswap, 'beatDuration', 0.05, 0.5)
-      .name('Height')
+      .name('高さ')
       .listen()
       .onFinishChange((value: number) => {
         this.options.siteswap.beatDurationAltitude = String(value);
@@ -107,7 +105,7 @@ export default class VRMJuggler {
 
     siteswap
       .add(this.options.siteswap.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
-      .name('prop')
+      .name('小道具')
       .listen()
       .onFinishChange((value: string) => {
         this.options.siteswap.props.map((prop: { type: string; color: string; radius: number; C: number }) => {
@@ -131,10 +129,10 @@ export default class VRMJuggler {
         this.setOptions();
       });
 
-    const altitude = this.gui.addFolder('Advnaced Setting');
+    const altitude = this.gui.addFolder('ジャグリング(高度な設定)');
     altitude
       .add(this.options.siteswap, 'beatDurationAltitude')
-      .name('Height')
+      .name('高さ')
       .listen()
       .onChange((value: string) => {
         this.options.siteswap.beatDuration = value;
@@ -143,7 +141,7 @@ export default class VRMJuggler {
 
     altitude
       .addColor(this.options.siteswap, 'propsColor')
-      .name('Prop color')
+      .name('小道具の色')
       .onChange((value: any) => {
         this.options.siteswap.props = this.options.siteswap.props.map((prop: { color: string }) => {
           prop.color = value;
@@ -154,7 +152,7 @@ export default class VRMJuggler {
 
     altitude
       .add(this.options.siteswap, 'propsRadius')
-      .name('Prop size')
+      .name('小道具の大きさ')
       .onChange((value: any) => {
         this.options.siteswap.props = this.options.siteswap.props.map((prop: { radius: string }) => {
           prop.radius = value;
@@ -197,7 +195,7 @@ export default class VRMJuggler {
 
     altitude
       .addColor(this.options, 'backgroundColor')
-      .name('Back Ground Color')
+      .name('背景色')
       .onChange((value: string) => {
         this.renderer.scene.background = new THREE.Color(value);
       });
@@ -251,74 +249,74 @@ export default class VRMJuggler {
         this.setOptions();
       });
 
-    const emotions = this.gui.addFolder('Blendshape');
+    const emotions = this.gui.addFolder('表情');
     emotions
       .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Joy, 0.0, 1.0)
-      .name('fun')
+      .name('喜')
       .onChange((value: number) => {
         this.facial.emotion[VRMSchema.BlendShapePresetName.Joy] = value;
       });
     emotions
       .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Angry, 0.0, 1.0)
-      .name('Angry')
+      .name('怒')
       .onChange((value: number) => {
         this.facial.emotion[VRMSchema.BlendShapePresetName.Angry] = value;
       });
     emotions
       .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Sorrow, 0.0, 1.0)
-      .name('Sorrow')
+      .name('哀')
       .onChange((value: number) => {
         this.facial.emotion[VRMSchema.BlendShapePresetName.Sorrow] = value;
       });
     emotions
       .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Fun, 0.0, 1.0)
-      .name('Enjoy')
+      .name('楽')
       .onChange((value: number) => {
         this.facial.emotion[VRMSchema.BlendShapePresetName.Fun] = value;
       });
 
-    const mouth = this.gui.addFolder('Mouth');
+    const mouth = this.gui.addFolder('口の形');
     mouth
       .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.A, 0.0, 1.0)
-      .name('A')
+      .name('あ')
       .onChange((value: number) => {
         this.facial.mouth[VRMSchema.BlendShapePresetName.A] = value;
       });
     mouth
       .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.I, 0.0, 1.0)
-      .name('I')
+      .name('い')
       .onChange((value: number) => {
         this.facial.mouth[VRMSchema.BlendShapePresetName.I] = value;
       });
     mouth
       .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.U, 0.0, 1.0)
-      .name('U')
+      .name('う')
       .onChange((value: number) => {
         this.facial.mouth[VRMSchema.BlendShapePresetName.U] = value;
       });
     mouth
       .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.E, 0.0, 1.0)
-      .name('E')
+      .name('え')
       .onChange((value: number) => {
         this.facial.mouth[VRMSchema.BlendShapePresetName.E] = value;
       });
     mouth
       .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.O, 0.0, 1.0)
-      .name('O')
+      .name('お')
       .onChange((value: number) => {
         this.facial.mouth[VRMSchema.BlendShapePresetName.O] = value;
       });
 
     this.gui
       .add(this.options, 'blink')
-      .name('blink')
+      .name('まばたき')
       .onChange((value: boolean) => {
         this.blink.enable = value;
       });
 
     this.gui
       .add(this.options, 'neck')
-      .name('neck')
+      .name('首振り')
       .onChange((value: boolean) => {
         this.juggling.enableNeck = value;
       });
