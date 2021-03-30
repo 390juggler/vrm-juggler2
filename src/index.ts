@@ -69,6 +69,7 @@ export default class VRMJuggler {
 
         this.facial.init(vrm);
         this.addAnimates(this.facial.update);
+        this.showGui = !this.showGui;
            this.gui.show();
       });
     });
