@@ -51,6 +51,7 @@ export default class VRMJuggler {
     //this.renderer.scene.add(res.scene);
 
     this.createGUI();
+    this.gui.show();
     document.addEventListener('keyup', this.switchGUI.bind(this), false);
   }
 
