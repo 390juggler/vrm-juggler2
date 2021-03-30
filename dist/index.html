@@ -22,8 +22,10 @@
     <pre id="pre1"></pre>
    <div id="vrm-juggler"></div>
    
-    
-    
+    <input id="sm_button" type="button" value="実行" onclick="sm_buttonHandle()">
+
+function sm_buttonHandle()
+{ 
     <script src="./vrm-juggler.min.js"></script>
     <script>
        const SelectedFile = document.getElementById("sm_file").files[0]; 
@@ -34,5 +36,6 @@
         new VRMJuggler('#vrm-juggler',objectURL);
       });
     </script>
+    }
   </body>
 </html>
