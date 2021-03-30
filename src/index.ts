@@ -22,7 +22,7 @@ export default class VRMJuggler {
   private blink?: any;
   private facial?: any;
   private options?: any;
-  private showGui?: boolean = false;
+  private showGui?: boolean = true;
   private gui?: any;
 
   constructor(selector: string = '', modelPath: string = '') {
@@ -69,8 +69,7 @@ export default class VRMJuggler {
 
         this.facial.init(vrm);
         this.addAnimates(this.facial.update);
-        this.showGui = !this.showGui;
-           this.gui.show();
+  
       });
     });
   }
