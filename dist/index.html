@@ -26,8 +26,9 @@
     
     <script src="./vrm-juggler.min.js"></script>
     <script>
-  
-      const  objectURL = URL.createObjectURL(smfile);
+      
+  const SelectedFile = document.getElementById("sm_file").files[0]; 
+      const objectURL = URL.createObjectURL(SelectedFile);
       
       document.addEventListener('DOMContentLoaded', () => {
         new VRMJuggler('#vrm-juggler',objectURL);
