@@ -59441,6 +59441,146 @@ var Renderer = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/classes/avatarShadow.ts":
+/*!*************************************!*\
+  !*** ./src/classes/avatarShadow.ts ***!
+  \*************************************/
+/*! exports provided: setupAvatarShadows */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setupAvatarShadows", function() { return setupAvatarShadows; });
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+
+// MToon の描画モード(three-vrm の MToonMaterialRenderMode)
+var MTOON_CUTOUT = 1;
+var MTOON_TRANSPARENT = 2;
+var MTOON_TRANSPARENT_WITH_ZWRITE = 3;
+/**
+ * アバターの影を、テクスチャの透明な部分を抜いた形で落とす。
+ *
+ * three.js r118 の影の描画は材質のテクスチャや透明度のしきい値を見ないため、
+ * 髪の毛先やスカートの端などが四角い板のまま影になってしまう。
+ * また 1 つのメッシュに複数の材質(髪・服・肌…)が入っているので、メッシュ単位の影用材質も使えない。
+ *
+ * そこで材質ごとに「影武者」メッシュを作る。頂点データと骨は元のメッシュと共有し(メモリはほぼ増えない)、
+ * その材質のテクスチャと透明度のしきい値を持った影用の材質を付ける。
+ * 影武者は色も奥行きも書き込まない材質で描くので画面には映らない(r118 は影の計算でも画面のカメラの
+ * レイヤーを使うため、レイヤーで隠すことはできない)。元のメッシュは影を落とさない。
+ */
+function setupAvatarShadows(root) {
+    var masks = new Map();
+    var meshes = [];
+    root.traverse(function (object) {
+        if (object.isMesh)
+            meshes.push(object);
+    });
+    meshes.forEach(function (mesh) {
+        mesh.castShadow = false;
+        // 揺れもの用の当たり判定(表示しない球)や、表情(モーフ)を持つ顔は影を落とさない。
+        // 顔は影への影響が小さく、three.js r118 はモーフの付け外しで影の描画に失敗することがある
+        var geometry = mesh.geometry;
+        if (!geometry.isBufferGeometry || !geometry.index)
+            return;
+        if (/^vrmCollider/.test(mesh.name))
+            return;
+        if (geometry.morphAttributes && Object.keys(geometry.morphAttributes).length > 0)
+            return;
+        var materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        var groups = geometry.groups.length > 0 ? geometry.groups : [{ start: 0, count: geometry.index.count, materialIndex: 0 }];
+        groups.forEach(function (group) {
+            var material = materials[group.materialIndex || 0];
+            if (!material || material.visible === false || material.isOutline)
+                return;
+            var proxy = createShadowProxy(mesh, geometry, group.start, group.count, material, masks);
+            if (proxy)
+                mesh.add(proxy);
+        });
+    });
+}
+function createShadowProxy(mesh, geometry, start, count, material, masks) {
+    var _a;
+    // 半透明(Transparent)の材質は影を落とさない(目のハイライトなど)
+    var blendMode = material.blendMode;
+    if (blendMode === MTOON_TRANSPARENT || blendMode === MTOON_TRANSPARENT_WITH_ZWRITE)
+        return null;
+    // 頂点データは共有し、この材質の三角形だけを描くインデックスを作る
+    var sub = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
+    Object.keys(geometry.attributes).forEach(function (name) { return sub.setAttribute(name, geometry.attributes[name]); });
+    var index = geometry.index;
+    sub.setIndex(new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](index.array.slice(start, start + count), 1));
+    sub.boundingSphere = geometry.boundingSphere;
+    sub.boundingBox = geometry.boundingBox;
+    var skinned = mesh.isSkinnedMesh === true;
+    var cutout = blendMode === MTOON_CUTOUT;
+    var depthMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshDepthMaterial"]({
+        depthPacking: three__WEBPACK_IMPORTED_MODULE_0__["RGBADepthPacking"],
+        map: cutout && material.map ? alphaMask(material.map, masks) : null,
+        alphaTest: cutout ? (_a = material.cutoff) !== null && _a !== void 0 ? _a : 0.5 : 0,
+    });
+    depthMaterial.skinning = skinned; // r118 の型定義にはないが、影の描画で骨の動きを反映するのに必要
+    // 画面には何も書き込まない(影の計算だけに使う)。裏表の扱いは元の材質に合わせる
+    var placeholder = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
+        colorWrite: false,
+        depthWrite: false,
+        depthTest: false,
+        side: material.side,
+    });
+    placeholder.skinning = skinned;
+    var proxy;
+    if (skinned) {
+        var original = mesh;
+        var skinnedProxy = new three__WEBPACK_IMPORTED_MODULE_0__["SkinnedMesh"](sub, placeholder);
+        skinnedProxy.bindMode = original.bindMode;
+        skinnedProxy.bind(original.skeleton, original.bindMatrix);
+        proxy = skinnedProxy;
+    }
+    else {
+        proxy = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](sub, placeholder);
+    }
+    proxy.name = mesh.name + " (shadow)";
+    proxy.customDepthMaterial = depthMaterial;
+    proxy.castShadow = true;
+    proxy.receiveShadow = false;
+    proxy.frustumCulled = false;
+    proxy.renderOrder = -1;
+    return proxy;
+}
+// 影の形を決めるだけなので、透明度のマスクは小さくてよい
+var MASK_SIZE = 512;
+/**
+ * 影用の透明度マスク。GLTF から読み込んだテクスチャ(ImageBitmap)をそのまま影用の材質に使うと
+ * アルファがすべて 0 として読まれて影が消えてしまうため、キャンバスに描き写したものを使う。
+ */
+function alphaMask(texture, masks) {
+    var cached = masks.get(texture);
+    if (cached)
+        return cached;
+    var image = texture.image;
+    if (!image || !image.width)
+        return null;
+    var canvas = document.createElement('canvas');
+    canvas.width = Math.min(MASK_SIZE, image.width);
+    canvas.height = Math.min(MASK_SIZE, image.height);
+    var context = canvas.getContext('2d');
+    if (!context)
+        return null;
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    var mask = new three__WEBPACK_IMPORTED_MODULE_0__["CanvasTexture"](canvas);
+    mask.flipY = texture.flipY;
+    mask.wrapS = texture.wrapS;
+    mask.wrapT = texture.wrapT;
+    mask.offset.copy(texture.offset);
+    mask.repeat.copy(texture.repeat);
+    mask.rotation = texture.rotation;
+    masks.set(texture, mask);
+    return mask;
+}
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -59458,11 +59598,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dat_gui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! dat.gui */ "./node_modules/dat.gui/build/dat.gui.module.js");
 /* harmony import */ var _interface_window__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./interface/window */ "./src/interface/window.ts");
 /* harmony import */ var _classes_Renderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./classes/Renderer */ "./src/classes/Renderer.ts");
-/* harmony import */ var _motion_juggling__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./motion/juggling */ "./src/motion/juggling/index.ts");
-/* harmony import */ var _motion_body__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./motion/body */ "./src/motion/body/index.ts");
-/* harmony import */ var _motion_blink__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./motion/blink */ "./src/motion/blink/index.ts");
-/* harmony import */ var _motion_facial__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./motion/facial */ "./src/motion/facial/index.ts");
-/* harmony import */ var _options_index__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./options/index */ "./src/options/index.ts");
+/* harmony import */ var _classes_avatarShadow__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./classes/avatarShadow */ "./src/classes/avatarShadow.ts");
+/* harmony import */ var _motion_juggling__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./motion/juggling */ "./src/motion/juggling/index.ts");
+/* harmony import */ var _motion_body__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./motion/body */ "./src/motion/body/index.ts");
+/* harmony import */ var _motion_blink__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./motion/blink */ "./src/motion/blink/index.ts");
+/* harmony import */ var _motion_facial__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./motion/facial */ "./src/motion/facial/index.ts");
+/* harmony import */ var _options_index__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./options/index */ "./src/options/index.ts");
+
 
 
 
@@ -59537,19 +59679,19 @@ var VRMJuggler = /** @class */ (function () {
         if (selector === '')
             return;
         this.selector = selector;
-        this.options = new _options_index__WEBPACK_IMPORTED_MODULE_10__["default"]();
+        this.options = new _options_index__WEBPACK_IMPORTED_MODULE_11__["default"]();
         this.renderer = new _classes_Renderer__WEBPACK_IMPORTED_MODULE_5__["default"](this.selector);
         if (!this.renderer.container) {
             console.error("VRMJuggler: " + selector + " \u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093");
             return;
         }
         this.createMessageArea(this.renderer.container);
-        this.juggling = new _motion_juggling__WEBPACK_IMPORTED_MODULE_6__["default"](this.renderer.scene, this.options.siteswapNums, this.options.siteswap);
+        this.juggling = new _motion_juggling__WEBPACK_IMPORTED_MODULE_7__["default"](this.renderer.scene, this.options.siteswapNums, this.options.siteswap);
         this.juggling.visible = false;
         this.juggling.speed = this.options.speed;
         this.syncTempo();
-        this.blink = new _motion_blink__WEBPACK_IMPORTED_MODULE_8__["default"]();
-        this.facial = new _motion_facial__WEBPACK_IMPORTED_MODULE_9__["default"](this.options.facial);
+        this.blink = new _motion_blink__WEBPACK_IMPORTED_MODULE_9__["default"]();
+        this.facial = new _motion_facial__WEBPACK_IMPORTED_MODULE_10__["default"](this.options.facial);
         this.createGUI();
         document.addEventListener('keyup', this.switchGUI, false);
         this.loadModel(modelPath || DEFAULT_MODEL_PATH);
@@ -59604,24 +59746,21 @@ var VRMJuggler = /** @class */ (function () {
         }
         this.vrm = vrm;
         scene.add(vrm.scene);
-        this.body = new _motion_body__WEBPACK_IMPORTED_MODULE_7__["default"](vrm, scene);
+        this.body = new _motion_body__WEBPACK_IMPORTED_MODULE_8__["default"](vrm, scene);
         this.body.armAngle = Number(this.options.siteswap.armAngle);
         this.body.motionAmount = this.options.bodyMotion;
         this.body.enableNeck = this.options.neck;
         this.juggling.setAvatarMetrics(this.body.metrics);
         this.juggling.visible = true;
         this.renderer.frameHeight(this.juggling.peakY);
-        // 床にアバターの影を落とす
+        // 床にアバターの影を落とす(テクスチャの透明な部分は抜く)
         vrm.scene.traverse(function (object) {
             var mesh = object;
             if (!mesh.isMesh)
                 return;
-            // 表情(モーフ)を持つメッシュは影を落とさない。three.js r118 は影の描画でモーフの付け外しに失敗することがある
-            var geometry = mesh.geometry;
-            var hasMorph = !!geometry.morphAttributes && Object.keys(geometry.morphAttributes).length > 0;
-            mesh.castShadow = !hasMorph;
             (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach(disableMToonShadowReceive);
         });
+        Object(_classes_avatarShadow__WEBPACK_IMPORTED_MODULE_6__["setupAvatarShadows"])(vrm.scene);
         this.blink.init(vrm);
         this.facial.init(vrm);
     };

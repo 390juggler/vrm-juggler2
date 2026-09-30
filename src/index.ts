@@ -6,6 +6,7 @@ import * as dat from 'dat.gui';
 import window from './interface/window';
 
 import Renderer from './classes/Renderer';
+import { setupAvatarShadows } from './classes/avatarShadow';
 import Juggling from './motion/juggling';
 import { SiteswapCheck } from './motion/juggling/validate';
 import Body from './motion/body';
@@ -143,16 +144,13 @@ export default class VRMJuggler {
     this.juggling.setAvatarMetrics(this.body.metrics);
     this.juggling.visible = true;
     this.renderer.frameHeight(this.juggling.peakY);
-    // 床にアバターの影を落とす
+    // 床にアバターの影を落とす(テクスチャの透明な部分は抜く)
     vrm.scene.traverse((object) => {
       const mesh = object as THREE.Mesh;
       if (!mesh.isMesh) return;
-      // 表情(モーフ)を持つメッシュは影を落とさない。three.js r118 は影の描画でモーフの付け外しに失敗することがある
-      const geometry = mesh.geometry as THREE.BufferGeometry;
-      const hasMorph = !!geometry.morphAttributes && Object.keys(geometry.morphAttributes).length > 0;
-      mesh.castShadow = !hasMorph;
       (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach(disableMToonShadowReceive);
     });
+    setupAvatarShadows(vrm.scene);
 
     this.blink.init(vrm);
     this.facial.init(vrm);
