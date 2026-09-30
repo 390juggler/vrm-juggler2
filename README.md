@@ -7,6 +7,10 @@ gunswap を流用して VRM 形式の 3D モデルにジャグリングをさせ
 > - http://www.gunswap.co/about
 > - https://github.com/yDgunz/gunswap/
 
+## デモ
+
+https://390juggler.github.io/vrm-juggler2/ (GitHub Pages。master ブランチの `dist/` を表示します)
+
 ## パッケージのインストール
 
 事前に node.js (18 以上) をインストールしてください。
