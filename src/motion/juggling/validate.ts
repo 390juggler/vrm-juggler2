@@ -14,6 +14,8 @@ export interface SiteswapCheck {
 }
 
 const VANILLA_RE = /^[0-9a-w]+$/;
+// 数字・英字(修飾子を含む)と、同時投げ・マルチプレックス・パッシング・バウンド指定に使う記号以外
+const INVALID_CHAR_RE = /[^0-9a-zA-Z()[\],*<>|{}.\-:]/;
 const MAX_THROW = 32; // 'w'
 const MAX_SUGGESTIONS = 3;
 const MAX_LENGTH_FOR_SUGGESTIONS = 12;
@@ -171,6 +173,18 @@ export function precheckSiteswap(input: string): SiteswapCheck {
   const siteswap = normalizeSiteswap(input);
   if (siteswap === '') {
     return { ok: false, siteswap, message: 'サイトスワップを入力してください(例: 3, 441, 531)。' };
+  }
+  // 使えない文字があれば、その文字と位置を示す
+  const badIndex = siteswap.search(INVALID_CHAR_RE);
+  if (badIndex >= 0) {
+    const cleaned = siteswap.replace(new RegExp(INVALID_CHAR_RE.source, 'g'), '');
+    const cleanedCheck = cleaned === '' ? undefined : precheckSiteswap(cleaned);
+    return {
+      ok: false,
+      siteswap,
+      message: `「${siteswap[badIndex]}」(${badIndex + 1} 文字目)はサイトスワップに使えない文字です。`,
+      suggestions: cleanedCheck && cleanedCheck.ok ? [cleaned] : cleanedCheck?.suggestions,
+    };
   }
   if (isVanilla(siteswap)) return checkVanilla(siteswap);
   return { ok: true, siteswap };

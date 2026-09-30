@@ -66,6 +66,8 @@ export interface Tracks {
   period: number;
   props: THREE.Vector3[][];
   hands: HandTrack[];
+  /** 目で追う位置(次にキャッチするボールの、リリース点から頂点へ向かう途中) */
+  gaze: THREE.Vector3[];
   peakY: number;
   centerZ: number;
 }
@@ -94,6 +96,8 @@ export function buildTracks(siteswap: any, transform: SpaceTransform): Tracks {
     return { positions, palmNormals, holding };
   });
 
+  const gaze = computeGazeTrack(siteswap.propPositions, props, numSteps);
+
   let peakY = -Infinity;
   let sumZ = 0;
   let count = 0;
@@ -111,9 +115,60 @@ export function buildTracks(siteswap: any, transform: SpaceTransform): Tracks {
     period,
     props,
     hands,
+    gaze,
     peakY,
     centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale,
   };
+}
+
+// 視線: 次にキャッチするボールについて、リリース点から頂点までの GAZE_TOWARD_APEX の位置を見る
+// (siteswap-performer の方式: https://github.com/aratama-ship-it/siteswap-performer)
+const GAZE_TOWARD_APEX = 0.78;
+
+function computeGazeTrack(raw: any[][], props: THREE.Vector3[][], numSteps: number): THREE.Vector3[] {
+  const gaze: (THREE.Vector3 | undefined)[] = new Array(numSteps).fill(undefined);
+  const remaining: number[] = new Array(numSteps).fill(Infinity);
+
+  raw.forEach((track, i) => {
+    const start = track.findIndex((p) => p.dwell === true);
+    if (start < 0) return;
+    // start(手の中)から 1 周して、空中にある区間(フライト)ごとに処理する
+    let k = 0;
+    while (k < numSteps) {
+      const s = (start + k) % numSteps;
+      if (track[s].dwell === true) {
+        k++;
+        continue;
+      }
+      const flight: number[] = [];
+      while (k < numSteps && track[(start + k) % numSteps].dwell !== true) {
+        flight.push((start + k) % numSteps);
+        k++;
+      }
+      const release = props[i][flight[0]];
+      const apex = flight.reduce((best, f) => (props[i][f].y > best.y ? props[i][f] : best), release);
+      const target = release.clone().lerp(apex, GAZE_TOWARD_APEX);
+      flight.forEach((f, ix) => {
+        const left = flight.length - ix;
+        if (left < remaining[f]) {
+          remaining[f] = left;
+          gaze[f] = target;
+        }
+      });
+    }
+  });
+
+  // 空中にボールがないステップは直前の値を使う
+  const firstIndex = gaze.findIndex((g) => g !== undefined);
+  if (firstIndex < 0) return new Array(numSteps).fill(null).map(() => new THREE.Vector3(0, 1.4, -0.3));
+  let last = gaze[firstIndex]!;
+  const result: THREE.Vector3[] = new Array(numSteps);
+  for (let k = 0; k < numSteps; k++) {
+    const s = (firstIndex + k) % numSteps;
+    if (gaze[s]) last = gaze[s]!;
+    result[s] = last;
+  }
+  return result;
 }
 
 function computePalmNormals(positions: THREE.Vector3[], holding: boolean[], dt: number): THREE.Vector3[] {

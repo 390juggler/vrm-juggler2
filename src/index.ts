@@ -52,6 +52,7 @@ export default class VRMJuggler {
     this.juggling = new Juggling(this.renderer.scene, this.options.siteswapNums, this.options.siteswap);
     this.juggling.visible = false;
     this.juggling.speed = this.options.speed;
+    this.syncTempo();
     this.blink = new Blink();
     this.facial = new Facial(this.options.facial);
 
@@ -136,6 +137,7 @@ export default class VRMJuggler {
     const result = this.juggling.setPattern(siteswap, this.options.siteswap);
     if (result.ok) {
       this.options.siteswapNums = result.siteswap;
+      this.syncTempo();
       this.clearMessage();
       // ページ側の入力欄などが追従できるように通知する
       this.renderer.container?.dispatchEvent(
@@ -242,7 +244,23 @@ export default class VRMJuggler {
 
   private setOptions() {
     const result = this.juggling.setPattern(this.juggling.currentSiteswap, this.options.siteswap);
-    if (!result.ok) this.showSiteswapError(result);
+    if (result.ok) this.syncTempo();
+    else this.showSiteswapError(result);
+  }
+
+  /** 自動で決まったテンポを設定値(パネルの表示)に反映する */
+  private syncTempo() {
+    const siteswapOptions = this.options.siteswap;
+    siteswapOptions.beatDuration = this.juggling.beatDuration;
+    siteswapOptions.beatDurationAltitude = this.juggling.beatDuration.toFixed(3);
+  }
+
+  /** 高さ(テンポ)を手で変えたら自動テンポをやめる */
+  private setManualTempo(beatDuration: number) {
+    this.options.siteswap.beatDuration = beatDuration;
+    this.options.autoTempo = false;
+    this.juggling.autoTempo = false;
+    this.setOptions();
   }
 
   private createGUI() {
@@ -260,8 +278,14 @@ export default class VRMJuggler {
       .add(siteswapOptions, 'beatDuration', 0.05, 0.5)
       .name('高さ')
       .listen()
-      .onFinishChange((value: number) => {
-        siteswapOptions.beatDurationAltitude = String(value);
+      .onFinishChange((value: number) => this.setManualTempo(Number(value)));
+
+    siteswap
+      .add(options, 'autoTempo')
+      .name('高さを自動で決める')
+      .listen()
+      .onChange((value: boolean) => {
+        this.juggling.autoTempo = value;
         this.setOptions();
       });
 
@@ -283,7 +307,7 @@ export default class VRMJuggler {
 
     siteswap
       .add(siteswapOptions, 'dwellPath', {
-        Cascade: '(30)(10)',
+        Cascade: '(30,10)(10)',
         'Reverse Cascade': '(10)(30)',
         Shower: '(30)(10).(10)(30)',
         Windmill: '(-20)(20).(20)(-20)',
@@ -300,9 +324,7 @@ export default class VRMJuggler {
       .listen()
       .onFinishChange((value: string) => {
         const beatDuration = Number(value);
-        if (!(beatDuration > 0)) return;
-        siteswapOptions.beatDuration = beatDuration;
-        this.setOptions();
+        if (beatDuration > 0) this.setManualTempo(beatDuration);
       });
 
     advanced

@@ -59475,6 +59475,7 @@ var VRMJuggler = /** @class */ (function () {
         this.juggling = new _motion_juggling__WEBPACK_IMPORTED_MODULE_6__["default"](this.renderer.scene, this.options.siteswapNums, this.options.siteswap);
         this.juggling.visible = false;
         this.juggling.speed = this.options.speed;
+        this.syncTempo();
         this.blink = new _motion_blink__WEBPACK_IMPORTED_MODULE_8__["default"]();
         this.facial = new _motion_facial__WEBPACK_IMPORTED_MODULE_9__["default"](this.options.facial);
         this.createGUI();
@@ -59548,6 +59549,7 @@ var VRMJuggler = /** @class */ (function () {
         var result = this.juggling.setPattern(siteswap, this.options.siteswap);
         if (result.ok) {
             this.options.siteswapNums = result.siteswap;
+            this.syncTempo();
             this.clearMessage();
             // ページ側の入力欄などが追従できるように通知する
             (_a = this.renderer.container) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new CustomEvent('siteswapchange', { detail: { siteswap: result.siteswap } }));
@@ -59632,8 +59634,23 @@ var VRMJuggler = /** @class */ (function () {
     // ---- パラメータ調整 UI ----
     VRMJuggler.prototype.setOptions = function () {
         var result = this.juggling.setPattern(this.juggling.currentSiteswap, this.options.siteswap);
-        if (!result.ok)
+        if (result.ok)
+            this.syncTempo();
+        else
             this.showSiteswapError(result);
+    };
+    /** 自動で決まったテンポを設定値(パネルの表示)に反映する */
+    VRMJuggler.prototype.syncTempo = function () {
+        var siteswapOptions = this.options.siteswap;
+        siteswapOptions.beatDuration = this.juggling.beatDuration;
+        siteswapOptions.beatDurationAltitude = this.juggling.beatDuration.toFixed(3);
+    };
+    /** 高さ(テンポ)を手で変えたら自動テンポをやめる */
+    VRMJuggler.prototype.setManualTempo = function (beatDuration) {
+        this.options.siteswap.beatDuration = beatDuration;
+        this.options.autoTempo = false;
+        this.juggling.autoTempo = false;
+        this.setOptions();
     };
     VRMJuggler.prototype.createGUI = function () {
         var _this = this;
@@ -59649,8 +59666,13 @@ var VRMJuggler = /** @class */ (function () {
             .add(siteswapOptions, 'beatDuration', 0.05, 0.5)
             .name('高さ')
             .listen()
-            .onFinishChange(function (value) {
-            siteswapOptions.beatDurationAltitude = String(value);
+            .onFinishChange(function (value) { return _this.setManualTempo(Number(value)); });
+        siteswap
+            .add(options, 'autoTempo')
+            .name('高さを自動で決める')
+            .listen()
+            .onChange(function (value) {
+            _this.juggling.autoTempo = value;
             _this.setOptions();
         });
         siteswap
@@ -59669,7 +59691,7 @@ var VRMJuggler = /** @class */ (function () {
         });
         siteswap
             .add(siteswapOptions, 'dwellPath', {
-            Cascade: '(30)(10)',
+            Cascade: '(30,10)(10)',
             'Reverse Cascade': '(10)(30)',
             Shower: '(30)(10).(10)(30)',
             Windmill: '(-20)(20).(20)(-20)',
@@ -59685,10 +59707,8 @@ var VRMJuggler = /** @class */ (function () {
             .listen()
             .onFinishChange(function (value) {
             var beatDuration = Number(value);
-            if (!(beatDuration > 0))
-                return;
-            siteswapOptions.beatDuration = beatDuration;
-            _this.setOptions();
+            if (beatDuration > 0)
+                _this.setManualTempo(beatDuration);
         });
         advanced
             .addColor(siteswapOptions, 'propsColor')
@@ -59922,9 +59942,9 @@ var SHOULDER_RAISE_MAX = 0.12;
 var HEAD_PITCH_MIN = -0.2;
 var HEAD_PITCH_MAX = 0.4;
 var NECK_SHARE = 0.4;
-var HEAD_FOLLOW_X = 0.25; // 頭が一番高いボールの横位置を追う割合
-var EYE_FOLLOW_X = 0.7;
-var GAZE_SMOOTH = 6; // 1/s
+var HEAD_FOLLOW_X = 0.35; // 頭が目線の横位置を追う割合
+var HEAD_FOLLOW_Y = 0.3; // 頭の上下が目線の高さを追う割合(残りはパターンの頂点)
+var GAZE_SMOOTH = 8; // 1/s
 function worldPosition(node) {
     return node.getWorldPosition(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
 }
@@ -59957,8 +59977,6 @@ var Body = /** @class */ (function () {
         this.rest = new Map();
         this.hipsRestY = 0;
         this.legLength = 0;
-        this.gazeX = 0;
-        this.headGazeX = 0;
         this.breathTime = 0;
         this.lookTarget = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
         this.armAngle = 0.3;
@@ -60124,22 +60142,21 @@ var Body = /** @class */ (function () {
                 motion;
             _this.pose(h === _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"] ? Bone.LeftShoulder : Bone.RightShoulder, 0, arm.side * SHOULDER_FORWARD, arm.side * raise);
         });
-        // 視線: 頭はパターンの頂点を、目はさらに一番高いボールを追う
-        var followX = frame.highestProp.x;
-        var k = 1 - Math.exp(-GAZE_SMOOTH * delta);
-        this.gazeX += (followX * EYE_FOLLOW_X - this.gazeX) * k;
-        this.headGazeX += (followX * HEAD_FOLLOW_X - this.headGazeX) * k;
+        // 視線: 目は次にキャッチするボールを追い、頭はパターンの頂点を中心に目線へ少し寄せる
+        if (!this.eyePoint)
+            this.eyePoint = frame.eyeTarget.clone();
+        this.eyePoint.lerp(frame.eyeTarget, 1 - Math.exp(-GAZE_SMOOTH * delta));
+        this.lookTarget.position.copy(this.eyePoint);
         var target = frame.gazeTarget;
-        this.lookTarget.position.set(this.gazeX, target.y, target.z);
         if (!this.enableNeck) {
             this.pose(Bone.Neck, 0, 0, 0);
             this.pose(Bone.Head, 0, 0, 0);
             return;
         }
         var distance = Math.max(0.1, Math.abs(target.z));
-        var pitch = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(Math.atan2(target.y - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) +
-            SPINE_LEAN;
-        var yaw = -Math.atan2(this.headGazeX, distance);
+        var headY = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(target.y, this.eyePoint.y, HEAD_FOLLOW_Y);
+        var pitch = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) + SPINE_LEAN;
+        var yaw = -Math.atan2(this.eyePoint.x * HEAD_FOLLOW_X, distance);
         this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
         this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), -sway * 0.02);
     };
@@ -61021,7 +61038,8 @@ function sumThrows(str) {
 }
 var flightPathCache = {};
 /* CONSTANTS */
-var ONE_TOSS_MAX_DWELL_RATIO = 0.5;
+// Juggling Lab の BEATS_AIRTIME_MIN と同じ値
+var MIN_AIRTIME_BEATS = 0.3;
 var LEFT = 0, RIGHT = 1;
 /* core functions */
 var CreateSiteswap = function (siteswapStr, options) {
@@ -61482,10 +61500,10 @@ var CreateSiteswap = function (siteswapStr, options) {
             }
             else {
                 dwellDuration = siteswap.dwellDuration;
-                // '1' は手から手への受け渡しなので、持つ時間を短くして空中時間を確保する
-                // (dwellRatio のままだと空中時間が 0.05 秒ほどになり、ボールと手が高速で振り回される)
-                if (numBeats == 1 && !sync) {
-                    dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * ONE_TOSS_MAX_DWELL_RATIO);
+                // どの投げも最低 MIN_AIRTIME_BEATS 拍は空中にいるように、持つ時間を短くする(Juggling Lab と同じ考え方)。
+                // 主に '1' のため。dwellRatio のままだと空中時間がほぼ 0 になり、ボールと手が高速で振り回される
+                if (numBeats > 0) {
+                    dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * (numBeats - MIN_AIRTIME_BEATS));
                 }
             }
             var numBounces = 0;
@@ -62625,6 +62643,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Siteswap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Siteswap */ "./src/motion/juggling/Siteswap.js");
 /* harmony import */ var _tracks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tracks */ "./src/motion/juggling/tracks.ts");
 /* harmony import */ var _validate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./validate */ "./src/motion/juggling/validate.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tempo */ "./src/motion/juggling/tempo.ts");
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -62636,6 +62655,7 @@ var __assign = (undefined && undefined.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+
 
 
 
@@ -62652,6 +62672,8 @@ var Juggling = /** @class */ (function () {
         this.propMeshes = [];
         this.time = 0;
         this.speed = 1;
+        /** true の時はパターンに合わせてテンポ(1 拍の秒数)を自動で決める */
+        this.autoTempo = true;
         this.tmpQuaternion = new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]();
         this.scene = scene;
         this.siteswapStr = siteswapStr;
@@ -62668,7 +62690,7 @@ var Juggling = /** @class */ (function () {
             beat: 0,
             gazeTarget: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
             propRadius: 0.05,
-            highestProp: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
+            eyeTarget: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
         };
         var result = this.setPattern(siteswapStr, options);
         if (!result.ok) {
@@ -62690,6 +62712,14 @@ var Juggling = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Juggling.prototype, "beatDuration", {
+        /** 再生中のパターンの 1 拍の秒数 */
+        get: function () {
+            return this.siteswap.beatDuration;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * パターンを切り替える。投げられないパターンの場合は何も変えずにエラー内容を返す。
      */
@@ -62698,7 +62728,10 @@ var Juggling = /** @class */ (function () {
         if (!check.ok)
             return check;
         // gunswap は options.props をボールの数に合わせて増減させるので、再生中のパターンに影響しないようコピーを渡す
-        var siteswap = Object(_Siteswap__WEBPACK_IMPORTED_MODULE_1__["CreateSiteswap"])(check.siteswap, __assign(__assign({}, options), { props: (options.props || []).map(function (prop) { return (__assign({}, prop)); }) }));
+        var beatDuration = this.autoTempo
+            ? Object(_tempo__WEBPACK_IMPORTED_MODULE_4__["autoBeatDuration"])(check.siteswap, Number(options.dwellRatio))
+            : Number(options.beatDuration);
+        var siteswap = Object(_Siteswap__WEBPACK_IMPORTED_MODULE_1__["CreateSiteswap"])(check.siteswap, __assign(__assign({}, options), { beatDuration: beatDuration, props: (options.props || []).map(function (prop) { return (__assign({}, prop)); }) }));
         if (siteswap.errorMessage || !siteswap.validPattern || !siteswap.propPositions) {
             var result = {
                 ok: false,
@@ -62830,6 +62863,7 @@ var Juggling = /** @class */ (function () {
         });
         this.frame.beat = this.time / this.siteswap.beatDuration;
         this.frame.gazeTarget.set(0, tracks.peakY - GAZE_BELOW_PEAK, tracks.centerZ);
+        this.frame.eyeTarget.copy(tracks.gaze[step]);
         return this.frame;
     };
     Juggling.prototype.updateProps = function (stepFloat) {
@@ -62853,9 +62887,6 @@ var Juggling = /** @class */ (function () {
                     mesh.quaternion.multiply(ringRotation);
                 mesh.quaternion.premultiply(this.tmpQuaternion);
             }
-            var head = this.propMeshes[i][0];
-            if (i === 0 || head.position.y > this.frame.highestProp.y)
-                this.frame.highestProp.copy(head.position);
         }
     };
     Juggling.prototype.dispose = function () {
@@ -62866,6 +62897,50 @@ var Juggling = /** @class */ (function () {
     return Juggling;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Juggling);
+
+
+/***/ }),
+
+/***/ "./src/motion/juggling/tempo.ts":
+/*!**************************************!*\
+  !*** ./src/motion/juggling/tempo.ts ***!
+  \**************************************/
+/*! exports provided: throwValues, autoBeatDuration */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "throwValues", function() { return throwValues; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "autoBeatDuration", function() { return autoBeatDuration; });
+/**
+ * パターンに合ったテンポ(1 拍の秒数)を決める。
+ * Juggling Lab の calcBps() と同じ考え方:
+ *   高さ 3 以上の投げについて、その高さの「1 秒あたりの投げ数」の平均を取り、
+ *   一番高い投げの空中時間が長くなりすぎない(2.6 秒以内)ようにする。
+ * https://github.com/jkboyce/jugglinglab (notation/MhnPattern.kt)
+ */
+// 投げの高さごとの 1 秒あたりの投げ数(index = 高さ、9 以上は 9 の値)
+var THROWS_PER_SECOND = [2, 2, 2, 2.9, 3.4, 4.1, 4.25, 5, 5, 5.5];
+var MAX_AIRTIME_SECONDS = 2.6;
+var FALLBACK_BPS = 2.0;
+function throwValues(siteswap) {
+    // 数字と a〜w(10〜32)だけを拾う。同時投げの x や大文字の修飾子は無視する
+    return (siteswap.match(/[0-9a-w]/g) || []).map(function (c) {
+        var code = c.charCodeAt(0);
+        return code <= 57 ? code - 48 : code - 87;
+    });
+}
+function autoBeatDuration(siteswap, dwellBeats) {
+    var values = throwValues(siteswap);
+    if (values.length === 0)
+        return 1 / FALLBACK_BPS;
+    var counted = values.filter(function (v) { return v > 2; });
+    var bps = counted.length > 0
+        ? counted.reduce(function (sum, v) { return sum + THROWS_PER_SECOND[Math.min(v, 9)]; }, 0) / counted.length
+        : FALLBACK_BPS;
+    var maxThrow = Math.max.apply(Math, values);
+    return 1 / Math.max(bps, (maxThrow - dwellBeats) / MAX_AIRTIME_SECONDS);
+}
 
 
 /***/ }),
@@ -62939,6 +63014,7 @@ function buildTracks(siteswap, transform) {
         var palmNormals = computePalmNormals(positions, holding, stepDuration);
         return { positions: positions, palmNormals: palmNormals, holding: holding };
     });
+    var gaze = computeGazeTrack(siteswap.propPositions, props, numSteps);
     var peakY = -Infinity;
     var sumZ = 0;
     var count = 0;
@@ -62955,9 +63031,62 @@ function buildTracks(siteswap, transform) {
         period: period,
         props: props,
         hands: hands,
+        gaze: gaze,
         peakY: peakY,
         centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale,
     };
+}
+// 視線: 次にキャッチするボールについて、リリース点から頂点までの GAZE_TOWARD_APEX の位置を見る
+// (siteswap-performer の方式: https://github.com/aratama-ship-it/siteswap-performer)
+var GAZE_TOWARD_APEX = 0.78;
+function computeGazeTrack(raw, props, numSteps) {
+    var gaze = new Array(numSteps).fill(undefined);
+    var remaining = new Array(numSteps).fill(Infinity);
+    raw.forEach(function (track, i) {
+        var start = track.findIndex(function (p) { return p.dwell === true; });
+        if (start < 0)
+            return;
+        // start(手の中)から 1 周して、空中にある区間(フライト)ごとに処理する
+        var k = 0;
+        var _loop_1 = function () {
+            var s = (start + k) % numSteps;
+            if (track[s].dwell === true) {
+                k++;
+                return "continue";
+            }
+            var flight = [];
+            while (k < numSteps && track[(start + k) % numSteps].dwell !== true) {
+                flight.push((start + k) % numSteps);
+                k++;
+            }
+            var release = props[i][flight[0]];
+            var apex = flight.reduce(function (best, f) { return (props[i][f].y > best.y ? props[i][f] : best); }, release);
+            var target = release.clone().lerp(apex, GAZE_TOWARD_APEX);
+            flight.forEach(function (f, ix) {
+                var left = flight.length - ix;
+                if (left < remaining[f]) {
+                    remaining[f] = left;
+                    gaze[f] = target;
+                }
+            });
+        };
+        while (k < numSteps) {
+            _loop_1();
+        }
+    });
+    // 空中にボールがないステップは直前の値を使う
+    var firstIndex = gaze.findIndex(function (g) { return g !== undefined; });
+    if (firstIndex < 0)
+        return new Array(numSteps).fill(null).map(function () { return new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1.4, -0.3); });
+    var last = gaze[firstIndex];
+    var result = new Array(numSteps);
+    for (var k = 0; k < numSteps; k++) {
+        var s = (firstIndex + k) % numSteps;
+        if (gaze[s])
+            last = gaze[s];
+        result[s] = last;
+    }
+    return result;
 }
 function computePalmNormals(positions, holding, dt) {
     var n = positions.length;
@@ -63186,6 +63315,8 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var VANILLA_RE = /^[0-9a-w]+$/;
+// 数字・英字(修飾子を含む)と、同時投げ・マルチプレックス・パッシング・バウンド指定に使う記号以外
+var INVALID_CHAR_RE = /[^0-9a-zA-Z()[\],*<>|{}.\-:]/;
 var MAX_THROW = 32; // 'w'
 var MAX_SUGGESTIONS = 3;
 var MAX_LENGTH_FOR_SUGGESTIONS = 12;
@@ -63330,6 +63461,18 @@ function precheckSiteswap(input) {
     if (siteswap === '') {
         return { ok: false, siteswap: siteswap, message: 'サイトスワップを入力してください(例: 3, 441, 531)。' };
     }
+    // 使えない文字があれば、その文字と位置を示す
+    var badIndex = siteswap.search(INVALID_CHAR_RE);
+    if (badIndex >= 0) {
+        var cleaned = siteswap.replace(new RegExp(INVALID_CHAR_RE.source, 'g'), '');
+        var cleanedCheck = cleaned === '' ? undefined : precheckSiteswap(cleaned);
+        return {
+            ok: false,
+            siteswap: siteswap,
+            message: "\u300C" + siteswap[badIndex] + "\u300D(" + (badIndex + 1) + " \u6587\u5B57\u76EE)\u306F\u30B5\u30A4\u30C8\u30B9\u30EF\u30C3\u30D7\u306B\u4F7F\u3048\u306A\u3044\u6587\u5B57\u3067\u3059\u3002",
+            suggestions: cleanedCheck && cleanedCheck.ok ? [cleaned] : cleanedCheck === null || cleanedCheck === void 0 ? void 0 : cleanedCheck.suggestions,
+        };
+    }
     if (isVanilla(siteswap))
         return checkVanilla(siteswap);
     return { ok: true, siteswap: siteswap };
@@ -63387,11 +63530,13 @@ var Options = /** @class */ (function () {
         this.siteswap = {
             beatDuration: 0.28,
             beatDurationAltitude: '0.28',
-            dwellRatio: 0.8,
+            // ボールを持っている時間(拍)。Juggling Lab の既定値 1.3 に合わせた(実際のジャグラーの計測でも手の周期の 6 割強)
+            dwellRatio: 1.3,
             props: [{ type: 'ball', color: 'random', radius: 0.05, C: 0.9 }],
             propsColor: '#ffffff',
             propsRadius: '0.05',
-            dwellPath: '(30)(10)',
+            // キャッチは外側・少し高い位置、投げは内側(実際のジャグラーはキャッチ位置の方が高い)
+            dwellPath: '(30,10)(10)',
             matchVelocity: false,
             dwellCatchScale: 0.06,
             dwellTossScale: 0.06,
@@ -63421,6 +63566,7 @@ var Options = /** @class */ (function () {
         this.neck = true;
         this.bodyMotion = true;
         this.speed = 1.0;
+        this.autoTempo = true;
         this.facial = {
             emotion: (_a = {},
                 _a[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Joy] = 0.0,

@@ -53,9 +53,9 @@ const SHOULDER_RAISE_MAX = 0.12;
 const HEAD_PITCH_MIN = -0.2;
 const HEAD_PITCH_MAX = 0.4;
 const NECK_SHARE = 0.4;
-const HEAD_FOLLOW_X = 0.25; // 頭が一番高いボールの横位置を追う割合
-const EYE_FOLLOW_X = 0.7;
-const GAZE_SMOOTH = 6; // 1/s
+const HEAD_FOLLOW_X = 0.35; // 頭が目線の横位置を追う割合
+const HEAD_FOLLOW_Y = 0.3; // 頭の上下が目線の高さを追う割合(残りはパターンの頂点)
+const GAZE_SMOOTH = 8; // 1/s
 
 interface ArmRig {
   side: number; // 左 -1, 右 +1(x 座標の符号)
@@ -113,8 +113,7 @@ export default class Body {
   private hipsRestY = 0;
   private legLength = 0;
   private baseHandY: number;
-  private gazeX = 0;
-  private headGazeX = 0;
+  private eyePoint?: THREE.Vector3;
   private breathTime = 0;
   private lookTarget = new THREE.Object3D();
   private eyeY: number;
@@ -299,14 +298,12 @@ export default class Body {
       );
     });
 
-    // 視線: 頭はパターンの頂点を、目はさらに一番高いボールを追う
-    const followX = frame.highestProp.x;
-    const k = 1 - Math.exp(-GAZE_SMOOTH * delta);
-    this.gazeX += (followX * EYE_FOLLOW_X - this.gazeX) * k;
-    this.headGazeX += (followX * HEAD_FOLLOW_X - this.headGazeX) * k;
+    // 視線: 目は次にキャッチするボールを追い、頭はパターンの頂点を中心に目線へ少し寄せる
+    if (!this.eyePoint) this.eyePoint = frame.eyeTarget.clone();
+    this.eyePoint.lerp(frame.eyeTarget, 1 - Math.exp(-GAZE_SMOOTH * delta));
+    this.lookTarget.position.copy(this.eyePoint);
 
     const target = frame.gazeTarget;
-    this.lookTarget.position.set(this.gazeX, target.y, target.z);
 
     if (!this.enableNeck) {
       this.pose(Bone.Neck, 0, 0, 0);
@@ -314,10 +311,10 @@ export default class Body {
       return;
     }
     const distance = Math.max(0.1, Math.abs(target.z));
+    const headY = THREE.MathUtils.lerp(target.y, this.eyePoint.y, HEAD_FOLLOW_Y);
     const pitch =
-      THREE.MathUtils.clamp(Math.atan2(target.y - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) +
-      SPINE_LEAN;
-    const yaw = -Math.atan2(this.headGazeX, distance);
+      THREE.MathUtils.clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) + SPINE_LEAN;
+    const yaw = -Math.atan2(this.eyePoint.x * HEAD_FOLLOW_X, distance);
     this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
     this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), -sway * 0.02);
   }

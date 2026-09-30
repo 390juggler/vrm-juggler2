@@ -12,6 +12,7 @@ export default class Options {
   public neck!: boolean;
   public bodyMotion!: boolean;
   public speed!: number;
+  public autoTempo!: boolean;
   public facial!: any;
 
   constructor() {
@@ -20,11 +21,13 @@ export default class Options {
     this.siteswap = {
       beatDuration: 0.28,
       beatDurationAltitude: '0.28',
-      dwellRatio: 0.8,
+      // ボールを持っている時間(拍)。Juggling Lab の既定値 1.3 に合わせた(実際のジャグラーの計測でも手の周期の 6 割強)
+      dwellRatio: 1.3,
       props: [{ type: 'ball', color: 'random', radius: 0.05, C: 0.9 }],
       propsColor: '#ffffff',
       propsRadius: '0.05',
-      dwellPath: '(30)(10)',
+      // キャッチは外側・少し高い位置、投げは内側(実際のジャグラーはキャッチ位置の方が高い)
+      dwellPath: '(30,10)(10)',
       matchVelocity: false,
       dwellCatchScale: 0.06,
       dwellTossScale: 0.06,
@@ -54,6 +57,7 @@ export default class Options {
     this.neck = true;
     this.bodyMotion = true;
     this.speed = 1.0;
+    this.autoTempo = true;
     this.facial = {
       emotion: {
         [VRMSchema.BlendShapePresetName.Joy]: 0.0,

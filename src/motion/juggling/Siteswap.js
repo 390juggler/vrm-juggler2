@@ -34,7 +34,8 @@ var flightPathCache = {};
 
 /* CONSTANTS */
 
-var ONE_TOSS_MAX_DWELL_RATIO = 0.5;
+// Juggling Lab の BEATS_AIRTIME_MIN と同じ値
+var MIN_AIRTIME_BEATS = 0.3;
 
 var LEFT = 0,
   RIGHT = 1;
@@ -528,10 +529,10 @@ export const CreateSiteswap = function (siteswapStr, options) {
         dwellDuration = siteswap.beatDuration * parseFloat(siteswapStr.substring(dIx + 2, siteswapStr.indexOf('}')));
       } else {
         dwellDuration = siteswap.dwellDuration;
-        // '1' は手から手への受け渡しなので、持つ時間を短くして空中時間を確保する
-        // (dwellRatio のままだと空中時間が 0.05 秒ほどになり、ボールと手が高速で振り回される)
-        if (numBeats == 1 && !sync) {
-          dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * ONE_TOSS_MAX_DWELL_RATIO);
+        // どの投げも最低 MIN_AIRTIME_BEATS 拍は空中にいるように、持つ時間を短くする(Juggling Lab と同じ考え方)。
+        // 主に '1' のため。dwellRatio のままだと空中時間がほぼ 0 になり、ボールと手が高速で振り回される
+        if (numBeats > 0) {
+          dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * (numBeats - MIN_AIRTIME_BEATS));
         }
       }
 

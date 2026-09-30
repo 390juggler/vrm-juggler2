@@ -15,6 +15,7 @@ import {
   transformPoint,
 } from './tracks';
 import { SiteswapCheck, isVanilla, precheckSiteswap, translateGunswapError } from './validate';
+import { autoBeatDuration } from './tempo';
 
 export interface HandState {
   /** ボールを持っている時はボールの中心、持っていない時は手の基準位置(ワールド座標) */
@@ -32,8 +33,8 @@ export interface JugglingFrame {
   gazeTarget: THREE.Vector3;
   /** 小道具の半径(手のひらとボールの距離に使う) */
   propRadius: number;
-  /** 一番高い位置にある小道具(目線で追う) */
-  highestProp: THREE.Vector3;
+  /** 目で追う位置(次にキャッチするボールの頂点付近) */
+  eyeTarget: THREE.Vector3;
 }
 
 const RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
@@ -58,6 +59,8 @@ export default class Juggling {
 
   private time = 0;
   public speed = 1;
+  /** true の時はパターンに合わせてテンポ(1 拍の秒数)を自動で決める */
+  public autoTempo = true;
 
   private frame: JugglingFrame;
   private tmpQuaternion = new THREE.Quaternion();
@@ -80,7 +83,7 @@ export default class Juggling {
       beat: 0,
       gazeTarget: new THREE.Vector3(),
       propRadius: 0.05,
-      highestProp: new THREE.Vector3(),
+      eyeTarget: new THREE.Vector3(),
     };
 
     const result = this.setPattern(siteswapStr, options);
@@ -98,6 +101,11 @@ export default class Juggling {
     return this.siteswapStr;
   }
 
+  /** 再生中のパターンの 1 拍の秒数 */
+  get beatDuration(): number {
+    return this.siteswap.beatDuration;
+  }
+
   /**
    * パターンを切り替える。投げられないパターンの場合は何も変えずにエラー内容を返す。
    */
@@ -106,8 +114,12 @@ export default class Juggling {
     if (!check.ok) return check;
 
     // gunswap は options.props をボールの数に合わせて増減させるので、再生中のパターンに影響しないようコピーを渡す
+    const beatDuration = this.autoTempo
+      ? autoBeatDuration(check.siteswap, Number(options.dwellRatio))
+      : Number(options.beatDuration);
     const siteswap = CreateSiteswap(check.siteswap, {
       ...options,
+      beatDuration,
       props: (options.props || []).map((prop) => ({ ...prop })),
     });
     if (siteswap.errorMessage || !siteswap.validPattern || !siteswap.propPositions) {
@@ -257,6 +269,7 @@ export default class Juggling {
 
     this.frame.beat = this.time / this.siteswap.beatDuration;
     this.frame.gazeTarget.set(0, tracks.peakY - GAZE_BELOW_PEAK, tracks.centerZ);
+    this.frame.eyeTarget.copy(tracks.gaze[step]);
     return this.frame;
   }
 
@@ -282,8 +295,6 @@ export default class Juggling {
         if (this.siteswap.props[i].type == 'ring') mesh.quaternion.multiply(ringRotation);
         mesh.quaternion.premultiply(this.tmpQuaternion);
       }
-      const head = this.propMeshes[i][0];
-      if (i === 0 || head.position.y > this.frame.highestProp.y) this.frame.highestProp.copy(head.position);
     }
   }
 
