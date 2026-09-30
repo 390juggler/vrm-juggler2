@@ -1,3 +1,4 @@
-dist/models/
+dist/models/*
+!dist/models/default.vrm
 dist/*.js.map
 node_modules

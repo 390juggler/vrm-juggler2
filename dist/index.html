@@ -1,38 +1,84 @@
 <!DOCTYPE html>
-<html lang="js">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>Document</title>
-     <script src="./vrm-juggler.min.js"></script>
+    <title>VRM Juggler</title>
+    <script src="./vrm-juggler.min.js"></script>
     <style>
       body {
         margin: 0;
         padding: 0;
+        font-family: sans-serif;
       }
- 
+
       #vrm-juggler {
         width: 100vw;
         height: 100vh;
       }
+
+      .toolbar {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 20;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.85);
+        font-size: 14px;
+      }
+
+      .toolbar input[type='text'] {
+        width: 8em;
+        font-size: 16px;
+      }
+
+      .toolbar .hint {
+        color: #666;
+      }
     </style>
   </head>
 
-  <body>     <input type="file" id="sm_file"accept=".vrm" value="import VRM">
-    <input id="sm_button" type="button" value="GO" onclick="sm_buttonHandle()">
-    <pre id="pre1"></pre>
-   <div id="vrm-juggler"></div>
+  <body>
+    <div class="toolbar">
+      <label>VRM を読み込む <input type="file" id="vrm-file" accept=".vrm" /></label>
+      <form id="siteswap-form">
+        <label>サイトスワップ <input type="text" id="siteswap" value="3" autocomplete="off" /></label>
+        <button type="submit">投げる</button>
+      </form>
+      <span class="hint">Esc で詳細設定</span>
+    </div>
+    <div id="vrm-juggler"></div>
 
-  
     <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // モデルを指定しなければ ./models/default.vrm を読み込む
+        const juggler = new VRMJuggler('#vrm-juggler');
 
+        let objectURL;
+        document.getElementById('vrm-file').addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          if (objectURL) URL.revokeObjectURL(objectURL);
+          objectURL = URL.createObjectURL(file);
+          juggler.loadModel(objectURL);
+        });
 
+        document.getElementById('siteswap-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          juggler.setSiteswap(document.getElementById('siteswap').value);
+        });
+
+        // 「近いパターン」のボタンで切り替えた時も入力欄を合わせる
+        document.getElementById('vrm-juggler').addEventListener('siteswapchange', (e) => {
+          document.getElementById('siteswap').value = e.detail.siteswap;
+        });
+      });
     </script>
   </body>
 </html>
-
-
-
-
-  

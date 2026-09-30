@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 import { VRMSchema } from '@pixiv/three-vrm';
 
 interface emotion {
@@ -18,9 +16,9 @@ interface mouth {
 }
 
 export default class Facial {
-  private vrm!: any;
-  private emotion!: emotion;
-  private mouth!: mouth;
+  private vrm?: any;
+  public emotion!: emotion;
+  public mouth!: mouth;
 
   constructor(options: { emotion: emotion; mouth: mouth }) {
     this.emotion = options.emotion;
@@ -31,8 +29,9 @@ export default class Facial {
     this.vrm = vrm;
   }
 
-  // フレーム毎回に呼ばれる
+  // フレーム毎回に呼ばれる(反映は vrm.update() で行われる)
   update = () => {
+    if (!this.vrm) return;
     this.vrm.blendShapeProxy.setValue(
       VRMSchema.BlendShapePresetName.Joy,
       this.emotion[VRMSchema.BlendShapePresetName.Joy]
@@ -54,6 +53,5 @@ export default class Facial {
     this.vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.U, this.mouth[VRMSchema.BlendShapePresetName.U]);
     this.vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.E, this.mouth[VRMSchema.BlendShapePresetName.E]);
     this.vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.O, this.mouth[VRMSchema.BlendShapePresetName.O]);
-    this.vrm.blendShapeProxy.update();
   };
 }

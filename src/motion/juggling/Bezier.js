@@ -2,6 +2,15 @@
 // The only thing I can take any credit for is modifying the algorithm to accomodate variable input control points and
 // the "matchVelocity" idea.
 
+// ベジェ制御点を dwell 開始/終了点からどれだけ離してよいか(m)
+var MAX_CONTROL_OFFSET = 0.1;
+
+function clampLength(x, y, z, max) {
+	var len = Math.sqrt(x * x + y * y + z * z);
+	var k = len > max ? max / len : 1;
+	return { x: x * k, y: y * k, z: z * k };
+}
+
 export const interpolateBezierSpline = function(P, t, v_0, v_T, v_0scale, v_Tscale, matchVelocity) {
 
 	// t goes from 0 to 1
@@ -27,14 +36,18 @@ export const interpolateBezierSpline = function(P, t, v_0, v_T, v_0scale, v_Tsca
 			P.push(P[0]);
 		}
 
+		// 制御点のオフセット(速度×スケール)に上限を設ける。
+		// 上限がないと '1' のような空中時間の短い投げで速度が大きくなり、手が大きく振り出されてしまう。
+		var c0Offset = clampLength(v_0.dx * v_0scale, v_0.dy * v_0scale, v_0.dz * v_0scale, MAX_CONTROL_OFFSET);
+		var c1Offset = clampLength(v_T.dx * v_Tscale, v_T.dy * v_Tscale, v_T.dz * v_Tscale, MAX_CONTROL_OFFSET);
 		var C = [{
-			x: P[0].x + v_0.dx * v_0scale,
-			y: P[0].y + v_0.dy * v_0scale,
-			z: P[0].z + v_0.dz * v_0scale
+			x: P[0].x + c0Offset.x,
+			y: P[0].y + c0Offset.y,
+			z: P[0].z + c0Offset.z
 		}, {
-			x: P.last().x - v_T.dx * v_Tscale,
-			y: P.last().y - v_T.dy * v_Tscale,
-			z: P.last().z - v_T.dz * v_Tscale
+			x: P.last().x - c1Offset.x,
+			y: P.last().y - c1Offset.y,
+			z: P.last().z - c1Offset.z
 		}];
 		var eps = .00001;
 

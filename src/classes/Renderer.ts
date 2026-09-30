@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export default class Renderer {
-  private container!: Element | null;
+  public container!: HTMLElement | null;
   private width!: number;
   private height!: number;
   private renderer!: THREE.WebGLRenderer;
@@ -14,7 +14,7 @@ export default class Renderer {
   constructor(selector: string = '') {
     if (selector === '') return;
 
-    this.container = document.querySelector(selector);
+    this.container = document.querySelector<HTMLElement>(selector);
 
     this.init();
   }
@@ -52,11 +52,6 @@ export default class Renderer {
     //const light = new THREE.DirectionalLight(0xffffff);
     //light.position.set(2, 2, -2).normalize();
     //this.scene.add(light);
-  };
-
-  public animate = () => {
-    requestAnimationFrame(this.animate);
-    this.render();
   };
 
   public render = () => {

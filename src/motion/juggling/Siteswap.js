@@ -34,6 +34,9 @@ var flightPathCache = {};
 
 /* CONSTANTS */
 
+// Juggling Lab の BEATS_AIRTIME_MIN と同じ値
+var MIN_AIRTIME_BEATS = 0.3;
+
 var LEFT = 0,
   RIGHT = 1;
 
@@ -526,6 +529,11 @@ export const CreateSiteswap = function (siteswapStr, options) {
         dwellDuration = siteswap.beatDuration * parseFloat(siteswapStr.substring(dIx + 2, siteswapStr.indexOf('}')));
       } else {
         dwellDuration = siteswap.dwellDuration;
+        // どの投げも最低 MIN_AIRTIME_BEATS 拍は空中にいるように、持つ時間を短くする(Juggling Lab と同じ考え方)。
+        // 主に '1' のため。dwellRatio のままだと空中時間がほぼ 0 になり、ボールと手が高速で振り回される
+        if (numBeats > 0) {
+          dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * (numBeats - MIN_AIRTIME_BEATS));
+        }
       }
 
       var numBounces = 0;
@@ -1835,7 +1843,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
         noGA: false,
       };
 
-      ga = new BounceGA(gaConfig, fitnessConfig);
+      var ga = new BounceGA(gaConfig, fitnessConfig);
       ga.evolve();
 
       if (!ga.ableToFindSolution) {
