@@ -70,14 +70,20 @@ const PALM_SNAP_SPEED_MAX = 6; // m/s
 const PALM_STROKE_SHARE = 0.8; // 投げる区間の始まりで、手のひらをどれだけ投げる方向へ向けておくか
 const PALM_SNAP_TIME = 0.06; // s
 
+// 小道具が大きいほど幅を広く投げる(空中で重ならないように)
+const PROP_WIDTH: { [type: string]: number } = { ball: 1, club: 1.15, ring: 1.3 };
+// リングは同じ面を飛ぶと輪同士が交差するので、1 本ずつ奥行きをずらして平行な面を飛ばす
+const RING_LAYER_GAP = 0.03; // m
+
 // 小道具の握る位置
 const CLUB_GRIP_LOCAL = new THREE.Vector3(0, -0.13, 0); // クラブのモデル座標(ノブ側)
 const RING_GRIP_RADIUS = 0.145; // 輪の太さの中央
 
-// クラブの向き: 前方からの仰角(度)。キャッチでほぼ真上、運ぶ間に前へ倒し、手首を返して投げる
-// (gunswap と同じく 1 回のフライトで「整数 + 0.2」回転するので、リリース角 + 72° がキャッチ角になる)
-const CLUB_RELEASE_PITCH = 25;
-const CLUB_LOW_PITCH = -5; // 運ぶ途中で一番前へ倒れる角度
+// クラブの向き: 前方からの仰角(度)。キャッチでほぼ真上、運ぶ間に斜め上まで前へ倒し、手首を返して投げる。
+// 空中では「投げの高さ / 2 の整数部分」回転 + キャッチでほぼ縦になる分だけ回る('1' は回転せずに手渡す)
+const CLUB_RELEASE_PITCH = 40;
+const CLUB_CATCH_PITCH = 85;
+const CLUB_LOW_PITCH = 15; // 運ぶ途中で一番前へ倒れる角度
 const CLUB_LOW_AT = 0.65; // 手に持っている時間のうち、一番倒れるタイミング
 const CLUB_INWARD_YAW = 12; // 体の内側へ向ける角度
 const RING_SPIN_PER_FLIGHT = 0.5; // リングが 1 回のフライトで回る量(回転)
@@ -95,7 +101,6 @@ interface HandEvent {
 
 interface Flight {
   prop: number;
-  spins: number;
   release: number; // 時刻
   duration: number;
   throwHand: number;
@@ -189,8 +194,13 @@ export function buildNaturalTracks(
     const pts = dwellPoints(ix);
     return pts[0].x > pts[pts.length - 1].x && pts[pts.length - 1].x > 0;
   };
+  const width = PROP_WIDTH[propType] || 1;
   const toWorld = (hand: number, p: { x: number; y: number; z: number }) =>
-    transformPoint({ x: (hand === LEFT ? -1 : 1) * p.x, y: 1.15 + p.y, z: p.z - 0.35 }, transform, new THREE.Vector3());
+    transformPoint(
+      { x: (hand === LEFT ? -1 : 1) * p.x * width, y: 1.15 + p.y, z: p.z - 0.35 },
+      transform,
+      new THREE.Vector3()
+    );
 
   const catchX = (baseX: number, incomingValue: number) => {
     if (incomingValue === 1) return ONE_CATCH_X;
@@ -214,7 +224,11 @@ export function buildNaturalTracks(
   const catchPoint = (toss: any, incomingValue: number) => {
     const pts = dwellPoints(toss.dwellPathIx);
     const p = { ...pts[0] };
-    if (cascadeLike(toss.dwellPathIx)) p.x = catchX(p.x, incomingValue);
+    if (cascadeLike(toss.dwellPathIx)) {
+      p.x = catchX(p.x, incomingValue);
+      // '1' は横へ押し出す手渡しなので、投げた高さのまま受ける(手のひらが受け手の方へ横を向く)
+      if (incomingValue === 1) p.y = pts[pts.length - 1].y;
+    }
     return toWorld(toss.hand, p);
   };
 
@@ -233,7 +247,6 @@ export function buildNaturalTracks(
       if (duration < 1e-6) duration += period;
       flights.push({
         prop,
-        spins: toss.numSpins || 0,
         release,
         duration,
         throwHand: toss.hand,
@@ -271,7 +284,10 @@ export function buildNaturalTracks(
   );
 
   // 重心の放物線(握る位置のずれは、その時刻の小道具の向きから求める)
+  const layer = (prop: number) => (propType === 'ring' ? (prop - (numProps - 1) / 2) * RING_LAYER_GAP : 0);
   flights.forEach((f) => {
+    f.start.z += layer(f.prop);
+    f.end.z += layer(f.prop);
     const releaseStep = stepOf(f.release);
     const catchStep = stepOf(f.release + f.duration);
     // throwPoint / catchPoint は手(握る位置)。重心はそこから握る位置のずれを引く
@@ -598,6 +614,8 @@ function buildOrientations(
 
   const release = rad(CLUB_RELEASE_PITCH);
   const low = rad(CLUB_LOW_PITCH);
+  // 1 回のフライトで回る角度(リリース角からキャッチ角まで + 整数回転)
+  const clubTurn = (f: Flight) => Math.floor(f.value / 2) * 2 * Math.PI + rad(CLUB_CATCH_PITCH - CLUB_RELEASE_PITCH);
 
   const result: THREE.Quaternion[][] = [];
   for (let prop = 0; prop < numProps; prop++) {
@@ -618,7 +636,7 @@ function buildOrientations(
         const k = Math.max(0, since(t, flying.release, period)) / flying.duration;
         if (propType === 'club') {
           const yaw = THREE.MathUtils.lerp(yawOf(flying.throwHand), yawOf(flying.catchHand), k);
-          track.push(clubQ(release + flying.spins * 2 * Math.PI * k, yaw));
+          track.push(clubQ(release + clubTurn(flying) * k, yaw));
         } else {
           track.push(ringQ(RING_SPIN_PER_FLIGHT * 2 * Math.PI * k));
         }
@@ -635,7 +653,7 @@ function buildOrientations(
       }
       const held = sinceCatch(previous) + untilRelease(next) || period;
       const k = THREE.MathUtils.clamp(sinceCatch(previous) / held, 0, 1);
-      const caught = release + (previous.spins % 1) * 2 * Math.PI;
+      const caught = rad(CLUB_CATCH_PITCH);
       const smooth = (x: number) => x * x * (3 - 2 * x);
       const pitch =
         k < CLUB_LOW_AT
