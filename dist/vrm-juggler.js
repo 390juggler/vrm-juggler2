@@ -59327,6 +59327,7 @@ var Renderer = /** @class */ (function () {
     function Renderer(selector) {
         var _this = this;
         if (selector === void 0) { selector = ''; }
+        this.userMovedCamera = false;
         this.init = function () {
             if (!_this.container)
                 return;
@@ -59339,24 +59340,78 @@ var Renderer = /** @class */ (function () {
             _this.renderer.setPixelRatio(window.devicePixelRatio);
             _this.renderer.setSize(_this.width, _this.height);
             _this.renderer.setClearColor(0x000000, 0.0);
+            _this.renderer.shadowMap.enabled = true;
+            _this.renderer.shadowMap.type = three__WEBPACK_IMPORTED_MODULE_0__["PCFSoftShadowMap"];
             _this.container.appendChild(_this.renderer.domElement);
             _this.camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, _this.width / _this.height, 0.1, 1000);
             _this.camera.position.set(0, 0.75, -3);
             _this.camera.rotation.set(0, Math.PI, 0);
             _this.controls = new three_examples_jsm_controls_OrbitControls_js__WEBPACK_IMPORTED_MODULE_1__["OrbitControls"](_this.camera, _this.renderer.domElement);
             _this.controls.target = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0.75, 0);
+            // ユーザーが視点を動かしたら、自動の構図合わせはやめる
+            _this.controls.addEventListener('start', function () {
+                _this.userMovedCamera = true;
+                _this.framing = undefined;
+            });
             _this.scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
-            var hemisphereLight = new three__WEBPACK_IMPORTED_MODULE_0__["HemisphereLight"](0xffffff, 0x080820, 1);
+            var hemisphereLight = new three__WEBPACK_IMPORTED_MODULE_0__["HemisphereLight"](0xffffff, 0x606070, 0.9);
             _this.scene.add(hemisphereLight);
-            var pointLight = new three__WEBPACK_IMPORTED_MODULE_0__["PointLight"](0xffffff, 1, 100);
-            pointLight.position.set(0, 0, -2);
-            _this.scene.add(pointLight);
-            //const light = new THREE.DirectionalLight(0xffffff);
-            //light.position.set(2, 2, -2).normalize();
-            //this.scene.add(light);
+            // 正面やや上から当てる主光源。床に影を落とす
+            _this.keyLight = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xffffff, 0.8);
+            _this.keyLight.position.set(-1.2, 3.5, -2.5);
+            _this.keyLight.target.position.set(0, 0.8, 0);
+            _this.keyLight.castShadow = true;
+            _this.keyLight.shadow.mapSize.set(2048, 2048);
+            _this.keyLight.shadow.camera.left = -1.5;
+            _this.keyLight.shadow.camera.right = 1.5;
+            _this.keyLight.shadow.camera.top = 2.5;
+            _this.keyLight.shadow.camera.bottom = -1.5;
+            _this.keyLight.shadow.camera.near = 0.5;
+            _this.keyLight.shadow.camera.far = 10;
+            _this.keyLight.shadow.bias = -0.0005;
+            _this.scene.add(_this.keyLight, _this.keyLight.target);
+            // 影だけを映す床(背景はページの色がそのまま見える)
+            var floor = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["CircleGeometry"](3, 48), new three__WEBPACK_IMPORTED_MODULE_0__["ShadowMaterial"]({ opacity: 0.18 }));
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            _this.scene.add(floor);
         };
-        this.render = function () {
+        /**
+         * 足元からパターンの頂点までが入るようにカメラを引く/寄せる。
+         * ユーザーが視点を動かした後は何もしない。
+         */
+        this.frameHeight = function (top) {
+            _this.framedTop = top;
+            if (_this.userMovedCamera)
+                return;
+            var bottom = -0.05;
+            var height = Math.max(top + 0.25, 1.85) - bottom;
+            var halfFov = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].degToRad(_this.camera.fov / 2);
+            // 縦長の画面では横幅(約 1.2m)も入るようにする
+            var halfWidthFov = Math.atan(Math.tan(halfFov) * _this.camera.aspect);
+            var distance = Math.max(height / 2 / Math.tan(halfFov), 0.6 / Math.tan(halfWidthFov)) * 1.05;
+            var toTarget = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, bottom + height / 2, 0);
+            var direction = _this.camera.position.clone().sub(_this.controls.target).normalize();
+            _this.framing = {
+                from: _this.camera.position.clone(),
+                to: toTarget.clone().addScaledVector(direction, distance),
+                fromTarget: _this.controls.target.clone(),
+                toTarget: toTarget,
+                t: 0,
+            };
+        };
+        this.render = function (delta) {
+            if (delta === void 0) { delta = 1 / 60; }
             _this.resize();
+            if (_this.framing) {
+                var f = _this.framing;
+                f.t = Math.min(1, f.t + delta / 0.8);
+                var k = f.t * f.t * (3 - 2 * f.t);
+                _this.camera.position.lerpVectors(f.from, f.to, k);
+                _this.controls.target.lerpVectors(f.fromTarget, f.toTarget, k);
+                if (f.t >= 1)
+                    _this.framing = undefined;
+            }
             _this.controls.update();
             _this.renderer.render(_this.scene, _this.camera);
         };
@@ -59371,6 +59426,8 @@ var Renderer = /** @class */ (function () {
             _this.renderer.setSize(_this.width, _this.height);
             _this.camera.aspect = _this.width / _this.height;
             _this.camera.updateProjectionMatrix();
+            if (_this.framedTop !== undefined)
+                _this.frameHeight(_this.framedTop);
         };
         if (selector === '')
             return;
@@ -59421,6 +59478,21 @@ __webpack_require__.r(__webpack_exports__);
 var DEFAULT_MODEL_PATH = './models/default.vrm';
 // フレームが大きく飛んだ時(タブを裏にした時など)に動きが暴れないようにする上限(秒)
 var MAX_DELTA = 0.1;
+/**
+ * three-vrm 0.3.x の MToon シェーダーは、影を受ける部分が three.js r118 より古い書き方
+ * (directionalLight.shadow など)のため、影を有効にするとコンパイルに失敗してアバターが消える。
+ * アバターは影を落とすだけにして、影を受ける計算を外す。
+ */
+function disableMToonShadowReceive(material) {
+    var shader = material;
+    if (typeof shader.fragmentShader !== 'string')
+        return;
+    var patched = shader.fragmentShader.replace(/atten = all\( bvec2\( \w+Light\.shadow, directLight\.visible \) \) \? [^;]*;/g, 'atten = 1.0;');
+    if (patched === shader.fragmentShader)
+        return;
+    shader.fragmentShader = patched;
+    shader.needsUpdate = true;
+}
 var VRMJuggler = /** @class */ (function () {
     function VRMJuggler(selector, modelPath) {
         var _this = this;
@@ -59442,7 +59514,7 @@ var VRMJuggler = /** @class */ (function () {
                     _this.facial.update();
                     _this.vrm.update(delta);
                 }
-                _this.renderer.render();
+                _this.renderer.render(delta);
             }
             catch (e) {
                 // 1 回のエラーでアニメーションが止まらないようにする
@@ -59534,10 +59606,22 @@ var VRMJuggler = /** @class */ (function () {
         scene.add(vrm.scene);
         this.body = new _motion_body__WEBPACK_IMPORTED_MODULE_7__["default"](vrm, scene);
         this.body.armAngle = Number(this.options.siteswap.armAngle);
-        this.body.enableBodyMotion = this.options.bodyMotion;
+        this.body.motionAmount = this.options.bodyMotion;
         this.body.enableNeck = this.options.neck;
         this.juggling.setAvatarMetrics(this.body.metrics);
         this.juggling.visible = true;
+        this.renderer.frameHeight(this.juggling.peakY);
+        // 床にアバターの影を落とす
+        vrm.scene.traverse(function (object) {
+            var mesh = object;
+            if (!mesh.isMesh)
+                return;
+            // 表情(モーフ)を持つメッシュは影を落とさない。three.js r118 は影の描画でモーフの付け外しに失敗することがある
+            var geometry = mesh.geometry;
+            var hasMorph = !!geometry.morphAttributes && Object.keys(geometry.morphAttributes).length > 0;
+            mesh.castShadow = !hasMorph;
+            (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach(disableMToonShadowReceive);
+        });
         this.blink.init(vrm);
         this.facial.init(vrm);
     };
@@ -59641,6 +59725,8 @@ var VRMJuggler = /** @class */ (function () {
     };
     /** 自動で決まったテンポを設定値(パネルの表示)に反映する */
     VRMJuggler.prototype.syncTempo = function () {
+        // パターンの高さが変わるので、頂点まで見えるようにカメラも合わせる
+        this.renderer.frameHeight(this.juggling.peakY);
         var siteswapOptions = this.options.siteswap;
         siteswapOptions.beatDuration = this.juggling.beatDuration;
         siteswapOptions.beatDurationAltitude = this.juggling.beatDuration.toFixed(3);
@@ -59811,11 +59897,11 @@ var VRMJuggler = /** @class */ (function () {
                 _this.body.enableNeck = value;
         });
         this.gui
-            .add(options, 'bodyMotion')
+            .add(options, 'bodyMotion', 0, 2)
             .name('体の動き')
             .onChange(function (value) {
             if (_this.body)
-                _this.body.enableBodyMotion = value;
+                _this.body.motionAmount = Number(value);
         });
         if (!this.showGui)
             this.gui.hide();
@@ -59854,17 +59940,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixiv/three-vrm */ "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js");
 /* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__);
 
+// まばたき: 人の自然なまばたきに合わせて、間隔をランダムにし、ときどき 2 回続ける
+var INTERVAL_MIN = 2.0; // s
+var INTERVAL_MAX = 6.0; // s
+var DOUBLE_BLINK_CHANCE = 0.15;
+var DOUBLE_BLINK_GAP = 0.25; // s
+var CLOSE_TIME = 0.06; // s
+var HOLD_TIME = 0.03; // s
+var OPEN_TIME = 0.12; // s
+var BLINK_FLOOR = 1e-4;
 var Blink = /** @class */ (function () {
     function Blink() {
         var _this = this;
         this.time = 0;
+        this.nextBlink = 1.5;
+        this.blinkStart = -Infinity;
         this.enable = true;
         // フレーム毎回に呼ばれる(vrm.update() は呼び出し側でまとめて 1 回だけ行う)
         this.update = function (delta) {
             if (!_this.vrm)
                 return;
             _this.time += delta;
-            _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Blink, _this.enable ? _this.blinkValue : 0);
+            if (_this.time >= _this.nextBlink) {
+                _this.blinkStart = _this.time;
+                _this.nextBlink =
+                    Math.random() < DOUBLE_BLINK_CHANCE
+                        ? _this.time + DOUBLE_BLINK_GAP
+                        : _this.time + INTERVAL_MIN + Math.random() * (INTERVAL_MAX - INTERVAL_MIN);
+            }
+            // 0 にすると three.js r118 の描画キャッシュの不具合(モーフの付け外しで落ちる)を踏むので、ごく小さい値を残す
+            var value = _this.enable ? _this.blinkValue : 0;
+            _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Blink, Math.max(value, BLINK_FLOOR));
         };
     }
     Blink.prototype.init = function (vrm) {
@@ -59872,7 +59978,16 @@ var Blink = /** @class */ (function () {
     };
     Object.defineProperty(Blink.prototype, "blinkValue", {
         get: function () {
-            return Math.pow(Math.sin(this.time / 3), 1024) + Math.pow(Math.sin((this.time * 4) / 7), 1024);
+            var t = this.time - this.blinkStart;
+            if (t < 0)
+                return 0;
+            if (t < CLOSE_TIME)
+                return t / CLOSE_TIME;
+            if (t < CLOSE_TIME + HOLD_TIME)
+                return 1;
+            if (t < CLOSE_TIME + HOLD_TIME + OPEN_TIME)
+                return 1 - (t - CLOSE_TIME - HOLD_TIME) / OPEN_TIME;
+            return 0;
         },
         enumerable: false,
         configurable: true
@@ -59903,12 +60018,12 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * ジャグリング中の全身の動き。
  *
- * - 腕: 解析的な 2 関節 IK。ボールが手のひらに乗るように手首の位置と向きを決め、
+ * - 腕: 解析的な 2 関節 IK。ボール(クラブはハンドル、リングは縁)が手のひらに乗るように手首の位置と向きを決め、
  *       肘は「下・後ろ・少し外」に向けて安定させる。前腕のひねりは前腕と手首に分配する。
- * - 指: ボールを持っている間は握り、投げた後は開く。
- * - 下半身: 拍に合わせて膝を軽く曲げ伸ばしする(キャッチで沈み、投げで伸びる)。
- * - 上半身: 前傾・呼吸・左右の手に合わせた胸のひねり、投げる側の肩を少し上げる。
- * - 頭: パターンの頂点付近を見る。目線はボールを少し追う。
+ * - 指: 持っている間は握り(クラブは握りこぶし)、投げた後は開く。
+ * - 体: 投げるたびに、投げの速さに比例した勢いをばねに与える(膝の沈み込み・胸のひねり・肩・前傾)。
+ *       ゆっくりした左右の重心移動と呼吸はいつも入れる。
+ * - 頭: パターンの頂点付近を見る。目は次にキャッチするボールを追う。
  */
 var Bone = _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName;
 // 前方(VRM 0.x は -Z を向いている)
@@ -59924,22 +60039,59 @@ var PALM_GAP = 0.012; // ボール表面と手のひらのすき間
 var GRIP_HOLDING = 1.0;
 var GRIP_EMPTY = 0.35;
 var GRIP_SMOOTH = 25; // 1/s
-var FINGER_CURL = [0.35, 0.75, 0.55]; // Proximal, Intermediate, Distal(rad, grip = 1 の時)
+// Proximal, Intermediate, Distal(rad, grip = 1 の時)。クラブはハンドルを握りこみ、リングは縁をつかむ
+var FINGER_CURL = {
+    ball: [0.35, 0.75, 0.55],
+    club: [1.0, 1.3, 0.9],
+    ring: [0.75, 1.1, 0.8],
+};
 var FINGER_CURL_OPEN = [0.1, 0.2, 0.1];
-// 下半身
-var KNEE_BASE = 0.1; // rad
-var KNEE_BOUNCE = 0.035; // rad
-var KNEE_BOUNCE_BEATS = 2; // 何拍で 1 回沈むか(毎拍だと小刻みに見えるので、左右 1 往復で 1 回)
-var KNEE_BOUNCE_PHASE = 0.1; // 周期の中で一番沈むタイミング(キャッチ直後)
+// 体は「投げ」に反応して動く。投げるたびにばね(減衰振動)へ投げの速さに比例した勢いを与える。
+// 一定周期の揺れと違い、投げの高さ・リズムに合った大きさで自然に収まる
+var KNEE_BASE = 0.1; // rad(いつも軽く曲げておく)
+var DIP_PER_SPEED = 0.03; // 投げの速さ 1 m/s あたり、腰を沈める勢い(m/s)
+var DIP_SPRING = { period: 0.65, damping: 0.6 };
+var TWIST_PER_SPEED = 0.07; // 投げた側の肩を前へ出す胸のひねり(rad/s)
+var TWIST_SPRING = { period: 0.7, damping: 0.5 };
+var SHOULDER_PER_SPEED = 0.22; // 投げた側の肩を上げる勢い(rad/s)
+var SHOULDER_SPRING = { period: 0.4, damping: 0.6 };
+var LEAN_PER_SPEED = 0.02; // 上へ強く投げるほど少し前傾する(rad/s)
+var LEAN_SPRING = { period: 0.8, damping: 0.6 };
 // 上半身
 var SPINE_LEAN = 0.05; // rad(前傾)
 var BREATH_AMPLITUDE = 0.012;
 var BREATH_PERIOD = 3.6; // s
-var CHEST_TWIST = 0.015;
 var SHOULDER_FORWARD = 0.08;
-var SHOULDER_RAISE_GAIN = 0.4;
-var SHOULDER_RAISE_MAX = 0.06;
-var SHOULDER_SMOOTH = 5; // 1/s(手の上下にそのまま反応するとピクピクするので遅らせる)
+// ゆっくりした左右の重心移動(止まって見えないように)
+var WEIGHT_SHIFT = [
+    { amplitude: 0.008, period: 7.3, phase: 0 },
+    { amplitude: 0.004, period: 3.1, phase: 1 },
+];
+/** 減衰振動するばね。kick() で勢いを与え、step() で進める */
+var Spring = /** @class */ (function () {
+    function Spring(_a) {
+        var period = _a.period, damping = _a.damping;
+        this.x = 0;
+        this.v = 0;
+        this.omega = (2 * Math.PI) / period;
+        this.zeta = damping;
+    }
+    Spring.prototype.kick = function (dv) {
+        this.v += dv;
+    };
+    Spring.prototype.step = function (delta) {
+        // フレーム時間が長くても発散しないように細かく刻む
+        var steps = Math.max(1, Math.ceil(delta / (1 / 240)));
+        var dt = delta / steps;
+        for (var i = 0; i < steps; i++) {
+            var a = -this.omega * this.omega * this.x - 2 * this.zeta * this.omega * this.v;
+            this.v += a * dt;
+            this.x += this.v * dt;
+        }
+        return this.x;
+    };
+    return Spring;
+}());
 // 頭・視線
 var HEAD_PITCH_MIN = -0.2;
 var HEAD_PITCH_MAX = 0.4;
@@ -59979,18 +60131,25 @@ var Body = /** @class */ (function () {
         var _this = this;
         this.rest = new Map();
         this.hipsRestY = 0;
+        this.hipsRestX = 0;
         this.legLength = 0;
-        this.shoulderRaise = [0, 0];
+        this.dip = new Spring(DIP_SPRING);
+        this.twist = new Spring(TWIST_SPRING);
+        this.lean = new Spring(LEAN_SPRING);
+        this.shoulders = [new Spring(SHOULDER_SPRING), new Spring(SHOULDER_SPRING)];
         this.breathTime = 0;
         this.lookTarget = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
         this.armAngle = 0.3;
-        this.enableBodyMotion = true;
+        /** 体の動きの大きさ(0 で止める、1 が標準、2 で大きく) */
+        this.motionAmount = 1;
         this.enableNeck = true;
         this.vrm = vrm;
         this.vrm.scene.updateMatrixWorld(true);
         this.hips = this.node(Bone.Hips);
-        if (this.hips)
+        if (this.hips) {
             this.hipsRestY = this.hips.position.y;
+            this.hipsRestX = this.hips.position.x;
+        }
         var upperLeg = this.node(Bone.LeftUpperLeg);
         var lowerLeg = this.node(Bone.LeftLowerLeg);
         var foot = this.node(Bone.LeftFoot);
@@ -60008,11 +60167,17 @@ var Body = /** @class */ (function () {
                 _this.rest.set(node, node.quaternion.clone());
         });
         this.arms = [this.createArm(_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"]), this.createArm(_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"])];
-        this.baseHandY = Object(_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["handBaseY"])(this.metrics);
         scene.add(this.lookTarget);
         if (this.vrm.lookAt)
             this.vrm.lookAt.target = this.lookTarget;
     }
+    Object.defineProperty(Body.prototype, "enableBodyMotion", {
+        set: function (value) {
+            this.motionAmount = value ? 1 : 0;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Body.prototype.dispose = function (scene) {
         scene.remove(this.lookTarget);
     };
@@ -60109,44 +60274,63 @@ var Body = /** @class */ (function () {
     Body.prototype.update = function (frame, delta) {
         var _this = this;
         this.breathTime += delta;
+        this.updateSprings(frame, delta);
         this.updateLowerBody(frame);
         this.updateUpperBody(frame, delta);
         this.vrm.scene.updateMatrixWorld(true);
         this.arms.forEach(function (arm, h) {
             _this.solveArm(arm, frame.hands[h], frame.propRadius);
-            _this.updateFingers(arm, frame.hands[h].holding, delta);
+            _this.updateFingers(arm, frame.hands[h].holding, frame.propType, delta);
         });
+    };
+    /** 投げに反応してばねに勢いを与え、進める */
+    Body.prototype.updateSprings = function (frame, delta) {
+        var _this = this;
+        var amount = this.motionAmount;
+        frame.throws.forEach(function (t) {
+            var speed = t.velocity.length();
+            var side = t.hand === _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"] ? -1 : 1;
+            _this.dip.kick(-DIP_PER_SPEED * speed * amount);
+            _this.twist.kick(side * TWIST_PER_SPEED * speed * amount);
+            _this.lean.kick(LEAN_PER_SPEED * Math.max(0, t.velocity.y) * amount);
+            _this.shoulders[t.hand].kick(SHOULDER_PER_SPEED * speed * amount);
+        });
+        this.dip.step(delta);
+        this.twist.step(delta);
+        this.lean.step(delta);
+        this.shoulders.forEach(function (s) { return s.step(delta); });
     };
     Body.prototype.updateLowerBody = function (frame) {
         var _this = this;
-        var phase = frame.beat / KNEE_BOUNCE_BEATS;
-        var bounce = this.enableBodyMotion ? 0.5 * (1 + Math.cos(2 * Math.PI * (phase - KNEE_BOUNCE_PHASE))) : 0;
-        var knee = KNEE_BASE + KNEE_BOUNCE * bounce;
+        // 太ももの付け根から足首までの長さと曲げ角から、腰の高さが決まる
+        var baseDrop = this.legLength * (1 - Math.cos(KNEE_BASE));
+        var drop = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(baseDrop - this.dip.x, 0, this.legLength * 0.05);
+        var knee = Math.acos(1 - drop / Math.max(this.legLength, 0.1));
         // 太もも前・すね後ろ・足首前に同じ角度だけ曲げると、足の位置がほぼ変わらずに腰が沈む
         [Bone.LeftUpperLeg, Bone.RightUpperLeg].forEach(function (b) { return _this.pose(b, knee, 0, 0); });
         [Bone.LeftLowerLeg, Bone.RightLowerLeg].forEach(function (b) { return _this.pose(b, -2 * knee, 0, 0); });
         [Bone.LeftFoot, Bone.RightFoot].forEach(function (b) { return _this.pose(b, knee, 0, 0); });
         if (this.hips) {
-            this.hips.position.y = this.hipsRestY - this.legLength * (1 - Math.cos(knee));
+            this.hips.position.y = this.hipsRestY - drop;
+            var shift = WEIGHT_SHIFT.reduce(function (sum, w) { return sum + w.amplitude * Math.sin((2 * Math.PI * _this.breathTime) / w.period + w.phase); }, 0) * Math.min(this.motionAmount, 1.5);
+            this.hips.position.x = this.hipsRestX + shift;
+            // 重心を乗せた側へ腰が少し傾く
+            this.pose(Bone.Hips, 0, 0, -shift * 2);
         }
     };
     Body.prototype.updateUpperBody = function (frame, delta) {
         var _this = this;
-        var motion = this.enableBodyMotion ? 1 : 0;
-        var breath = BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * motion;
-        // 1 拍ごとに左右の手が交互に投げるので、胸のひねりは 2 拍で 1 往復
-        var sway = Math.sin(Math.PI * frame.beat) * motion;
+        var breath = BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * Math.min(this.motionAmount, 1.5);
         var smooth = function (rate) { return 1 - Math.exp(-rate * delta); };
-        this.pose(Bone.Spine, -SPINE_LEAN, 0, 0);
-        this.pose(Bone.Chest, breath, CHEST_TWIST * sway * 0.5, 0);
-        this.pose(Bone.UpperChest, breath * 0.5, CHEST_TWIST * sway * 0.5, CHEST_TWIST * sway * 0.3);
-        // 肩: 少し前へ、手が上がった時に少し上がる
+        var twist = this.twist.x;
+        // 腰の傾きを背骨で打ち消して、上半身はまっすぐに保つ
+        var hipsRoll = this.hips ? -(this.hips.position.x - this.hipsRestX) * 2 : 0;
+        this.pose(Bone.Spine, -SPINE_LEAN - this.lean.x, twist * 0.3, -hipsRoll * 0.7);
+        this.pose(Bone.Chest, breath, twist * 0.4, -hipsRoll * 0.3);
+        this.pose(Bone.UpperChest, breath * 0.5, twist * 0.3, 0);
+        // 肩: 少し前へ出し、投げた側を少し上げる
         this.arms.forEach(function (arm, h) {
-            var hand = frame.hands[h];
-            var target = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp((hand.position.y - _this.baseHandY) * SHOULDER_RAISE_GAIN, 0, SHOULDER_RAISE_MAX) *
-                motion;
-            _this.shoulderRaise[h] += (target - _this.shoulderRaise[h]) * smooth(SHOULDER_SMOOTH);
-            var raise = _this.shoulderRaise[h];
+            var raise = Math.max(0, _this.shoulders[h].x);
             _this.pose(h === _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"] ? Bone.LeftShoulder : Bone.RightShoulder, 0, arm.side * SHOULDER_FORWARD, arm.side * raise);
         });
         // 視線: 目は次にキャッチするボールを追い、頭はパターンの頂点を中心に目線へ少し寄せる
@@ -60165,19 +60349,25 @@ var Body = /** @class */ (function () {
         }
         var distance = Math.max(0.1, Math.abs(target.z));
         var headY = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(target.y, this.headPoint.y, HEAD_FOLLOW_Y);
-        var pitch = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) + SPINE_LEAN;
-        var yaw = -Math.atan2(this.headPoint.x * HEAD_FOLLOW_X, distance);
+        // 背骨の前傾と胸のひねりは首で打ち消し、顔はパターンへ向け続ける
+        var pitch = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) +
+            SPINE_LEAN +
+            this.lean.x;
+        var yaw = -Math.atan2(this.headPoint.x * HEAD_FOLLOW_X, distance) - this.twist.x;
         this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
         this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), 0);
     };
     Body.prototype.solveArm = function (arm, hand, propRadius) {
         var palmNormal = hand.palmNormal;
-        // 指先の向き: 前方・少し内側と、前腕の向きの中間(手首の曲がりすぎを防ぐ)
-        var fingerDir = FORWARD.clone()
-            .addScaledVector(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0), -arm.side * FINGER_INWARD)
-            .normalize()
-            .add(arm.lastForearmDir)
-            .normalize();
+        // 指先の向き: 指定があればそれ(クラブのハンドルに巻き付く向きなど)。
+        // なければ前方・少し内側と、前腕の向きの中間(手首の曲がりすぎを防ぐ)
+        var fingerDir = hand.fingerDir.lengthSq() > 0.25
+            ? hand.fingerDir.clone()
+            : FORWARD.clone()
+                .addScaledVector(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0), -arm.side * FINGER_INWARD)
+                .normalize()
+                .add(arm.lastForearmDir)
+                .normalize();
         // 手の向き(休止姿勢からの回転)。手のひらの向きを優先して合わせる
         var handDelta = frameRotation(arm.restPalmNormal, arm.restFingerDir, palmNormal, fingerDir);
         // 手のひらの中心がボールの真下に来るような手首の位置
@@ -60223,14 +60413,15 @@ var Body = /** @class */ (function () {
         var handWorld = handDelta.multiply(arm.restWorld.hand);
         arm.hand.quaternion.copy(lowerWorld.clone().conjugate().multiply(handWorld));
     };
-    Body.prototype.updateFingers = function (arm, holding, delta) {
+    Body.prototype.updateFingers = function (arm, holding, propType, delta) {
         var _this = this;
+        var curl = FINGER_CURL[propType] || FINGER_CURL.ball;
         var target = holding ? GRIP_HOLDING : GRIP_EMPTY;
         arm.grip += (target - arm.grip) * (1 - Math.exp(-GRIP_SMOOTH * delta));
         // T ポーズ(手のひら下向き)で z 軸周りに回すと指が手のひら側に曲がる
         arm.fingers.forEach(function (_a) {
             var node = _a.node, joint = _a.joint;
-            var angle = FINGER_CURL_OPEN[joint] + (FINGER_CURL[joint] - FINGER_CURL_OPEN[joint]) * arm.grip;
+            var angle = FINGER_CURL_OPEN[joint] + (curl[joint] - FINGER_CURL_OPEN[joint]) * arm.grip;
             var rest = _this.rest.get(node);
             node.quaternion.setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 1), -arm.side * angle);
             if (rest)
@@ -62654,6 +62845,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tracks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tracks */ "./src/motion/juggling/tracks.ts");
 /* harmony import */ var _validate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./validate */ "./src/motion/juggling/validate.ts");
 /* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tempo */ "./src/motion/juggling/tempo.ts");
+/* harmony import */ var _natural__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./natural */ "./src/motion/juggling/natural.ts");
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -62670,6 +62862,9 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 
 
+
+// 手のひらと握る位置の距離(クラブのハンドル・リングの縁の太さ)
+var GRIP_RADIUS = { club: 0.018, ring: 0.01 };
 var RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
 // 視線はパターンの頂点より少し下を見る
 var GAZE_BELOW_PEAK = 0.05;
@@ -62695,12 +62890,15 @@ var Juggling = /** @class */ (function () {
             hands: [_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"], _tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"]].map(function () { return ({
                 position: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
                 palmNormal: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0),
+                fingerDir: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
                 holding: false,
             }); }),
             beat: 0,
             gazeTarget: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
             propRadius: 0.05,
             eyeTarget: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
+            throws: [],
+            propType: 'ball',
         };
         var result = this.setPattern(siteswapStr, options);
         if (!result.ok) {
@@ -62711,6 +62909,14 @@ var Juggling = /** @class */ (function () {
     Object.defineProperty(Juggling.prototype, "visible", {
         set: function (value) {
             this.group.visible = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Juggling.prototype, "peakY", {
+        /** パターンの一番高い位置(ワールド座標の y) */
+        get: function () {
+            return this.tracks.peakY;
         },
         enumerable: false,
         configurable: true
@@ -62773,7 +62979,11 @@ var Juggling = /** @class */ (function () {
     };
     Juggling.prototype.rebuild = function () {
         this.transform = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["makeTransform"])(this.metrics);
-        this.tracks = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["buildTracks"])(this.siteswap, this.transform);
+        var prop = this.siteswap.props[0];
+        var radius = Number(prop.radius) || 0.05;
+        this.tracks = Object(_natural__WEBPACK_IMPORTED_MODULE_5__["isNaturalSupported"])(this.siteswap)
+            ? Object(_natural__WEBPACK_IMPORTED_MODULE_5__["buildNaturalTracks"])(this.siteswap, this.transform, prop.type, prop.type === 'ball' ? radius : 0.03)
+            : Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["buildTracks"])(this.siteswap, this.transform);
         this.drawProps();
         this.drawSurfaces();
     };
@@ -62785,50 +62995,98 @@ var Juggling = /** @class */ (function () {
             mesh.material.dispose();
         });
         this.surfaceMeshes = [];
+        // 床(影を受ける面)は Renderer が用意している。バウンドするパターンの時だけ跳ねる面を表示する
+        var bounces = this.siteswap.propOrbits.some(function (orbit) { return orbit.some(function (toss) { return toss.numBounces > 0; }); });
+        if (!bounces)
+            return;
         this.siteswap.surfaces.forEach(function (a) {
             var position = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["transformPoint"])(a.position, _this.transform, new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
             var axis1 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.axis1.x, a.axis1.y, a.axis1.z);
             var axis2 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.axis2.x, a.axis2.y, a.axis2.z);
-            var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
-            geometry.vertices.push(position.clone().add(axis1).add(axis2));
-            geometry.vertices.push(position.clone().sub(axis1).add(axis2));
-            geometry.vertices.push(position.clone().sub(axis1).sub(axis2));
-            geometry.vertices.push(position.clone().add(axis1).sub(axis2));
-            geometry.faces.push(new three__WEBPACK_IMPORTED_MODULE_0__["Face3"](0, 1, 2));
-            geometry.faces.push(new three__WEBPACK_IMPORTED_MODULE_0__["Face3"](2, 0, 3));
-            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({ color: a.color ? a.color : 'grey', side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"] }));
+            // three.js r118 は旧形式の Geometry を内部で変換する経路に不具合があるので BufferGeometry で作る
+            var corners = [
+                position.clone().add(axis1).add(axis2),
+                position.clone().sub(axis1).add(axis2),
+                position.clone().sub(axis1).sub(axis2),
+                position.clone().add(axis1).sub(axis2),
+            ];
+            var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]().setFromPoints(corners);
+            geometry.setIndex([0, 1, 2, 2, 0, 3]);
+            geometry.computeVertexNormals();
+            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, new three__WEBPACK_IMPORTED_MODULE_0__["MeshStandardMaterial"]({
+                color: a.color ? a.color : 'grey',
+                side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"],
+                roughness: 0.9,
+                transparent: true,
+                opacity: 0.6,
+            }));
+            mesh.receiveShadow = true;
             _this.surfaceMeshes.push(mesh);
             _this.group.add(mesh);
         });
     };
-    Juggling.prototype.createPropGeometry = function (prop) {
+    /**
+     * 小道具のモデル。クラブは白いハンドルと色付きの胴(2 つのメッシュ)、リングは薄く平たい輪、ボールは布っぽい質感。
+     * クラブのモデル座標は重心が原点、ノブ側が -y(natural.ts の握る位置と合わせている)。
+     */
+    Juggling.prototype.createPropMesh = function (prop, color, opacity) {
+        var transparent = opacity < 1;
+        var material = function (params) {
+            return new three__WEBPACK_IMPORTED_MODULE_0__["MeshStandardMaterial"](__assign(__assign({}, params), { transparent: transparent, opacity: opacity }));
+        };
         if (prop.type == 'club') {
-            var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.008, 0.02, 0.02, 7, 5);
-            geometry.vertices.forEach(function (v) { return (v.y += 0.01); });
-            var clubHandle = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.015, 0.008, 0.18, 7, 5);
-            clubHandle.vertices.forEach(function (v) { return (v.y += 0.11); });
-            var clubBody1 = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.04, 0.015, 0.18, 7, 5);
-            clubBody1.vertices.forEach(function (v) { return (v.y += 0.29); });
-            var clubBody2 = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.02, 0.04, 0.11, 7, 5);
-            clubBody2.vertices.forEach(function (v) { return (v.y += 0.43); });
-            geometry.merge(clubHandle);
-            geometry.merge(clubBody1);
-            geometry.merge(clubBody2);
-            // 重心が原点に来るように下げる
-            geometry.vertices.forEach(function (v) { return (v.y -= 0.2); });
-            return geometry;
+            var lathe = function (points) {
+                return new three__WEBPACK_IMPORTED_MODULE_0__["LatheBufferGeometry"](points.map(function (_a) {
+                    var r = _a[0], y = _a[1];
+                    return new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](r, y);
+                }), 20);
+            };
+            // [半径, 高さ](m)。ノブ → ハンドル
+            var handle = lathe([
+                [0, -0.2],
+                [0.02, -0.198],
+                [0.023, -0.19],
+                [0.02, -0.182],
+                [0.012, -0.176],
+                [0.012, -0.12],
+                [0.014, -0.05],
+                [0.016, -0.02],
+            ]);
+            // 胴 → 先端
+            var body = lathe([
+                [0.016, -0.02],
+                [0.026, 0.03],
+                [0.038, 0.1],
+                [0.041, 0.15],
+                [0.038, 0.21],
+                [0.028, 0.27],
+                [0.02, 0.3],
+                [0, 0.302],
+            ]);
+            var mesh_1 = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](body, material({ color: color, roughness: 0.35 }));
+            var handleMesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](handle, material({ color: '#f4f4f4', roughness: 0.5 }));
+            mesh_1.add(handleMesh);
+            mesh_1.castShadow = handleMesh.castShadow = !transparent;
+            return mesh_1;
         }
         if (prop.type == 'ring') {
             var points = [
-                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, 0.01),
-                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.18, 0.01),
-                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.18, -0.01),
-                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, -0.01),
-                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, 0.01),
-            ];
-            return new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
+                [0.13, 0.003],
+                [0.16, 0.003],
+                [0.16, -0.003],
+                [0.13, -0.003],
+                [0.13, 0.003],
+            ].map(function (_a) {
+                var r = _a[0], y = _a[1];
+                return new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](r, y);
+            });
+            var mesh_2 = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["LatheBufferGeometry"](points, 64), material({ color: color, roughness: 0.45, side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"] }));
+            mesh_2.castShadow = !transparent;
+            return mesh_2;
         }
-        return new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](Number(prop.radius) || 0.05, 20, 16);
+        var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["SphereBufferGeometry"](Number(prop.radius) || 0.05, 32, 20), material({ color: color, roughness: 0.85 }));
+        mesh.castShadow = !transparent;
+        return mesh;
     };
     Juggling.prototype.drawProps = function () {
         var _this = this;
@@ -62836,7 +63094,13 @@ var Juggling = /** @class */ (function () {
             return meshes.forEach(function (mesh) {
                 _this.group.remove(mesh);
                 mesh.geometry.dispose();
-                mesh.material.dispose();
+                mesh.traverse(function (object) {
+                    var m = object;
+                    if (!m.isMesh)
+                        return;
+                    m.geometry.dispose();
+                    m.material.dispose();
+                });
             });
         });
         this.propMeshes = [];
@@ -62846,21 +63110,28 @@ var Juggling = /** @class */ (function () {
             var color = prop.color == 'random' ? RANDOM_COLORS[i % RANDOM_COLORS.length] : prop.color;
             var meshes = [];
             for (var j = 0; j <= numTails; j++) {
-                var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"](j == 0 ? { color: color } : { color: color, transparent: true, opacity: 1 - (1 / (numTails + 1)) * j });
-                var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](this.createPropGeometry(prop), material);
+                var mesh = this.createPropMesh(prop, color, j == 0 ? 1 : 1 - (1 / (numTails + 1)) * j);
                 this.group.add(mesh);
                 meshes.push(mesh);
             }
             this.propMeshes.push(meshes);
         }
         var first = this.siteswap.props[0];
-        this.frame.propRadius = first.type == 'ball' ? Number(first.radius) || 0.05 : 0.02;
+        this.frame.propType = first.type;
+        this.frame.propRadius = first.type == 'ball' ? Number(first.radius) || 0.05 : GRIP_RADIUS[first.type] || 0.02;
     };
     /** 毎フレーム呼ぶ。delta は秒 */
     Juggling.prototype.update = function (delta) {
         var _this = this;
         var tracks = this.tracks;
-        this.time = (this.time + delta * this.speed) % tracks.period;
+        var previousTime = this.time;
+        var advance = delta * this.speed;
+        this.time = (this.time + advance) % tracks.period;
+        // この間に行われた投げ(周期の境目をまたぐ場合も含む)
+        this.frame.throws = tracks.throws.filter(function (t) {
+            var since = (((t.time - previousTime) % tracks.period) + tracks.period) % tracks.period;
+            return since > 0 && since <= advance;
+        });
         var stepFloat = (this.time / tracks.period) * tracks.numSteps;
         var step = Math.floor(stepFloat) % tracks.numSteps;
         this.updateProps(stepFloat);
@@ -62870,6 +63141,10 @@ var Juggling = /** @class */ (function () {
             Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(track.positions, stepFloat, hand.position);
             Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(track.palmNormals, stepFloat, hand.palmNormal).normalize();
             hand.holding = track.holding[step];
+            if (track.fingerDirs)
+                Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(track.fingerDirs, stepFloat, hand.fingerDir).normalize();
+            else
+                hand.fingerDir.set(0, 0, 0);
         });
         this.frame.beat = this.time / this.siteswap.beatDuration;
         this.frame.gazeTarget.set(0, tracks.peakY - GAZE_BELOW_PEAK, tracks.centerZ);
@@ -62879,7 +63154,7 @@ var Juggling = /** @class */ (function () {
     Juggling.prototype.updateProps = function (stepFloat) {
         var tracks = this.tracks;
         var tailGap = Math.floor(this.siteswap.numStepsPerBeat / 8);
-        var ringRotation = new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0), Math.PI / 2);
+        var baseRotation = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["propBaseQuaternion"])(this.frame.propType);
         for (var i = 0; i < this.propMeshes.length; i++) {
             for (var j = 0; j < this.propMeshes[i].length; j++) {
                 var mesh = this.propMeshes[i][j];
@@ -62889,13 +63164,14 @@ var Juggling = /** @class */ (function () {
                 Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(tracks.props[i], s, mesh.position);
                 var i0 = Math.floor(s) % tracks.numSteps;
                 var i1 = (i0 + 1) % tracks.numSteps;
+                if (tracks.propRotations) {
+                    mesh.quaternion.copy(tracks.propRotations[i][i0]).slerp(tracks.propRotations[i][i1], s - Math.floor(s));
+                    continue;
+                }
                 this.tmpQuaternion
                     .copy(this.siteswap.propRotations[i][i0])
                     .slerp(this.siteswap.propRotations[i][i1], s - Math.floor(s));
-                mesh.quaternion.set(1, 0, 0, 0);
-                if (this.siteswap.props[i].type == 'ring')
-                    mesh.quaternion.multiply(ringRotation);
-                mesh.quaternion.premultiply(this.tmpQuaternion);
+                mesh.quaternion.copy(baseRotation).premultiply(this.tmpQuaternion);
             }
         }
     };
@@ -62907,6 +63183,637 @@ var Juggling = /** @class */ (function () {
     return Juggling;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Juggling);
+
+
+/***/ }),
+
+/***/ "./src/motion/juggling/natural.ts":
+/*!****************************************!*\
+  !*** ./src/motion/juggling/natural.ts ***!
+  \****************************************/
+/*! exports provided: isNaturalSupported, buildNaturalTracks */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNaturalSupported", function() { return isNaturalSupported; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buildNaturalTracks", function() { return buildNaturalTracks; });
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+/* harmony import */ var _tracks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tracks */ "./src/motion/juggling/tracks.ts");
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+
+
+/**
+ * ジャグラーの手の動きを「投げ」と「キャッチ」の出来事から組み立てる。
+ *
+ * gunswap はパターンの構造(どの拍にどちらの手が何を投げるか)の計算にだけ使い、
+ * ボールの放物線と手の軌道はここで作り直す。
+ *
+ * - 投げる瞬間は手の速度をボールの速度に一致させる(Juggling Lab と同じ考え方)。
+ *   それまでの gunswap の軌道は、ほぼ止まった手からボールが飛び出していた。
+ * - キャッチでは落ちてくるボールの速さの一部で受けて沈み込む(実測: 約 4 割)。
+ * - 手の中の動きは「運ぶ」区間と、短く速い「投げる」区間に分ける(実際のジャグラーの手の動き)。
+ * - 投げる/受ける横位置は投げの高さで変える(Juggling Lab の表を元にした)。'1' は中央近くで手渡す。
+ * - クラブはハンドル、リングは縁を握る。手の軌道はその握る位置で計算する。
+ *
+ * バウンド・複数人のパターンは対象外(null を返し、gunswap の軌道を使う)。
+ */
+// 横位置(cm)の表: Juggling Lab (notation/MhnPattern.kt)。3 の値を基準にした比率で使う
+var JL_CATCH_X = [0, 17, 25, 30, 40, 45, 45, 50, 50]; // 飛んでくる投げの高さごと
+var JL_CROSSING_THROW_X = [0, 17, 17, 7, 10, 14, 25, 24, 30];
+var JL_SAME_THROW_X = [0, 20, 25, 12, 7, 7.5, 5, 5, 5];
+var WIDTH_BLEND_CATCH = 0.6; // 表の比率をどれだけ反映するか(小柄なアバターで広がりすぎないように)
+var WIDTH_BLEND_THROW = 0.5;
+// '1' は手渡しなので中央近くで投げて、中央寄りで受ける(m, gunswap 座標)
+var ONE_THROW_X = 0.06;
+var ONE_CATCH_X = 0.15;
+// フォロースルーの横方向の伸び(手渡しの '1' で反対の手にぶつからないように縦方向を主にする)
+var FOLLOW_HORIZONTAL = 0.3;
+// キャッチ: 落ちてくる速さの何割で受けるか(siteswap-performer の catchAbsorptionRatio 0.42)と上限
+var CATCH_ABSORB = 0.35;
+var CATCH_HAND_SPEED_MAX = 1.5; // m/s
+// 投げる区間: 一定の加速度で加速すると考えて長さを決める
+var THROW_ACCEL = 40; // m/s^2(約 4G)
+var THROW_STROKE_MIN = 0.05; // m
+var THROW_STROKE_MAX = 0.14; // m(深く沈みすぎると腕が届かない)
+var THROW_STROKE_START_SPEED = 0.3; // 投げる区間の始まりの速さ(リリースの速さに対する割合)。底で止まらないように
+var THROW_STROKE_MAX_SHARE = 0.6; // 手に持っている時間のうち、投げる区間に使える割合
+// 投げた後、手はボールについて行きながら短い時間で減速する(フォロースルー)。速度が途切れないようにする
+var FOLLOW_TIME = 0.06; // s
+var FOLLOW_END_SPEED = 0.1; // フォロースルーの終わりの速さ(リリースの速さに対する割合)
+var FOLLOW_DISTANCE_MAX = 0.1; // m
+// 手のひらの向き
+var PALM_MAX_TILT = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].degToRad(80);
+var PALM_CATCH_TILT_SHARE = 0.5; // キャッチでは飛んできた方向へ半分だけ向ける
+var PALM_SNAP_ANGLE = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].degToRad(18); // 投げた直後の手首のスナップ(速い投げの時)
+var PALM_SNAP_SPEED_MIN = 2; // m/s(これより遅い投げはスナップを小さく)
+var PALM_SNAP_SPEED_MAX = 6; // m/s
+var PALM_STROKE_SHARE = 0.8; // 投げる区間の始まりで、手のひらをどれだけ投げる方向へ向けておくか
+var PALM_SNAP_TIME = 0.06; // s
+// 小道具が大きいほど幅を広く投げる(空中で重ならないように)
+var PROP_WIDTH = { ball: 1, club: 1.15, ring: 1.3 };
+// リングは同じ面を飛ぶと輪同士が交差するので、1 本ずつ奥行きをずらして平行な面を飛ばす
+var RING_LAYER_GAP = 0.03; // m
+// 小道具の握る位置
+var CLUB_GRIP_LOCAL = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -0.13, 0); // クラブのモデル座標(ノブ側)
+var RING_GRIP_RADIUS = 0.145; // 輪の太さの中央
+// クラブの向き: 前方からの仰角(度)。キャッチでほぼ真上、運ぶ間に斜め上まで前へ倒し、手首を返して投げる。
+// 空中では「投げの高さ / 2 の整数部分」回転 + キャッチでほぼ縦になる分だけ回る('1' は回転せずに手渡す)
+var CLUB_RELEASE_PITCH = 40;
+var CLUB_CATCH_PITCH = 85;
+var CLUB_LOW_PITCH = 15; // 運ぶ途中で一番前へ倒れる角度
+var CLUB_LOW_AT = 0.65; // 手に持っている時間のうち、一番倒れるタイミング
+var CLUB_INWARD_YAW = 12; // 体の内側へ向ける角度
+var RING_SPIN_PER_FLIGHT = 0.5; // リングが 1 回のフライトで回る量(回転)
+var UP = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0);
+function mod(a, n) {
+    return ((a % n) + n) % n;
+}
+// 周期上で t0 から t までの経過時間。ちょうど同じ時刻が浮動小数点誤差で 1 周ずれないように、わずかな負の値を許す
+var EPS = 1e-7;
+function since(t, t0, period) {
+    return mod(t - t0 + EPS, period) - EPS;
+}
+function hermite(p0, v0, p1, v1, T, s) {
+    var s2 = s * s;
+    var s3 = s2 * s;
+    var h00 = 2 * s3 - 3 * s2 + 1;
+    var h10 = s3 - 2 * s2 + s;
+    var h01 = -2 * s3 + 3 * s2;
+    var h11 = s3 - s2;
+    return new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()
+        .addScaledVector(p0, h00)
+        .addScaledVector(v0, h10 * T)
+        .addScaledVector(p1, h01)
+        .addScaledVector(v1, h11 * T);
+}
+/** 上向きから最大 maxTilt までに傾きを制限する */
+function limitTilt(n, maxTilt) {
+    var v = n.clone().normalize();
+    var tilt = Math.acos(three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(v.dot(UP), -1, 1));
+    if (tilt <= maxTilt)
+        return v;
+    var axis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(UP, v);
+    if (axis.lengthSq() < 1e-10)
+        return UP.clone();
+    return UP.clone().applyAxisAngle(axis.normalize(), maxTilt);
+}
+function tiltToward(from, toward, share) {
+    var target = limitTilt(toward, PALM_MAX_TILT);
+    return from.clone().lerp(target, share).normalize();
+}
+function isNaturalSupported(siteswap) {
+    if (siteswap.numJugglers !== 1)
+        return false;
+    return siteswap.propOrbits.every(function (orbit) { return orbit.every(function (toss) { return !toss.numBounces; }); });
+}
+function buildNaturalTracks(siteswap, transform, propType, propRadius) {
+    var beat = siteswap.beatDuration;
+    var period = siteswap.states.length * beat;
+    var numSteps = siteswap.numSteps;
+    var dt = period / numSteps;
+    var numProps = siteswap.numProps;
+    var stepOf = function (time) { return Math.round(mod(time, period) / dt) % numSteps; };
+    // 小道具の向き(クラブ・リングは下で自前の回転を作る。ボールは gunswap の回転のまま)
+    var baseQ = Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["propBaseQuaternion"])(propType);
+    var orientations;
+    var meshQ = function (prop, step) {
+        return orientations ? orientations[prop][step] : siteswap.propRotations[prop][step].clone().multiply(baseQ);
+    };
+    var gripOffset = function (prop, step, out) {
+        if (out === void 0) { out = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](); }
+        var q = meshQ(prop, step);
+        if (propType === 'club')
+            return out.copy(CLUB_GRIP_LOCAL).applyQuaternion(q);
+        if (propType === 'ring') {
+            var axis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0).applyQuaternion(q);
+            var down = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -1, 0);
+            out.copy(down).addScaledVector(axis, -axis.dot(down));
+            if (out.lengthSq() < 0.01)
+                out.set(1, 0, 0).applyQuaternion(q);
+            return out.normalize().multiplyScalar(RING_GRIP_RADIUS);
+        }
+        return out.set(0, 0, 0);
+    };
+    // ---- 位置(gunswap 座標で計算してからアバターの体格に合わせて変換) ----
+    var dwellPoints = function (ix) { return siteswap.dwellPath[ix].filter(function (p) { return !p.empty; }); };
+    var cascadeLike = function (ix) {
+        var pts = dwellPoints(ix);
+        return pts[0].x > pts[pts.length - 1].x && pts[pts.length - 1].x > 0;
+    };
+    var width = PROP_WIDTH[propType] || 1;
+    var toWorld = function (hand, p) {
+        return Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["transformPoint"])({ x: (hand === _tracks__WEBPACK_IMPORTED_MODULE_1__["LEFT"] ? -1 : 1) * p.x * width, y: 1.15 + p.y, z: p.z - 0.35 }, transform, new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
+    };
+    var catchX = function (baseX, incomingValue) {
+        if (incomingValue === 1)
+            return ONE_CATCH_X;
+        var v = Math.min(incomingValue, 8);
+        return baseX * three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(1 + (JL_CATCH_X[v] / 30 - 1) * WIDTH_BLEND_CATCH, 0.5, 2);
+    };
+    var throwPoint = function (toss, crossing) {
+        var pts = dwellPoints(toss.dwellPathIx);
+        var p = __assign({}, pts[pts.length - 1]);
+        if (cascadeLike(toss.dwellPathIx)) {
+            var v = Math.min(toss.numBeats, 8);
+            if (toss.numBeats === 1)
+                p.x = ONE_THROW_X;
+            else {
+                // 同じ手に戻る投げも内側で投げて外側で受ける(ファウンテンの小さな輪。上りと下りがぶつからない)
+                var table = crossing ? JL_CROSSING_THROW_X : JL_SAME_THROW_X;
+                p.x *= three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(1 + (table[v] / 7 - 1) * WIDTH_BLEND_THROW, 0.5, 2);
+            }
+        }
+        return toWorld(toss.hand, p);
+    };
+    var catchPoint = function (toss, incomingValue) {
+        var pts = dwellPoints(toss.dwellPathIx);
+        var p = __assign({}, pts[0]);
+        if (cascadeLike(toss.dwellPathIx)) {
+            p.x = catchX(p.x, incomingValue);
+            // '1' は横へ押し出す手渡しなので、投げた高さのまま受ける(手のひらが受け手の方へ横を向く)
+            if (incomingValue === 1)
+                p.y = pts[pts.length - 1].y;
+        }
+        return toWorld(toss.hand, p);
+    };
+    // ---- 出来事を集める ----
+    var flights = [];
+    var holdTosses = [];
+    siteswap.propOrbits.forEach(function (orbit, prop) {
+        orbit.forEach(function (toss, k) {
+            var next = orbit[(k + 1) % orbit.length];
+            if (toss.hold) {
+                holdTosses.push({ hand: toss.hand, toss: toss, next: next });
+                return;
+            }
+            var release = mod(toss.beat * beat + toss.dwellDuration, period);
+            var duration = mod(next.beat * beat - release, period);
+            if (duration < 1e-6)
+                duration += period;
+            flights.push({
+                prop: prop,
+                release: release,
+                duration: duration,
+                throwHand: toss.hand,
+                catchHand: next.hand,
+                value: toss.numBeats,
+                start: throwPoint(toss, next.hand !== toss.hand),
+                velocity: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
+                end: catchPoint(next, toss.numBeats),
+            });
+        });
+    });
+    if (propType === 'club' || propType === 'ring') {
+        orientations = buildOrientations(propType, flights, numProps, numSteps, period, siteswap);
+    }
+    // 同じ手・同じ時刻の投げ/キャッチ(マルチプレックス)は横に並べる
+    var spread = function (key, apply) {
+        var groups = new Map();
+        flights.forEach(function (f) {
+            var k = key(f);
+            groups.set(k, __spreadArrays((groups.get(k) || []), [f]));
+        });
+        groups.forEach(function (group) { return group.forEach(function (f, i) { return apply(f, (i - (group.length - 1) / 2) * propRadius * 2.1); }); });
+    };
+    var releaseOffset = new Map();
+    var catchOffset = new Map();
+    spread(function (f) { return f.throwHand + ":" + Math.round(f.release * 1000); }, function (f, o) { return releaseOffset.set(f, o); });
+    spread(function (f) { return f.catchHand + ":" + Math.round(mod(f.release + f.duration, period) * 1000); }, function (f, o) { return catchOffset.set(f, o); });
+    // 重心の放物線(握る位置のずれは、その時刻の小道具の向きから求める)
+    var layer = function (prop) { return (propType === 'ring' ? (prop - (numProps - 1) / 2) * RING_LAYER_GAP : 0); };
+    flights.forEach(function (f) {
+        f.start.z += layer(f.prop);
+        f.end.z += layer(f.prop);
+        var releaseStep = stepOf(f.release);
+        var catchStep = stepOf(f.release + f.duration);
+        // throwPoint / catchPoint は手(握る位置)。重心はそこから握る位置のずれを引く
+        f.start.x += releaseOffset.get(f);
+        f.end.x += catchOffset.get(f);
+        f.start.sub(gripOffset(f.prop, releaseStep));
+        f.end.sub(gripOffset(f.prop, catchStep));
+        var T = f.duration;
+        f.velocity
+            .copy(f.end)
+            .sub(f.start)
+            .multiplyScalar(1 / T);
+        f.velocity.y += 0.5 * _tracks__WEBPACK_IMPORTED_MODULE_1__["GRAVITY"] * T;
+    });
+    var flightAt = function (f, tau, out) {
+        if (out === void 0) { out = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](); }
+        return out
+            .copy(f.start)
+            .addScaledVector(f.velocity, tau)
+            .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -0.5 * _tracks__WEBPACK_IMPORTED_MODULE_1__["GRAVITY"] * tau * tau, 0));
+    };
+    var flightVelocityAt = function (f, tau) { return f.velocity.clone().add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -_tracks__WEBPACK_IMPORTED_MODULE_1__["GRAVITY"] * tau, 0)); };
+    // ---- 手ごとの出来事 ----
+    var handEvents = [[], []];
+    var addOrMerge = function (hand, e) {
+        var same = handEvents[hand].find(function (x) { return x.kind === e.kind && Math.abs(x.time - e.time) < 1e-6; });
+        if (same) {
+            // マルチプレックス: 速度は平均する(位置は同じ)
+            same.velocityIn.add(e.velocityIn).multiplyScalar(0.5);
+            same.velocityOut.add(e.velocityOut).multiplyScalar(0.5);
+            return;
+        }
+        handEvents[hand].push(e);
+    };
+    flights.forEach(function (f) {
+        var vRelease = f.velocity.clone();
+        var dir = vRelease.clone().normalize();
+        var releaseStep = stepOf(f.release);
+        var handAtRelease = f.start
+            .clone()
+            .add(gripOffset(f.prop, releaseStep))
+            .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](-releaseOffset.get(f), 0, 0));
+        addOrMerge(f.throwHand, {
+            time: f.release,
+            kind: 'throw',
+            position: handAtRelease,
+            velocityIn: vRelease.clone(),
+            velocityOut: vRelease.clone(),
+            palm: limitTilt(dir, PALM_MAX_TILT),
+        });
+        var catchTime = mod(f.release + f.duration, period);
+        var vIncoming = flightVelocityAt(f, f.duration);
+        var handVelocity = vIncoming.clone().multiplyScalar(CATCH_ABSORB);
+        if (handVelocity.length() > CATCH_HAND_SPEED_MAX)
+            handVelocity.setLength(CATCH_HAND_SPEED_MAX);
+        var handAtCatch = f.end
+            .clone()
+            .add(gripOffset(f.prop, stepOf(catchTime)))
+            .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](-catchOffset.get(f), 0, 0));
+        addOrMerge(f.catchHand, {
+            time: catchTime,
+            kind: 'catch',
+            position: handAtCatch,
+            velocityIn: handVelocity.clone(),
+            velocityOut: handVelocity.clone(),
+            palm: tiltToward(UP, vIncoming.clone().negate(), PALM_CATCH_TILT_SHARE),
+        });
+    });
+    // '2'(持ったまま): 手はリズムを保って小さく投げる/受ける動きをする。
+    // 同じ手がその時刻に本当の投げ/キャッチをする場合は、そちらを優先する
+    var HOLD_MIN_GAP = 0.05; // s
+    var busy = function (hand, time) {
+        return handEvents[hand].some(function (e) {
+            return Math.abs(since(e.time, time, period)) < HOLD_MIN_GAP || Math.abs(since(time, e.time, period)) < HOLD_MIN_GAP;
+        });
+    };
+    holdTosses.forEach(function (_a) {
+        var hand = _a.hand, toss = _a.toss, next = _a.next;
+        var holdTime = mod(toss.beat * beat + toss.dwellDuration, period);
+        var regripTime = mod(next.beat * beat, period);
+        if (!busy(hand, holdTime))
+            addOrMerge(hand, {
+                time: holdTime,
+                kind: 'hold',
+                position: throwPoint(toss, false),
+                velocityIn: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0.4, 0),
+                velocityOut: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0.2, 0),
+                palm: UP.clone(),
+            });
+        if (!busy(hand, regripTime))
+            addOrMerge(hand, {
+                time: regripTime,
+                kind: 'hold',
+                position: catchPoint(next, 2),
+                velocityIn: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -0.3, 0),
+                velocityOut: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -0.3, 0),
+                palm: UP.clone(),
+            });
+    });
+    // 投げる区間の始まり(ストローク)を投げの前に、フォロースルーの終わりを投げの後に入れる
+    [_tracks__WEBPACK_IMPORTED_MODULE_1__["LEFT"], _tracks__WEBPACK_IMPORTED_MODULE_1__["RIGHT"]].forEach(function (hand) {
+        var events = handEvents[hand].sort(function (a, b) { return a.time - b.time; });
+        var strokes = [];
+        events.forEach(function (e, i) {
+            if (e.kind !== 'throw')
+                return;
+            var prev = events[(i - 1 + events.length) % events.length];
+            var following = events[(i + 1) % events.length];
+            var gapAfter = mod(following.time - e.time, period) || period;
+            var releaseSpeed = e.velocityIn.length();
+            var followTime = Math.min(FOLLOW_TIME, gapAfter * 0.4, FOLLOW_DISTANCE_MAX / Math.max(1e-3, releaseSpeed * ((1 + FOLLOW_END_SPEED) / 2)));
+            var followVelocity = e.velocityIn.clone().multiply(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](FOLLOW_HORIZONTAL, 1, FOLLOW_HORIZONTAL));
+            strokes.push({
+                time: mod(e.time + followTime, period),
+                kind: 'follow',
+                position: e.position.clone().addScaledVector(followVelocity, followTime * ((1 + FOLLOW_END_SPEED) / 2)),
+                velocityIn: followVelocity.clone().multiplyScalar(FOLLOW_END_SPEED),
+                velocityOut: followVelocity.clone().multiplyScalar(FOLLOW_END_SPEED),
+                palm: e.palm.clone(),
+            });
+            var available = mod(e.time - prev.time, period) || period;
+            var speed = e.velocityIn.length();
+            if (speed < 1e-3)
+                return;
+            var startSpeed = speed * THROW_STROKE_START_SPEED;
+            var stroke = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp((speed * speed) / (2 * THROW_ACCEL), THROW_STROKE_MIN, THROW_STROKE_MAX);
+            var duration = stroke / ((speed + startSpeed) / 2);
+            if (duration > available * THROW_STROKE_MAX_SHARE) {
+                duration = available * THROW_STROKE_MAX_SHARE;
+                stroke = ((speed + startSpeed) / 2) * duration;
+            }
+            var dir = e.velocityIn.clone().normalize();
+            // 投げる区間の始まりは手の軌道の一番下。縦の速度は 0 にして、横は内側へすくう動きを続ける
+            // (上向きの速度で到着させると、その手前で一度下へ潜ってしまう)
+            var start = e.position.clone().addScaledVector(dir, -stroke);
+            var scoop = start.clone().sub(prev.position).multiplyScalar(1 / Math.max(available - duration, 1e-3));
+            scoop.y = 0;
+            var startVelocity = dir.clone().multiplyScalar(startSpeed).setY(0).add(scoop).multiplyScalar(0.5);
+            strokes.push({
+                time: mod(e.time - duration, period),
+                kind: 'stroke',
+                position: start,
+                velocityIn: startVelocity.clone(),
+                velocityOut: startVelocity.clone(),
+                palm: tiltToward(UP, dir, PALM_STROKE_SHARE),
+            });
+        });
+        handEvents[hand] = events.concat(strokes).sort(function (a, b) { return a.time - b.time; });
+    });
+    // ---- 手の軌道 ----
+    var restPosition = function (hand) { return toWorld(hand, { x: 0.2, y: 0, z: 0 }); };
+    var hands = [_tracks__WEBPACK_IMPORTED_MODULE_1__["LEFT"], _tracks__WEBPACK_IMPORTED_MODULE_1__["RIGHT"]].map(function (hand) {
+        var events = handEvents[hand];
+        var positions = [];
+        var palmNormals = [];
+        var _loop_2 = function (s) {
+            var t = s * dt;
+            if (events.length === 0) {
+                positions.push(restPosition(hand));
+                palmNormals.push(UP.clone());
+                return "continue";
+            }
+            // t を含む区間 [a, b)
+            var bIndex = events.findIndex(function (e) { return e.time > t; });
+            if (bIndex < 0)
+                bIndex = 0;
+            var a = events[(bIndex - 1 + events.length) % events.length];
+            var b = events[bIndex];
+            var T = mod(b.time - a.time, period) || period;
+            var u = mod(t - a.time, period) / T;
+            positions.push(hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u));
+            // 手のひら: 区間の両端の向きをなめらかに補間。投げた直後は手首のスナップを足す
+            var eased = u * u * (3 - 2 * u);
+            var palm = a.palm.clone().lerp(b.palm, eased).normalize();
+            var lastThrow = a.kind === 'follow' ? events[(events.indexOf(a) - 1 + events.length) % events.length] : a;
+            var sinceThrow = mod(t - lastThrow.time, period);
+            if (lastThrow.kind === 'throw' && sinceThrow < PALM_SNAP_TIME * 2) {
+                var strength = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp((lastThrow.velocityIn.length() - PALM_SNAP_SPEED_MIN) / (PALM_SNAP_SPEED_MAX - PALM_SNAP_SPEED_MIN), 0.25, 1);
+                var snap = Math.sin((Math.PI * sinceThrow) / (PALM_SNAP_TIME * 2)) * PALM_SNAP_ANGLE * strength;
+                var axis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(UP, lastThrow.palm);
+                if (axis.lengthSq() > 1e-6)
+                    palm.applyAxisAngle(axis.normalize(), snap);
+            }
+            palmNormals.push(palm);
+        };
+        for (var s = 0; s < numSteps; s++) {
+            _loop_2(s);
+        }
+        return { positions: positions, palmNormals: palmNormals, holding: new Array(numSteps).fill(false) };
+    });
+    // ---- 小道具の位置 ----
+    var props = [];
+    var inAir = [];
+    var _loop_1 = function (prop) {
+        var own = flights.filter(function (f) { return f.prop === prop; }).sort(function (a, b) { return a.release - b.release; });
+        var track = [];
+        var air = [];
+        var _loop_3 = function (s) {
+            var t = s * dt;
+            var flying = own.find(function (f) {
+                var tau = since(t, f.release, period);
+                return tau >= 0 && tau < f.duration - EPS;
+            });
+            if (flying) {
+                track.push(flightAt(flying, Math.max(0, since(t, flying.release, period))));
+                air.push(true);
+                return "continue";
+            }
+            air.push(false);
+            // 手の中: 直前にキャッチした手(投げたことがなければ最初の投げの手)
+            var hand = siteswap.propOrbits[prop][0].hand;
+            var startOffset = 0;
+            var endOffset = 0;
+            var heldFrom = 0;
+            var heldFor = period;
+            if (own.length > 0) {
+                var sinceCatch_1 = function (f) { return since(t, f.release + f.duration, period); };
+                var untilRelease_1 = function (f) { return since(f.release, t, period); };
+                var previous = own.reduce(function (best, f) { return (sinceCatch_1(f) < sinceCatch_1(best) ? f : best); });
+                var nextFlight = own.reduce(function (best, f) { return (untilRelease_1(f) < untilRelease_1(best) ? f : best); });
+                hand = previous.catchHand;
+                startOffset = catchOffset.get(previous);
+                endOffset = releaseOffset.get(nextFlight);
+                heldFrom = mod(previous.release + previous.duration, period);
+                heldFor = mod(nextFlight.release - heldFrom, period) || period;
+            }
+            hands[hand].holding[s] = true;
+            var k = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(mod(t - heldFrom, period) / heldFor, 0, 1);
+            var position = hands[hand].positions[s]
+                .clone()
+                .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(startOffset, endOffset, k), 0, 0))
+                .sub(gripOffset(prop, s));
+            track.push(position);
+        };
+        for (var s = 0; s < numSteps; s++) {
+            _loop_3(s);
+        }
+        props.push(track);
+        inAir.push(air);
+    };
+    for (var prop = 0; prop < numProps; prop++) {
+        _loop_1(prop);
+    }
+    // クラブは握ったハンドルに垂直な向きへ手のひらを向け、指はハンドルに巻き付く向きにする。
+    // リングは手のひらを輪の中心側へ向ける
+    if (propType !== 'ball') {
+        [_tracks__WEBPACK_IMPORTED_MODULE_1__["LEFT"], _tracks__WEBPACK_IMPORTED_MODULE_1__["RIGHT"]].forEach(function (hand) {
+            var side = hand === _tracks__WEBPACK_IMPORTED_MODULE_1__["RIGHT"] ? 1 : -1;
+            var defaultFinger = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](-side * 0.35, 0, -1).normalize();
+            var fingers = [];
+            var _loop_4 = function (s) {
+                fingers.push(defaultFinger.clone());
+                if (!hands[hand].holding[s])
+                    return "continue";
+                var prop = props.findIndex(function (track, i) { return !inAir[i][s] && track[s].distanceTo(hands[hand].positions[s]) < 0.3; });
+                if (prop < 0)
+                    return "continue";
+                var n = hands[hand].palmNormals[s];
+                if (propType === 'club') {
+                    var axis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0).applyQuaternion(meshQ(prop, s));
+                    var orth = n.clone().addScaledVector(axis, -n.dot(axis));
+                    if (orth.lengthSq() > 0.05)
+                        n.copy(orth.normalize());
+                    var wrap = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(n, axis).normalize();
+                    if (wrap.x * side > 0)
+                        wrap.negate();
+                    fingers[s].copy(wrap);
+                }
+                else {
+                    var toCenter = props[prop][s].clone().sub(hands[hand].positions[s]).normalize();
+                    n.lerp(toCenter, 0.6).normalize();
+                }
+            };
+            for (var s = 0; s < numSteps; s++) {
+                _loop_4(s);
+            }
+            // 持ち替えの瞬間に手首が跳ねないようにならす
+            if (propType === 'club') {
+                hands[hand].fingerDirs = Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["boxSmooth"])(fingers, Math.max(1, Math.round(0.04 / dt))).map(function (v) { return v.normalize(); });
+            }
+        });
+    }
+    // 体の動き用: 投げの一覧
+    var throws = flights
+        .map(function (f) { return ({ time: f.release, hand: f.throwHand, value: f.value, velocity: f.velocity.clone() }); })
+        .sort(function (a, b) { return a.time - b.time; });
+    var gaze = Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["computeGazeTrack"])(inAir, props, numSteps);
+    return __assign({ numSteps: numSteps, stepDuration: dt, period: period,
+        props: props, propRotations: orientations, hands: hands,
+        gaze: gaze,
+        throws: throws }, Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["summarize"])(props, transform));
+}
+/**
+ * クラブ・リングの向き(モデルの回転)を時刻ごとに作る。
+ * クラブ: 手の内側へ少し向けた前方を基準に、仰角だけを変える(空中では横軸まわりに回転)。
+ * リング: 輪を正面に向けて立て、車輪のように回す。
+ */
+function buildOrientations(propType, flights, numProps, numSteps, period, siteswap) {
+    var dt = period / numSteps;
+    var X = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0);
+    var Y = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0);
+    var FORWARD = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, -1);
+    var rad = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].degToRad;
+    var yawOf = function (hand) { return rad(CLUB_INWARD_YAW) * (hand === _tracks__WEBPACK_IMPORTED_MODULE_1__["RIGHT"] ? 1 : -1); };
+    var clubQ = function (pitch, yaw) {
+        return new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]()
+            .setFromAxisAngle(Y, yaw)
+            .multiply(new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromAxisAngle(X, pitch - Math.PI / 2));
+    };
+    var ringQ = function (spin) {
+        return new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]()
+            .setFromAxisAngle(FORWARD, spin)
+            .multiply(new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromAxisAngle(X, -Math.PI / 2));
+    };
+    var release = rad(CLUB_RELEASE_PITCH);
+    var low = rad(CLUB_LOW_PITCH);
+    // 1 回のフライトで回る角度(リリース角からキャッチ角まで + 整数回転)
+    var clubTurn = function (f) { return Math.floor(f.value / 2) * 2 * Math.PI + rad(CLUB_CATCH_PITCH - CLUB_RELEASE_PITCH); };
+    var result = [];
+    var _loop_5 = function (prop) {
+        var own = flights.filter(function (f) { return f.prop === prop; }).sort(function (a, b) { return a.release - b.release; });
+        var track = [];
+        var _loop_6 = function (s) {
+            var t = s * dt;
+            if (own.length === 0) {
+                var hand = siteswap.propOrbits[prop][0].hand;
+                track.push(propType === 'club' ? clubQ(release, yawOf(hand)) : ringQ(0));
+                return "continue";
+            }
+            var flying = own.find(function (f) {
+                var tau = since(t, f.release, period);
+                return tau >= 0 && tau < f.duration - EPS;
+            });
+            if (flying) {
+                var k_1 = Math.max(0, since(t, flying.release, period)) / flying.duration;
+                if (propType === 'club') {
+                    var yaw = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(yawOf(flying.throwHand), yawOf(flying.catchHand), k_1);
+                    track.push(clubQ(release + clubTurn(flying) * k_1, yaw));
+                }
+                else {
+                    track.push(ringQ(RING_SPIN_PER_FLIGHT * 2 * Math.PI * k_1));
+                }
+                return "continue";
+            }
+            // 手の中: キャッチ(リリース角 + 端数回転)→ 前へ倒す → リリース角
+            var sinceCatch = function (f) { return since(t, f.release + f.duration, period); };
+            var untilRelease = function (f) { return since(f.release, t, period); };
+            var previous = own.reduce(function (best, f) { return (sinceCatch(f) < sinceCatch(best) ? f : best); });
+            var next = own.reduce(function (best, f) { return (untilRelease(f) < untilRelease(best) ? f : best); });
+            if (propType === 'ring') {
+                track.push(ringQ(0));
+                return "continue";
+            }
+            var held = sinceCatch(previous) + untilRelease(next) || period;
+            var k = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(sinceCatch(previous) / held, 0, 1);
+            var caught = rad(CLUB_CATCH_PITCH);
+            var smooth = function (x) { return x * x * (3 - 2 * x); };
+            var pitch = k < CLUB_LOW_AT
+                ? three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(caught, low, smooth(k / CLUB_LOW_AT))
+                : three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(low, release, smooth((k - CLUB_LOW_AT) / (1 - CLUB_LOW_AT)));
+            track.push(clubQ(pitch, yawOf(previous.catchHand)));
+        };
+        for (var s = 0; s < numSteps; s++) {
+            _loop_6(s);
+        }
+        result.push(track);
+    };
+    for (var prop = 0; prop < numProps; prop++) {
+        _loop_5(prop);
+    }
+    return result;
+}
 
 
 /***/ }),
@@ -62959,20 +63866,36 @@ function autoBeatDuration(siteswap, dwellBeats) {
 /*!***************************************!*\
   !*** ./src/motion/juggling/tracks.ts ***!
   \***************************************/
-/*! exports provided: LEFT, RIGHT, DEFAULT_METRICS, handBaseY, makeTransform, transformPoint, buildTracks, sampleTrack */
+/*! exports provided: LEFT, RIGHT, GRAVITY, DEFAULT_METRICS, handBaseY, makeTransform, transformPoint, propBaseQuaternion, summarize, buildTracks, computeGazeTrack, boxSmooth, sampleTrack */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LEFT", function() { return LEFT; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RIGHT", function() { return RIGHT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GRAVITY", function() { return GRAVITY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_METRICS", function() { return DEFAULT_METRICS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handBaseY", function() { return handBaseY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeTransform", function() { return makeTransform; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transformPoint", function() { return transformPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "propBaseQuaternion", function() { return propBaseQuaternion; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "summarize", function() { return summarize; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buildTracks", function() { return buildTracks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "computeGazeTrack", function() { return computeGazeTrack; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "boxSmooth", function() { return boxSmooth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sampleTrack", function() { return sampleTrack; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 /**
  * gunswap が計算した軌道(ボール・手)を、アバターの体格に合わせた座標に変換し、
@@ -63004,6 +63927,26 @@ function makeTransform(metrics) {
 function transformPoint(p, t, out) {
     return out.set(p.x * t.horizontalScale, p.y + t.offsetY, p.z * t.horizontalScale);
 }
+/** 小道具のモデルの基準の向き(gunswap の回転に掛ける) */
+function propBaseQuaternion(type) {
+    var q = new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"](1, 0, 0, 0);
+    if (type === 'ring')
+        q.multiply(new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0), Math.PI / 2));
+    return q;
+}
+function summarize(props, transform) {
+    var peakY = -Infinity;
+    var sumZ = 0;
+    var count = 0;
+    props.forEach(function (track) {
+        return track.forEach(function (p) {
+            peakY = Math.max(peakY, p.y);
+            sumZ += p.z;
+            count++;
+        });
+    });
+    return { peakY: peakY, centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale };
+}
 // 手のひらの傾き: 持っている時は手がボールに加える力(加速度 + 重力)の向きに手のひらを向ける
 var PALM_TILT_GAIN_HOLDING = 0.55;
 var PALM_TILT_GAIN_EMPTY = 0.35;
@@ -63024,48 +63967,43 @@ function buildTracks(siteswap, transform) {
         var palmNormals = computePalmNormals(positions, holding, stepDuration);
         return { positions: positions, palmNormals: palmNormals, holding: holding };
     });
-    var gaze = computeGazeTrack(siteswap.propPositions, props, numSteps);
-    var peakY = -Infinity;
-    var sumZ = 0;
-    var count = 0;
-    props.forEach(function (track) {
-        return track.forEach(function (p) {
-            peakY = Math.max(peakY, p.y);
-            sumZ += p.z;
-            count++;
+    var inAir = siteswap.propPositions.map(function (track) { return track.map(function (p) { return p.dwell !== true; }); });
+    var gaze = computeGazeTrack(inAir, props, numSteps);
+    // 体の動き用: 手の中から空中に出たステップを投げとみなす
+    var throws = [];
+    inAir.forEach(function (air, i) {
+        return air.forEach(function (flying, s) {
+            var prev = (s - 1 + numSteps) % numSteps;
+            if (!flying || air[prev])
+                return;
+            var next = (s + 1) % numSteps;
+            var velocity = props[i][next].clone().sub(props[i][s]).multiplyScalar(1 / stepDuration);
+            throws.push({ time: s * stepDuration, hand: props[i][s].x < 0 ? LEFT : RIGHT, value: 0, velocity: velocity });
         });
     });
-    return {
-        numSteps: numSteps,
-        stepDuration: stepDuration,
-        period: period,
-        props: props,
-        hands: hands,
-        gaze: gaze,
-        peakY: peakY,
-        centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale,
-    };
+    throws.sort(function (a, b) { return a.time - b.time; });
+    return __assign({ numSteps: numSteps, stepDuration: stepDuration, period: period, props: props, hands: hands, gaze: gaze, throws: throws }, summarize(props, transform));
 }
 // 視線: 次にキャッチするボールについて、リリース点から頂点までの GAZE_TOWARD_APEX の位置を見る
 // (siteswap-performer の方式: https://github.com/aratama-ship-it/siteswap-performer)
 var GAZE_TOWARD_APEX = 0.78;
-function computeGazeTrack(raw, props, numSteps) {
+function computeGazeTrack(inAir, props, numSteps) {
     var gaze = new Array(numSteps).fill(undefined);
     var remaining = new Array(numSteps).fill(Infinity);
-    raw.forEach(function (track, i) {
-        var start = track.findIndex(function (p) { return p.dwell === true; });
+    inAir.forEach(function (air, i) {
+        var start = air.findIndex(function (flying) { return !flying; });
         if (start < 0)
             return;
         // start(手の中)から 1 周して、空中にある区間(フライト)ごとに処理する
         var k = 0;
         var _loop_1 = function () {
             var s = (start + k) % numSteps;
-            if (track[s].dwell === true) {
+            if (!air[s]) {
                 k++;
                 return "continue";
             }
             var flight = [];
-            while (k < numSteps && track[(start + k) % numSteps].dwell !== true) {
+            while (k < numSteps && air[(start + k) % numSteps]) {
                 flight.push((start + k) % numSteps);
                 k++;
             }
@@ -63574,7 +64512,7 @@ var Options = /** @class */ (function () {
         };
         this.blink = true;
         this.neck = true;
-        this.bodyMotion = true;
+        this.bodyMotion = 1.0;
         this.speed = 1.0;
         this.autoTempo = true;
         this.facial = {
