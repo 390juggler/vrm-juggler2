@@ -73,11 +73,11 @@ export interface Tracks {
 }
 
 // 手のひらの傾き: 持っている時は手がボールに加える力(加速度 + 重力)の向きに手のひらを向ける
-const PALM_TILT_GAIN_HOLDING = 0.8;
+const PALM_TILT_GAIN_HOLDING = 0.55;
 const PALM_TILT_GAIN_EMPTY = 0.35;
-const PALM_MAX_TILT = 0.75; // rad
+const PALM_MAX_TILT = 0.55; // rad
 const ACCEL_SMOOTH_TIME = 0.03; // s
-const NORMAL_SMOOTH_TIME = 0.05; // s
+const NORMAL_SMOOTH_TIME = 0.08; // s
 
 export function buildTracks(siteswap: any, transform: SpaceTransform): Tracks {
   const numSteps: number = siteswap.numSteps;

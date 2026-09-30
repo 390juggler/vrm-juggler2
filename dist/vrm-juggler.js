@@ -59928,23 +59928,26 @@ var FINGER_CURL = [0.35, 0.75, 0.55]; // Proximal, Intermediate, Distal(rad, gri
 var FINGER_CURL_OPEN = [0.1, 0.2, 0.1];
 // 下半身
 var KNEE_BASE = 0.1; // rad
-var KNEE_BOUNCE = 0.08; // rad
-var KNEE_BOUNCE_PHASE = 0.2; // 拍の中で一番沈むタイミング(キャッチ直後)
+var KNEE_BOUNCE = 0.035; // rad
+var KNEE_BOUNCE_BEATS = 2; // 何拍で 1 回沈むか(毎拍だと小刻みに見えるので、左右 1 往復で 1 回)
+var KNEE_BOUNCE_PHASE = 0.1; // 周期の中で一番沈むタイミング(キャッチ直後)
 // 上半身
 var SPINE_LEAN = 0.05; // rad(前傾)
 var BREATH_AMPLITUDE = 0.012;
 var BREATH_PERIOD = 3.6; // s
-var CHEST_TWIST = 0.035;
+var CHEST_TWIST = 0.015;
 var SHOULDER_FORWARD = 0.08;
-var SHOULDER_RAISE_GAIN = 0.9;
-var SHOULDER_RAISE_MAX = 0.12;
+var SHOULDER_RAISE_GAIN = 0.4;
+var SHOULDER_RAISE_MAX = 0.06;
+var SHOULDER_SMOOTH = 5; // 1/s(手の上下にそのまま反応するとピクピクするので遅らせる)
 // 頭・視線
 var HEAD_PITCH_MIN = -0.2;
 var HEAD_PITCH_MAX = 0.4;
 var NECK_SHARE = 0.4;
-var HEAD_FOLLOW_X = 0.35; // 頭が目線の横位置を追う割合
-var HEAD_FOLLOW_Y = 0.3; // 頭の上下が目線の高さを追う割合(残りはパターンの頂点)
-var GAZE_SMOOTH = 8; // 1/s
+var HEAD_FOLLOW_X = 0.2; // 頭が目線の横位置を追う割合
+var HEAD_FOLLOW_Y = 0.15; // 頭の上下が目線の高さを追う割合(残りはパターンの頂点)
+var GAZE_SMOOTH = 8; // 1/s(目)
+var HEAD_SMOOTH = 2.5; // 1/s(頭は目よりゆっくり追う)
 function worldPosition(node) {
     return node.getWorldPosition(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
 }
@@ -59977,6 +59980,7 @@ var Body = /** @class */ (function () {
         this.rest = new Map();
         this.hipsRestY = 0;
         this.legLength = 0;
+        this.shoulderRaise = [0, 0];
         this.breathTime = 0;
         this.lookTarget = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
         this.armAngle = 0.3;
@@ -60115,7 +60119,7 @@ var Body = /** @class */ (function () {
     };
     Body.prototype.updateLowerBody = function (frame) {
         var _this = this;
-        var phase = frame.beat - Math.floor(frame.beat);
+        var phase = frame.beat / KNEE_BOUNCE_BEATS;
         var bounce = this.enableBodyMotion ? 0.5 * (1 + Math.cos(2 * Math.PI * (phase - KNEE_BOUNCE_PHASE))) : 0;
         var knee = KNEE_BASE + KNEE_BOUNCE * bounce;
         // 太もも前・すね後ろ・足首前に同じ角度だけ曲げると、足の位置がほぼ変わらずに腰が沈む
@@ -60132,21 +60136,27 @@ var Body = /** @class */ (function () {
         var breath = BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * motion;
         // 1 拍ごとに左右の手が交互に投げるので、胸のひねりは 2 拍で 1 往復
         var sway = Math.sin(Math.PI * frame.beat) * motion;
+        var smooth = function (rate) { return 1 - Math.exp(-rate * delta); };
         this.pose(Bone.Spine, -SPINE_LEAN, 0, 0);
         this.pose(Bone.Chest, breath, CHEST_TWIST * sway * 0.5, 0);
         this.pose(Bone.UpperChest, breath * 0.5, CHEST_TWIST * sway * 0.5, CHEST_TWIST * sway * 0.3);
         // 肩: 少し前へ、手が上がった時に少し上がる
         this.arms.forEach(function (arm, h) {
             var hand = frame.hands[h];
-            var raise = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp((hand.position.y - _this.baseHandY) * SHOULDER_RAISE_GAIN, 0, SHOULDER_RAISE_MAX) *
+            var target = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp((hand.position.y - _this.baseHandY) * SHOULDER_RAISE_GAIN, 0, SHOULDER_RAISE_MAX) *
                 motion;
+            _this.shoulderRaise[h] += (target - _this.shoulderRaise[h]) * smooth(SHOULDER_SMOOTH);
+            var raise = _this.shoulderRaise[h];
             _this.pose(h === _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"] ? Bone.LeftShoulder : Bone.RightShoulder, 0, arm.side * SHOULDER_FORWARD, arm.side * raise);
         });
         // 視線: 目は次にキャッチするボールを追い、頭はパターンの頂点を中心に目線へ少し寄せる
         if (!this.eyePoint)
             this.eyePoint = frame.eyeTarget.clone();
-        this.eyePoint.lerp(frame.eyeTarget, 1 - Math.exp(-GAZE_SMOOTH * delta));
+        this.eyePoint.lerp(frame.eyeTarget, smooth(GAZE_SMOOTH));
         this.lookTarget.position.copy(this.eyePoint);
+        if (!this.headPoint)
+            this.headPoint = this.eyePoint.clone();
+        this.headPoint.lerp(this.eyePoint, smooth(HEAD_SMOOTH));
         var target = frame.gazeTarget;
         if (!this.enableNeck) {
             this.pose(Bone.Neck, 0, 0, 0);
@@ -60154,11 +60164,11 @@ var Body = /** @class */ (function () {
             return;
         }
         var distance = Math.max(0.1, Math.abs(target.z));
-        var headY = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(target.y, this.eyePoint.y, HEAD_FOLLOW_Y);
+        var headY = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].lerp(target.y, this.headPoint.y, HEAD_FOLLOW_Y);
         var pitch = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) + SPINE_LEAN;
-        var yaw = -Math.atan2(this.eyePoint.x * HEAD_FOLLOW_X, distance);
+        var yaw = -Math.atan2(this.headPoint.x * HEAD_FOLLOW_X, distance);
         this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
-        this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), -sway * 0.02);
+        this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), 0);
     };
     Body.prototype.solveArm = function (arm, hand, propRadius) {
         var palmNormal = hand.palmNormal;
@@ -62995,11 +63005,11 @@ function transformPoint(p, t, out) {
     return out.set(p.x * t.horizontalScale, p.y + t.offsetY, p.z * t.horizontalScale);
 }
 // 手のひらの傾き: 持っている時は手がボールに加える力(加速度 + 重力)の向きに手のひらを向ける
-var PALM_TILT_GAIN_HOLDING = 0.8;
+var PALM_TILT_GAIN_HOLDING = 0.55;
 var PALM_TILT_GAIN_EMPTY = 0.35;
-var PALM_MAX_TILT = 0.75; // rad
+var PALM_MAX_TILT = 0.55; // rad
 var ACCEL_SMOOTH_TIME = 0.03; // s
-var NORMAL_SMOOTH_TIME = 0.05; // s
+var NORMAL_SMOOTH_TIME = 0.08; // s
 function buildTracks(siteswap, transform) {
     var numSteps = siteswap.numSteps;
     var period = siteswap.states.length * siteswap.beatDuration;

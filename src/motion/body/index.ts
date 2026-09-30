@@ -37,25 +37,28 @@ const FINGER_CURL_OPEN = [0.1, 0.2, 0.1];
 
 // 下半身
 const KNEE_BASE = 0.1; // rad
-const KNEE_BOUNCE = 0.08; // rad
-const KNEE_BOUNCE_PHASE = 0.2; // 拍の中で一番沈むタイミング(キャッチ直後)
+const KNEE_BOUNCE = 0.035; // rad
+const KNEE_BOUNCE_BEATS = 2; // 何拍で 1 回沈むか(毎拍だと小刻みに見えるので、左右 1 往復で 1 回)
+const KNEE_BOUNCE_PHASE = 0.1; // 周期の中で一番沈むタイミング(キャッチ直後)
 
 // 上半身
 const SPINE_LEAN = 0.05; // rad(前傾)
 const BREATH_AMPLITUDE = 0.012;
 const BREATH_PERIOD = 3.6; // s
-const CHEST_TWIST = 0.035;
+const CHEST_TWIST = 0.015;
 const SHOULDER_FORWARD = 0.08;
-const SHOULDER_RAISE_GAIN = 0.9;
-const SHOULDER_RAISE_MAX = 0.12;
+const SHOULDER_RAISE_GAIN = 0.4;
+const SHOULDER_RAISE_MAX = 0.06;
+const SHOULDER_SMOOTH = 5; // 1/s(手の上下にそのまま反応するとピクピクするので遅らせる)
 
 // 頭・視線
 const HEAD_PITCH_MIN = -0.2;
 const HEAD_PITCH_MAX = 0.4;
 const NECK_SHARE = 0.4;
-const HEAD_FOLLOW_X = 0.35; // 頭が目線の横位置を追う割合
-const HEAD_FOLLOW_Y = 0.3; // 頭の上下が目線の高さを追う割合(残りはパターンの頂点)
-const GAZE_SMOOTH = 8; // 1/s
+const HEAD_FOLLOW_X = 0.2; // 頭が目線の横位置を追う割合
+const HEAD_FOLLOW_Y = 0.15; // 頭の上下が目線の高さを追う割合(残りはパターンの頂点)
+const GAZE_SMOOTH = 8; // 1/s(目)
+const HEAD_SMOOTH = 2.5; // 1/s(頭は目よりゆっくり追う)
 
 interface ArmRig {
   side: number; // 左 -1, 右 +1(x 座標の符号)
@@ -114,6 +117,8 @@ export default class Body {
   private legLength = 0;
   private baseHandY: number;
   private eyePoint?: THREE.Vector3;
+  private headPoint?: THREE.Vector3;
+  private shoulderRaise = [0, 0];
   private breathTime = 0;
   private lookTarget = new THREE.Object3D();
   private eyeY: number;
@@ -261,7 +266,7 @@ export default class Body {
   }
 
   private updateLowerBody(frame: JugglingFrame) {
-    const phase = frame.beat - Math.floor(frame.beat);
+    const phase = frame.beat / KNEE_BOUNCE_BEATS;
     const bounce = this.enableBodyMotion ? 0.5 * (1 + Math.cos(2 * Math.PI * (phase - KNEE_BOUNCE_PHASE))) : 0;
     const knee = KNEE_BASE + KNEE_BOUNCE * bounce;
 
@@ -279,6 +284,7 @@ export default class Body {
     const breath = BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * motion;
     // 1 拍ごとに左右の手が交互に投げるので、胸のひねりは 2 拍で 1 往復
     const sway = Math.sin(Math.PI * frame.beat) * motion;
+    const smooth = (rate: number) => 1 - Math.exp(-rate * delta);
 
     this.pose(Bone.Spine, -SPINE_LEAN, 0, 0);
     this.pose(Bone.Chest, breath, CHEST_TWIST * sway * 0.5, 0);
@@ -287,9 +293,11 @@ export default class Body {
     // 肩: 少し前へ、手が上がった時に少し上がる
     this.arms.forEach((arm, h) => {
       const hand = frame.hands[h];
-      const raise =
+      const target =
         THREE.MathUtils.clamp((hand.position.y - this.baseHandY) * SHOULDER_RAISE_GAIN, 0, SHOULDER_RAISE_MAX) *
         motion;
+      this.shoulderRaise[h] += (target - this.shoulderRaise[h]) * smooth(SHOULDER_SMOOTH);
+      const raise = this.shoulderRaise[h];
       this.pose(
         h === LEFT ? Bone.LeftShoulder : Bone.RightShoulder,
         0,
@@ -300,8 +308,10 @@ export default class Body {
 
     // 視線: 目は次にキャッチするボールを追い、頭はパターンの頂点を中心に目線へ少し寄せる
     if (!this.eyePoint) this.eyePoint = frame.eyeTarget.clone();
-    this.eyePoint.lerp(frame.eyeTarget, 1 - Math.exp(-GAZE_SMOOTH * delta));
+    this.eyePoint.lerp(frame.eyeTarget, smooth(GAZE_SMOOTH));
     this.lookTarget.position.copy(this.eyePoint);
+    if (!this.headPoint) this.headPoint = this.eyePoint.clone();
+    this.headPoint.lerp(this.eyePoint, smooth(HEAD_SMOOTH));
 
     const target = frame.gazeTarget;
 
@@ -311,12 +321,12 @@ export default class Body {
       return;
     }
     const distance = Math.max(0.1, Math.abs(target.z));
-    const headY = THREE.MathUtils.lerp(target.y, this.eyePoint.y, HEAD_FOLLOW_Y);
+    const headY = THREE.MathUtils.lerp(target.y, this.headPoint.y, HEAD_FOLLOW_Y);
     const pitch =
       THREE.MathUtils.clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) + SPINE_LEAN;
-    const yaw = -Math.atan2(this.eyePoint.x * HEAD_FOLLOW_X, distance);
+    const yaw = -Math.atan2(this.headPoint.x * HEAD_FOLLOW_X, distance);
     this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
-    this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), -sway * 0.02);
+    this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), 0);
   }
 
   private solveArm(arm: ArmRig, hand: JugglingFrame['hands'][number], propRadius: number) {
