@@ -9,13 +9,16 @@ import {
   RIGHT,
   SpaceTransform,
   Tracks,
+  ThrowEvent,
   buildTracks,
+  propBaseQuaternion,
   makeTransform,
   sampleTrack,
   transformPoint,
 } from './tracks';
 import { SiteswapCheck, isVanilla, precheckSiteswap, translateGunswapError } from './validate';
 import { autoBeatDuration } from './tempo';
+import { buildNaturalTracks, isNaturalSupported } from './natural';
 
 export interface HandState {
   /** ボールを持っている時はボールの中心、持っていない時は手の基準位置(ワールド座標) */
@@ -23,6 +26,8 @@ export interface HandState {
   /** 手のひらが向くべき方向(ワールド座標の単位ベクトル) */
   palmNormal: THREE.Vector3;
   holding: boolean;
+  /** 指先の向きの指定(長さ 0 なら体の側で決める) */
+  fingerDir: THREE.Vector3;
 }
 
 export interface JugglingFrame {
@@ -35,7 +40,14 @@ export interface JugglingFrame {
   propRadius: number;
   /** 目で追う位置(次にキャッチするボールの頂点付近) */
   eyeTarget: THREE.Vector3;
+  /** 前のフレームからの間に行われた投げ */
+  throws: ThrowEvent[];
+  /** 小道具の種類('ball' | 'club' | 'ring') */
+  propType: string;
 }
+
+// 手のひらと握る位置の距離(クラブのハンドル・リングの縁の太さ)
+const GRIP_RADIUS: { [type: string]: number } = { club: 0.018, ring: 0.01 };
 
 const RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
 
@@ -78,12 +90,15 @@ export default class Juggling {
       hands: [LEFT, RIGHT].map(() => ({
         position: new THREE.Vector3(),
         palmNormal: new THREE.Vector3(0, 1, 0),
+        fingerDir: new THREE.Vector3(),
         holding: false,
       })),
       beat: 0,
       gazeTarget: new THREE.Vector3(),
       propRadius: 0.05,
       eyeTarget: new THREE.Vector3(),
+      throws: [],
+      propType: 'ball',
     };
 
     const result = this.setPattern(siteswapStr, options);
@@ -95,6 +110,11 @@ export default class Juggling {
 
   set visible(value: boolean) {
     this.group.visible = value;
+  }
+
+  /** パターンの一番高い位置(ワールド座標の y) */
+  get peakY(): number {
+    return this.tracks.peakY;
   }
 
   get currentSiteswap() {
@@ -155,7 +175,11 @@ export default class Juggling {
 
   private rebuild() {
     this.transform = makeTransform(this.metrics);
-    this.tracks = buildTracks(this.siteswap, this.transform);
+    const prop = this.siteswap.props[0];
+    const radius = Number(prop.radius) || 0.05;
+    this.tracks = isNaturalSupported(this.siteswap)
+      ? buildNaturalTracks(this.siteswap, this.transform, prop.type, prop.type === 'ball' ? radius : 0.03)
+      : buildTracks(this.siteswap, this.transform);
     this.drawProps();
     this.drawSurfaces();
   }
@@ -168,56 +192,106 @@ export default class Juggling {
     });
     this.surfaceMeshes = [];
 
+    // 床(影を受ける面)は Renderer が用意している。バウンドするパターンの時だけ跳ねる面を表示する
+    const bounces = this.siteswap.propOrbits.some((orbit: any[]) => orbit.some((toss) => toss.numBounces > 0));
+    if (!bounces) return;
+
     this.siteswap.surfaces.forEach((a: any) => {
       const position = transformPoint(a.position, this.transform, new THREE.Vector3());
       const axis1 = new THREE.Vector3(a.axis1.x, a.axis1.y, a.axis1.z);
       const axis2 = new THREE.Vector3(a.axis2.x, a.axis2.y, a.axis2.z);
 
-      const geometry = new THREE.Geometry();
-      geometry.vertices.push(position.clone().add(axis1).add(axis2));
-      geometry.vertices.push(position.clone().sub(axis1).add(axis2));
-      geometry.vertices.push(position.clone().sub(axis1).sub(axis2));
-      geometry.vertices.push(position.clone().add(axis1).sub(axis2));
-      geometry.faces.push(new THREE.Face3(0, 1, 2));
-      geometry.faces.push(new THREE.Face3(2, 0, 3));
+      // three.js r118 は旧形式の Geometry を内部で変換する経路に不具合があるので BufferGeometry で作る
+      const corners = [
+        position.clone().add(axis1).add(axis2),
+        position.clone().sub(axis1).add(axis2),
+        position.clone().sub(axis1).sub(axis2),
+        position.clone().add(axis1).sub(axis2),
+      ];
+      const geometry = new THREE.BufferGeometry().setFromPoints(corners);
+      geometry.setIndex([0, 1, 2, 2, 0, 3]);
+      geometry.computeVertexNormals();
 
       const mesh = new THREE.Mesh(
         geometry,
-        new THREE.MeshBasicMaterial({ color: a.color ? a.color : 'grey', side: THREE.DoubleSide })
+        new THREE.MeshStandardMaterial({
+          color: a.color ? a.color : 'grey',
+          side: THREE.DoubleSide,
+          roughness: 0.9,
+          transparent: true,
+          opacity: 0.6,
+        })
       );
+      mesh.receiveShadow = true;
       this.surfaceMeshes.push(mesh);
       this.group.add(mesh);
     });
   }
 
-  private createPropGeometry(prop: any): THREE.Geometry {
+  /**
+   * 小道具のモデル。クラブは白いハンドルと色付きの胴(2 つのメッシュ)、リングは薄く平たい輪、ボールは布っぽい質感。
+   * クラブのモデル座標は重心が原点、ノブ側が -y(natural.ts の握る位置と合わせている)。
+   */
+  private createPropMesh(prop: any, color: string, opacity: number): THREE.Mesh {
+    const transparent = opacity < 1;
+    const material = (params: THREE.MeshStandardMaterialParameters) =>
+      new THREE.MeshStandardMaterial({ ...params, transparent, opacity });
+
     if (prop.type == 'club') {
-      const geometry = new THREE.CylinderGeometry(0.008, 0.02, 0.02, 7, 5);
-      geometry.vertices.forEach((v) => (v.y += 0.01));
-      const clubHandle = new THREE.CylinderGeometry(0.015, 0.008, 0.18, 7, 5);
-      clubHandle.vertices.forEach((v) => (v.y += 0.11));
-      const clubBody1 = new THREE.CylinderGeometry(0.04, 0.015, 0.18, 7, 5);
-      clubBody1.vertices.forEach((v) => (v.y += 0.29));
-      const clubBody2 = new THREE.CylinderGeometry(0.02, 0.04, 0.11, 7, 5);
-      clubBody2.vertices.forEach((v) => (v.y += 0.43));
-      geometry.merge(clubHandle);
-      geometry.merge(clubBody1);
-      geometry.merge(clubBody2);
-      // 重心が原点に来るように下げる
-      geometry.vertices.forEach((v) => (v.y -= 0.2));
-      return geometry;
+      const lathe = (points: [number, number][]) =>
+        new THREE.LatheBufferGeometry(
+          points.map(([r, y]) => new THREE.Vector2(r, y)),
+          20
+        );
+      // [半径, 高さ](m)。ノブ → ハンドル
+      const handle = lathe([
+        [0, -0.2],
+        [0.02, -0.198],
+        [0.023, -0.19],
+        [0.02, -0.182],
+        [0.012, -0.176],
+        [0.012, -0.12],
+        [0.014, -0.05],
+        [0.016, -0.02],
+      ]);
+      // 胴 → 先端
+      const body = lathe([
+        [0.016, -0.02],
+        [0.026, 0.03],
+        [0.038, 0.1],
+        [0.041, 0.15],
+        [0.038, 0.21],
+        [0.028, 0.27],
+        [0.02, 0.3],
+        [0, 0.302],
+      ]);
+      const mesh = new THREE.Mesh(body, material({ color, roughness: 0.35 }));
+      const handleMesh = new THREE.Mesh(handle, material({ color: '#f4f4f4', roughness: 0.5 }));
+      mesh.add(handleMesh);
+      mesh.castShadow = handleMesh.castShadow = !transparent;
+      return mesh;
     }
     if (prop.type == 'ring') {
       const points = [
-        new THREE.Vector2(0.14, 0.01),
-        new THREE.Vector2(0.18, 0.01),
-        new THREE.Vector2(0.18, -0.01),
-        new THREE.Vector2(0.14, -0.01),
-        new THREE.Vector2(0.14, 0.01),
-      ];
-      return new THREE.LatheGeometry(points);
+        [0.13, 0.003],
+        [0.16, 0.003],
+        [0.16, -0.003],
+        [0.13, -0.003],
+        [0.13, 0.003],
+      ].map(([r, y]) => new THREE.Vector2(r, y));
+      const mesh = new THREE.Mesh(
+        new THREE.LatheBufferGeometry(points, 64),
+        material({ color, roughness: 0.45, side: THREE.DoubleSide })
+      );
+      mesh.castShadow = !transparent;
+      return mesh;
     }
-    return new THREE.SphereGeometry(Number(prop.radius) || 0.05, 20, 16);
+    const mesh = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(Number(prop.radius) || 0.05, 32, 20),
+      material({ color, roughness: 0.85 })
+    );
+    mesh.castShadow = !transparent;
+    return mesh;
   }
 
   private drawProps() {
@@ -225,7 +299,12 @@ export default class Juggling {
       meshes.forEach((mesh) => {
         this.group.remove(mesh);
         mesh.geometry.dispose();
-        (mesh.material as THREE.Material).dispose();
+        mesh.traverse((object) => {
+          const m = object as THREE.Mesh;
+          if (!m.isMesh) return;
+          m.geometry.dispose();
+          (m.material as THREE.Material).dispose();
+        });
       })
     );
     this.propMeshes = [];
@@ -236,10 +315,7 @@ export default class Juggling {
       const color = prop.color == 'random' ? RANDOM_COLORS[i % RANDOM_COLORS.length] : prop.color;
       const meshes: THREE.Mesh[] = [];
       for (let j = 0; j <= numTails; j++) {
-        const material = new THREE.MeshLambertMaterial(
-          j == 0 ? { color } : { color, transparent: true, opacity: 1 - (1 / (numTails + 1)) * j }
-        );
-        const mesh = new THREE.Mesh(this.createPropGeometry(prop), material);
+        const mesh = this.createPropMesh(prop, color, j == 0 ? 1 : 1 - (1 / (numTails + 1)) * j);
         this.group.add(mesh);
         meshes.push(mesh);
       }
@@ -247,13 +323,22 @@ export default class Juggling {
     }
 
     const first = this.siteswap.props[0];
-    this.frame.propRadius = first.type == 'ball' ? Number(first.radius) || 0.05 : 0.02;
+    this.frame.propType = first.type;
+    this.frame.propRadius = first.type == 'ball' ? Number(first.radius) || 0.05 : GRIP_RADIUS[first.type] || 0.02;
   }
 
   /** 毎フレーム呼ぶ。delta は秒 */
   update(delta: number): JugglingFrame {
     const tracks = this.tracks;
-    this.time = (this.time + delta * this.speed) % tracks.period;
+    const previousTime = this.time;
+    const advance = delta * this.speed;
+    this.time = (this.time + advance) % tracks.period;
+
+    // この間に行われた投げ(周期の境目をまたぐ場合も含む)
+    this.frame.throws = tracks.throws.filter((t) => {
+      const since = (((t.time - previousTime) % tracks.period) + tracks.period) % tracks.period;
+      return since > 0 && since <= advance;
+    });
     const stepFloat = (this.time / tracks.period) * tracks.numSteps;
     const step = Math.floor(stepFloat) % tracks.numSteps;
 
@@ -265,6 +350,8 @@ export default class Juggling {
       sampleTrack(track.positions, stepFloat, hand.position);
       sampleTrack(track.palmNormals, stepFloat, hand.palmNormal).normalize();
       hand.holding = track.holding[step];
+      if (track.fingerDirs) sampleTrack(track.fingerDirs, stepFloat, hand.fingerDir).normalize();
+      else hand.fingerDir.set(0, 0, 0);
     });
 
     this.frame.beat = this.time / this.siteswap.beatDuration;
@@ -276,7 +363,7 @@ export default class Juggling {
   private updateProps(stepFloat: number) {
     const tracks = this.tracks;
     const tailGap = Math.floor(this.siteswap.numStepsPerBeat / 8);
-    const ringRotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+    const baseRotation = propBaseQuaternion(this.frame.propType);
 
     for (let i = 0; i < this.propMeshes.length; i++) {
       for (let j = 0; j < this.propMeshes[i].length; j++) {
@@ -287,13 +374,15 @@ export default class Juggling {
 
         const i0 = Math.floor(s) % tracks.numSteps;
         const i1 = (i0 + 1) % tracks.numSteps;
+        if (tracks.propRotations) {
+          mesh.quaternion.copy(tracks.propRotations[i][i0]).slerp(tracks.propRotations[i][i1], s - Math.floor(s));
+          continue;
+        }
         this.tmpQuaternion
           .copy(this.siteswap.propRotations[i][i0])
           .slerp(this.siteswap.propRotations[i][i1], s - Math.floor(s));
 
-        mesh.quaternion.set(1, 0, 0, 0);
-        if (this.siteswap.props[i].type == 'ring') mesh.quaternion.multiply(ringRotation);
-        mesh.quaternion.premultiply(this.tmpQuaternion);
+        mesh.quaternion.copy(baseRotation).premultiply(this.tmpQuaternion);
       }
     }
   }

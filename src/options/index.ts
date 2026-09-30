@@ -10,7 +10,7 @@ export default class Options {
   public siteswap!: options;
   public blink!: boolean;
   public neck!: boolean;
-  public bodyMotion!: boolean;
+  public bodyMotion!: number;
   public speed!: number;
   public autoTempo!: boolean;
   public facial!: any;
@@ -55,7 +55,7 @@ export default class Options {
     };
     this.blink = true;
     this.neck = true;
-    this.bodyMotion = true;
+    this.bodyMotion = 1.0;
     this.speed = 1.0;
     this.autoTempo = true;
     this.facial = {

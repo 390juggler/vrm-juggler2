@@ -2,17 +2,17 @@ import * as THREE from 'three';
 import { VRMSchema } from '@pixiv/three-vrm';
 
 import { JugglingFrame } from '../juggling';
-import { AvatarMetrics, LEFT, RIGHT, handBaseY } from '../juggling/tracks';
+import { AvatarMetrics, LEFT, RIGHT } from '../juggling/tracks';
 
 /**
  * ジャグリング中の全身の動き。
  *
- * - 腕: 解析的な 2 関節 IK。ボールが手のひらに乗るように手首の位置と向きを決め、
+ * - 腕: 解析的な 2 関節 IK。ボール(クラブはハンドル、リングは縁)が手のひらに乗るように手首の位置と向きを決め、
  *       肘は「下・後ろ・少し外」に向けて安定させる。前腕のひねりは前腕と手首に分配する。
- * - 指: ボールを持っている間は握り、投げた後は開く。
- * - 下半身: 拍に合わせて膝を軽く曲げ伸ばしする(キャッチで沈み、投げで伸びる)。
- * - 上半身: 前傾・呼吸・左右の手に合わせた胸のひねり、投げる側の肩を少し上げる。
- * - 頭: パターンの頂点付近を見る。目線はボールを少し追う。
+ * - 指: 持っている間は握り(クラブは握りこぶし)、投げた後は開く。
+ * - 体: 投げるたびに、投げの速さに比例した勢いをばねに与える(膝の沈み込み・胸のひねり・肩・前傾)。
+ *       ゆっくりした左右の重心移動と呼吸はいつも入れる。
+ * - 頭: パターンの頂点付近を見る。目は次にキャッチするボールを追う。
  */
 
 const Bone = VRMSchema.HumanoidBoneName;
@@ -32,24 +32,65 @@ const PALM_GAP = 0.012; // ボール表面と手のひらのすき間
 const GRIP_HOLDING = 1.0;
 const GRIP_EMPTY = 0.35;
 const GRIP_SMOOTH = 25; // 1/s
-const FINGER_CURL = [0.35, 0.75, 0.55]; // Proximal, Intermediate, Distal(rad, grip = 1 の時)
+// Proximal, Intermediate, Distal(rad, grip = 1 の時)。クラブはハンドルを握りこみ、リングは縁をつかむ
+const FINGER_CURL: { [propType: string]: number[] } = {
+  ball: [0.35, 0.75, 0.55],
+  club: [1.0, 1.3, 0.9],
+  ring: [0.75, 1.1, 0.8],
+};
 const FINGER_CURL_OPEN = [0.1, 0.2, 0.1];
 
-// 下半身
-const KNEE_BASE = 0.1; // rad
-const KNEE_BOUNCE = 0.035; // rad
-const KNEE_BOUNCE_BEATS = 2; // 何拍で 1 回沈むか(毎拍だと小刻みに見えるので、左右 1 往復で 1 回)
-const KNEE_BOUNCE_PHASE = 0.1; // 周期の中で一番沈むタイミング(キャッチ直後)
+// 体は「投げ」に反応して動く。投げるたびにばね(減衰振動)へ投げの速さに比例した勢いを与える。
+// 一定周期の揺れと違い、投げの高さ・リズムに合った大きさで自然に収まる
+const KNEE_BASE = 0.1; // rad(いつも軽く曲げておく)
+const DIP_PER_SPEED = 0.03; // 投げの速さ 1 m/s あたり、腰を沈める勢い(m/s)
+const DIP_SPRING = { period: 0.65, damping: 0.6 };
+const TWIST_PER_SPEED = 0.07; // 投げた側の肩を前へ出す胸のひねり(rad/s)
+const TWIST_SPRING = { period: 0.7, damping: 0.5 };
+const SHOULDER_PER_SPEED = 0.22; // 投げた側の肩を上げる勢い(rad/s)
+const SHOULDER_SPRING = { period: 0.4, damping: 0.6 };
+const LEAN_PER_SPEED = 0.02; // 上へ強く投げるほど少し前傾する(rad/s)
+const LEAN_SPRING = { period: 0.8, damping: 0.6 };
 
 // 上半身
 const SPINE_LEAN = 0.05; // rad(前傾)
 const BREATH_AMPLITUDE = 0.012;
 const BREATH_PERIOD = 3.6; // s
-const CHEST_TWIST = 0.015;
 const SHOULDER_FORWARD = 0.08;
-const SHOULDER_RAISE_GAIN = 0.4;
-const SHOULDER_RAISE_MAX = 0.06;
-const SHOULDER_SMOOTH = 5; // 1/s(手の上下にそのまま反応するとピクピクするので遅らせる)
+// ゆっくりした左右の重心移動(止まって見えないように)
+const WEIGHT_SHIFT = [
+  { amplitude: 0.008, period: 7.3, phase: 0 },
+  { amplitude: 0.004, period: 3.1, phase: 1 },
+];
+
+/** 減衰振動するばね。kick() で勢いを与え、step() で進める */
+class Spring {
+  x = 0;
+  v = 0;
+  private omega: number;
+  private zeta: number;
+
+  constructor({ period, damping }: { period: number; damping: number }) {
+    this.omega = (2 * Math.PI) / period;
+    this.zeta = damping;
+  }
+
+  kick(dv: number) {
+    this.v += dv;
+  }
+
+  step(delta: number) {
+    // フレーム時間が長くても発散しないように細かく刻む
+    const steps = Math.max(1, Math.ceil(delta / (1 / 240)));
+    const dt = delta / steps;
+    for (let i = 0; i < steps; i++) {
+      const a = -this.omega * this.omega * this.x - 2 * this.zeta * this.omega * this.v;
+      this.v += a * dt;
+      this.x += this.v * dt;
+    }
+    return this.x;
+  }
+}
 
 // 頭・視線
 const HEAD_PITCH_MIN = -0.2;
@@ -114,17 +155,25 @@ export default class Body {
   private rest = new Map<THREE.Object3D, THREE.Quaternion>();
   private hips: THREE.Object3D | null;
   private hipsRestY = 0;
+  private hipsRestX = 0;
   private legLength = 0;
-  private baseHandY: number;
   private eyePoint?: THREE.Vector3;
   private headPoint?: THREE.Vector3;
-  private shoulderRaise = [0, 0];
+  private dip = new Spring(DIP_SPRING);
+  private twist = new Spring(TWIST_SPRING);
+  private lean = new Spring(LEAN_SPRING);
+  private shoulders = [new Spring(SHOULDER_SPRING), new Spring(SHOULDER_SPRING)];
   private breathTime = 0;
   private lookTarget = new THREE.Object3D();
   private eyeY: number;
 
   public armAngle = 0.3;
-  public enableBodyMotion = true;
+  /** 体の動きの大きさ(0 で止める、1 が標準、2 で大きく) */
+  public motionAmount = 1;
+
+  set enableBodyMotion(value: boolean) {
+    this.motionAmount = value ? 1 : 0;
+  }
   public enableNeck = true;
 
   constructor(vrm: any, scene: THREE.Scene) {
@@ -132,7 +181,10 @@ export default class Body {
     this.vrm.scene.updateMatrixWorld(true);
 
     this.hips = this.node(Bone.Hips);
-    if (this.hips) this.hipsRestY = this.hips.position.y;
+    if (this.hips) {
+      this.hipsRestY = this.hips.position.y;
+      this.hipsRestX = this.hips.position.x;
+    }
 
     const upperLeg = this.node(Bone.LeftUpperLeg);
     const lowerLeg = this.node(Bone.LeftLowerLeg);
@@ -153,7 +205,6 @@ export default class Body {
     });
 
     this.arms = [this.createArm(LEFT), this.createArm(RIGHT)];
-    this.baseHandY = handBaseY(this.metrics);
 
     scene.add(this.lookTarget);
     if (this.vrm.lookAt) this.vrm.lookAt.target = this.lookTarget;
@@ -254,6 +305,7 @@ export default class Body {
 
   update(frame: JugglingFrame, delta: number) {
     this.breathTime += delta;
+    this.updateSprings(frame, delta);
 
     this.updateLowerBody(frame);
     this.updateUpperBody(frame, delta);
@@ -261,43 +313,65 @@ export default class Body {
 
     this.arms.forEach((arm, h) => {
       this.solveArm(arm, frame.hands[h], frame.propRadius);
-      this.updateFingers(arm, frame.hands[h].holding, delta);
+      this.updateFingers(arm, frame.hands[h].holding, frame.propType, delta);
     });
   }
 
+  /** 投げに反応してばねに勢いを与え、進める */
+  private updateSprings(frame: JugglingFrame, delta: number) {
+    const amount = this.motionAmount;
+    frame.throws.forEach((t) => {
+      const speed = t.velocity.length();
+      const side = t.hand === LEFT ? -1 : 1;
+      this.dip.kick(-DIP_PER_SPEED * speed * amount);
+      this.twist.kick(side * TWIST_PER_SPEED * speed * amount);
+      this.lean.kick(LEAN_PER_SPEED * Math.max(0, t.velocity.y) * amount);
+      this.shoulders[t.hand].kick(SHOULDER_PER_SPEED * speed * amount);
+    });
+    this.dip.step(delta);
+    this.twist.step(delta);
+    this.lean.step(delta);
+    this.shoulders.forEach((s) => s.step(delta));
+  }
+
   private updateLowerBody(frame: JugglingFrame) {
-    const phase = frame.beat / KNEE_BOUNCE_BEATS;
-    const bounce = this.enableBodyMotion ? 0.5 * (1 + Math.cos(2 * Math.PI * (phase - KNEE_BOUNCE_PHASE))) : 0;
-    const knee = KNEE_BASE + KNEE_BOUNCE * bounce;
+    // 太ももの付け根から足首までの長さと曲げ角から、腰の高さが決まる
+    const baseDrop = this.legLength * (1 - Math.cos(KNEE_BASE));
+    const drop = THREE.MathUtils.clamp(baseDrop - this.dip.x, 0, this.legLength * 0.05);
+    const knee = Math.acos(1 - drop / Math.max(this.legLength, 0.1));
 
     // 太もも前・すね後ろ・足首前に同じ角度だけ曲げると、足の位置がほぼ変わらずに腰が沈む
     [Bone.LeftUpperLeg, Bone.RightUpperLeg].forEach((b) => this.pose(b, knee, 0, 0));
     [Bone.LeftLowerLeg, Bone.RightLowerLeg].forEach((b) => this.pose(b, -2 * knee, 0, 0));
     [Bone.LeftFoot, Bone.RightFoot].forEach((b) => this.pose(b, knee, 0, 0));
     if (this.hips) {
-      this.hips.position.y = this.hipsRestY - this.legLength * (1 - Math.cos(knee));
+      this.hips.position.y = this.hipsRestY - drop;
+      const shift =
+        WEIGHT_SHIFT.reduce(
+          (sum, w) => sum + w.amplitude * Math.sin((2 * Math.PI * this.breathTime) / w.period + w.phase),
+          0
+        ) * Math.min(this.motionAmount, 1.5);
+      this.hips.position.x = this.hipsRestX + shift;
+      // 重心を乗せた側へ腰が少し傾く
+      this.pose(Bone.Hips, 0, 0, -shift * 2);
     }
   }
 
   private updateUpperBody(frame: JugglingFrame, delta: number) {
-    const motion = this.enableBodyMotion ? 1 : 0;
-    const breath = BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * motion;
-    // 1 拍ごとに左右の手が交互に投げるので、胸のひねりは 2 拍で 1 往復
-    const sway = Math.sin(Math.PI * frame.beat) * motion;
+    const breath =
+      BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * Math.min(this.motionAmount, 1.5);
     const smooth = (rate: number) => 1 - Math.exp(-rate * delta);
+    const twist = this.twist.x;
 
-    this.pose(Bone.Spine, -SPINE_LEAN, 0, 0);
-    this.pose(Bone.Chest, breath, CHEST_TWIST * sway * 0.5, 0);
-    this.pose(Bone.UpperChest, breath * 0.5, CHEST_TWIST * sway * 0.5, CHEST_TWIST * sway * 0.3);
+    // 腰の傾きを背骨で打ち消して、上半身はまっすぐに保つ
+    const hipsRoll = this.hips ? -(this.hips.position.x - this.hipsRestX) * 2 : 0;
+    this.pose(Bone.Spine, -SPINE_LEAN - this.lean.x, twist * 0.3, -hipsRoll * 0.7);
+    this.pose(Bone.Chest, breath, twist * 0.4, -hipsRoll * 0.3);
+    this.pose(Bone.UpperChest, breath * 0.5, twist * 0.3, 0);
 
-    // 肩: 少し前へ、手が上がった時に少し上がる
+    // 肩: 少し前へ出し、投げた側を少し上げる
     this.arms.forEach((arm, h) => {
-      const hand = frame.hands[h];
-      const target =
-        THREE.MathUtils.clamp((hand.position.y - this.baseHandY) * SHOULDER_RAISE_GAIN, 0, SHOULDER_RAISE_MAX) *
-        motion;
-      this.shoulderRaise[h] += (target - this.shoulderRaise[h]) * smooth(SHOULDER_SMOOTH);
-      const raise = this.shoulderRaise[h];
+      const raise = Math.max(0, this.shoulders[h].x);
       this.pose(
         h === LEFT ? Bone.LeftShoulder : Bone.RightShoulder,
         0,
@@ -322,9 +396,12 @@ export default class Body {
     }
     const distance = Math.max(0.1, Math.abs(target.z));
     const headY = THREE.MathUtils.lerp(target.y, this.headPoint.y, HEAD_FOLLOW_Y);
+    // 背骨の前傾と胸のひねりは首で打ち消し、顔はパターンへ向け続ける
     const pitch =
-      THREE.MathUtils.clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) + SPINE_LEAN;
-    const yaw = -Math.atan2(this.headPoint.x * HEAD_FOLLOW_X, distance);
+      THREE.MathUtils.clamp(Math.atan2(headY - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) +
+      SPINE_LEAN +
+      this.lean.x;
+    const yaw = -Math.atan2(this.headPoint.x * HEAD_FOLLOW_X, distance) - this.twist.x;
     this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
     this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), 0);
   }
@@ -332,12 +409,16 @@ export default class Body {
   private solveArm(arm: ArmRig, hand: JugglingFrame['hands'][number], propRadius: number) {
     const palmNormal = hand.palmNormal;
 
-    // 指先の向き: 前方・少し内側と、前腕の向きの中間(手首の曲がりすぎを防ぐ)
-    const fingerDir = FORWARD.clone()
-      .addScaledVector(new THREE.Vector3(1, 0, 0), -arm.side * FINGER_INWARD)
-      .normalize()
-      .add(arm.lastForearmDir)
-      .normalize();
+    // 指先の向き: 指定があればそれ(クラブのハンドルに巻き付く向きなど)。
+    // なければ前方・少し内側と、前腕の向きの中間(手首の曲がりすぎを防ぐ)
+    const fingerDir =
+      hand.fingerDir.lengthSq() > 0.25
+        ? hand.fingerDir.clone()
+        : FORWARD.clone()
+            .addScaledVector(new THREE.Vector3(1, 0, 0), -arm.side * FINGER_INWARD)
+            .normalize()
+            .add(arm.lastForearmDir)
+            .normalize();
 
     // 手の向き(休止姿勢からの回転)。手のひらの向きを優先して合わせる
     const handDelta = frameRotation(arm.restPalmNormal, arm.restFingerDir, palmNormal, fingerDir);
@@ -392,13 +473,14 @@ export default class Body {
     arm.hand.quaternion.copy(lowerWorld.clone().conjugate().multiply(handWorld));
   }
 
-  private updateFingers(arm: ArmRig, holding: boolean, delta: number) {
+  private updateFingers(arm: ArmRig, holding: boolean, propType: string, delta: number) {
+    const curl = FINGER_CURL[propType] || FINGER_CURL.ball;
     const target = holding ? GRIP_HOLDING : GRIP_EMPTY;
     arm.grip += (target - arm.grip) * (1 - Math.exp(-GRIP_SMOOTH * delta));
 
     // T ポーズ(手のひら下向き)で z 軸周りに回すと指が手のひら側に曲がる
     arm.fingers.forEach(({ node, joint }) => {
-      const angle = FINGER_CURL_OPEN[joint] + (FINGER_CURL[joint] - FINGER_CURL_OPEN[joint]) * arm.grip;
+      const angle = FINGER_CURL_OPEN[joint] + (curl[joint] - FINGER_CURL_OPEN[joint]) * arm.grip;
       const rest = this.rest.get(node);
       node.quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), -arm.side * angle);
       if (rest) node.quaternion.premultiply(rest);

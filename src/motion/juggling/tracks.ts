@@ -8,7 +8,7 @@ import * as THREE from 'three';
 export const LEFT = 0;
 export const RIGHT = 1;
 
-const GRAVITY = 9.8;
+export const GRAVITY = 9.8;
 
 // gunswap の想定する体格(Siteswap.js の getDwellPosition / getElbowPosition より)
 const GUNSWAP_HAND_Y = 1.15;
@@ -58,6 +58,15 @@ export interface HandTrack {
   positions: THREE.Vector3[];
   palmNormals: THREE.Vector3[];
   holding: boolean[];
+  /** 指先の向き(クラブのハンドルを握る時など)。なければ体の側で決める */
+  fingerDirs?: THREE.Vector3[];
+}
+
+export interface ThrowEvent {
+  time: number; // 周期の中の時刻(秒)
+  hand: number;
+  value: number; // 投げの高さ(サイトスワップの数字)
+  velocity: THREE.Vector3; // リリース時のボールの速度
 }
 
 export interface Tracks {
@@ -65,11 +74,36 @@ export interface Tracks {
   stepDuration: number;
   period: number;
   props: THREE.Vector3[][];
+  /** 小道具のモデルの回転(指定がなければ gunswap の回転 × 基準回転を使う) */
+  propRotations?: THREE.Quaternion[][];
   hands: HandTrack[];
   /** 目で追う位置(次にキャッチするボールの、リリース点から頂点へ向かう途中) */
   gaze: THREE.Vector3[];
+  /** 投げの一覧(体の動きに使う) */
+  throws: ThrowEvent[];
   peakY: number;
   centerZ: number;
+}
+
+/** 小道具のモデルの基準の向き(gunswap の回転に掛ける) */
+export function propBaseQuaternion(type: string): THREE.Quaternion {
+  const q = new THREE.Quaternion(1, 0, 0, 0);
+  if (type === 'ring') q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2));
+  return q;
+}
+
+export function summarize(props: THREE.Vector3[][], transform: SpaceTransform) {
+  let peakY = -Infinity;
+  let sumZ = 0;
+  let count = 0;
+  props.forEach((track) =>
+    track.forEach((p) => {
+      peakY = Math.max(peakY, p.y);
+      sumZ += p.z;
+      count++;
+    })
+  );
+  return { peakY, centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale };
 }
 
 // 手のひらの傾き: 持っている時は手がボールに加える力(加速度 + 重力)の向きに手のひらを向ける
@@ -96,52 +130,46 @@ export function buildTracks(siteswap: any, transform: SpaceTransform): Tracks {
     return { positions, palmNormals, holding };
   });
 
-  const gaze = computeGazeTrack(siteswap.propPositions, props, numSteps);
+  const inAir: boolean[][] = siteswap.propPositions.map((track: any[]) => track.map((p) => p.dwell !== true));
+  const gaze = computeGazeTrack(inAir, props, numSteps);
 
-  let peakY = -Infinity;
-  let sumZ = 0;
-  let count = 0;
-  props.forEach((track) =>
-    track.forEach((p) => {
-      peakY = Math.max(peakY, p.y);
-      sumZ += p.z;
-      count++;
+  // 体の動き用: 手の中から空中に出たステップを投げとみなす
+  const throws: ThrowEvent[] = [];
+  inAir.forEach((air, i) =>
+    air.forEach((flying, s) => {
+      const prev = (s - 1 + numSteps) % numSteps;
+      if (!flying || air[prev]) return;
+      const next = (s + 1) % numSteps;
+      const velocity = props[i][next].clone().sub(props[i][s]).multiplyScalar(1 / stepDuration);
+      throws.push({ time: s * stepDuration, hand: props[i][s].x < 0 ? LEFT : RIGHT, value: 0, velocity });
     })
   );
+  throws.sort((a, b) => a.time - b.time);
 
-  return {
-    numSteps,
-    stepDuration,
-    period,
-    props,
-    hands,
-    gaze,
-    peakY,
-    centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale,
-  };
+  return { numSteps, stepDuration, period, props, hands, gaze, throws, ...summarize(props, transform) };
 }
 
 // 視線: 次にキャッチするボールについて、リリース点から頂点までの GAZE_TOWARD_APEX の位置を見る
 // (siteswap-performer の方式: https://github.com/aratama-ship-it/siteswap-performer)
 const GAZE_TOWARD_APEX = 0.78;
 
-function computeGazeTrack(raw: any[][], props: THREE.Vector3[][], numSteps: number): THREE.Vector3[] {
+export function computeGazeTrack(inAir: boolean[][], props: THREE.Vector3[][], numSteps: number): THREE.Vector3[] {
   const gaze: (THREE.Vector3 | undefined)[] = new Array(numSteps).fill(undefined);
   const remaining: number[] = new Array(numSteps).fill(Infinity);
 
-  raw.forEach((track, i) => {
-    const start = track.findIndex((p) => p.dwell === true);
+  inAir.forEach((air, i) => {
+    const start = air.findIndex((flying) => !flying);
     if (start < 0) return;
     // start(手の中)から 1 周して、空中にある区間(フライト)ごとに処理する
     let k = 0;
     while (k < numSteps) {
       const s = (start + k) % numSteps;
-      if (track[s].dwell === true) {
+      if (!air[s]) {
         k++;
         continue;
       }
       const flight: number[] = [];
-      while (k < numSteps && track[(start + k) % numSteps].dwell !== true) {
+      while (k < numSteps && air[(start + k) % numSteps]) {
         flight.push((start + k) % numSteps);
         k++;
       }
@@ -204,7 +232,7 @@ function computePalmNormals(positions: THREE.Vector3[], holding: boolean[], dt: 
 }
 
 // 周期的な配列に対する移動平均
-function boxSmooth(values: THREE.Vector3[], radius: number): THREE.Vector3[] {
+export function boxSmooth(values: THREE.Vector3[], radius: number): THREE.Vector3[] {
   const n = values.length;
   const result: THREE.Vector3[] = [];
   const sum = new THREE.Vector3();

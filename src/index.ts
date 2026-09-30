@@ -20,6 +20,23 @@ export const DEFAULT_MODEL_PATH = './models/default.vrm';
 // フレームが大きく飛んだ時(タブを裏にした時など)に動きが暴れないようにする上限(秒)
 const MAX_DELTA = 0.1;
 
+/**
+ * three-vrm 0.3.x の MToon シェーダーは、影を受ける部分が three.js r118 より古い書き方
+ * (directionalLight.shadow など)のため、影を有効にするとコンパイルに失敗してアバターが消える。
+ * アバターは影を落とすだけにして、影を受ける計算を外す。
+ */
+function disableMToonShadowReceive(material: THREE.Material) {
+  const shader = material as THREE.ShaderMaterial;
+  if (typeof shader.fragmentShader !== 'string') return;
+  const patched = shader.fragmentShader.replace(
+    /atten = all\( bvec2\( \w+Light\.shadow, directLight\.visible \) \) \? [^;]*;/g,
+    'atten = 1.0;'
+  );
+  if (patched === shader.fragmentShader) return;
+  shader.fragmentShader = patched;
+  shader.needsUpdate = true;
+}
+
 export default class VRMJuggler {
   private selector!: string;
   private renderer!: Renderer;
@@ -121,10 +138,21 @@ export default class VRMJuggler {
 
     this.body = new Body(vrm, scene);
     this.body.armAngle = Number(this.options.siteswap.armAngle);
-    this.body.enableBodyMotion = this.options.bodyMotion;
+    this.body.motionAmount = this.options.bodyMotion;
     this.body.enableNeck = this.options.neck;
     this.juggling.setAvatarMetrics(this.body.metrics);
     this.juggling.visible = true;
+    this.renderer.frameHeight(this.juggling.peakY);
+    // 床にアバターの影を落とす
+    vrm.scene.traverse((object) => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      // 表情(モーフ)を持つメッシュは影を落とさない。three.js r118 は影の描画でモーフの付け外しに失敗することがある
+      const geometry = mesh.geometry as THREE.BufferGeometry;
+      const hasMorph = !!geometry.morphAttributes && Object.keys(geometry.morphAttributes).length > 0;
+      mesh.castShadow = !hasMorph;
+      (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach(disableMToonShadowReceive);
+    });
 
     this.blink.init(vrm);
     this.facial.init(vrm);
@@ -162,7 +190,7 @@ export default class VRMJuggler {
         this.facial.update();
         this.vrm.update(delta);
       }
-      this.renderer.render();
+      this.renderer.render(delta);
     } catch (e) {
       // 1 回のエラーでアニメーションが止まらないようにする
       if (!this.loggedError) console.error(e);
@@ -250,6 +278,8 @@ export default class VRMJuggler {
 
   /** 自動で決まったテンポを設定値(パネルの表示)に反映する */
   private syncTempo() {
+    // パターンの高さが変わるので、頂点まで見えるようにカメラも合わせる
+    this.renderer.frameHeight(this.juggling.peakY);
     const siteswapOptions = this.options.siteswap;
     siteswapOptions.beatDuration = this.juggling.beatDuration;
     siteswapOptions.beatDurationAltitude = this.juggling.beatDuration.toFixed(3);
@@ -430,10 +460,10 @@ export default class VRMJuggler {
       });
 
     this.gui
-      .add(options, 'bodyMotion')
+      .add(options, 'bodyMotion', 0, 2)
       .name('体の動き')
-      .onChange((value: boolean) => {
-        if (this.body) this.body.enableBodyMotion = value;
+      .onChange((value: number) => {
+        if (this.body) this.body.motionAmount = Number(value);
       });
 
     if (!this.showGui) this.gui.hide();
