@@ -1,30 +1,22 @@
-import * as THREE from 'three';
-
 import { VRMSchema } from '@pixiv/three-vrm';
 
 export default class Blink {
-  private vrm!: any;
-  private enable: boolean = true;
-  private clock!: THREE.Clock;
-
-  constructor() {
-    this.clock = new THREE.Clock();
-  }
+  private vrm?: any;
+  private time = 0;
+  public enable: boolean = true;
 
   init(vrm: object) {
     this.vrm = vrm;
   }
 
   get blinkValue() {
-    return Math.sin((this.clock.elapsedTime * 1) / 3) ** 1024 + Math.sin((this.clock.elapsedTime * 4) / 7) ** 1024;
+    return Math.sin(this.time / 3) ** 1024 + Math.sin((this.time * 4) / 7) ** 1024;
   }
 
-  // フレーム毎回に呼ばれる
-  update = () => {
-    if (!this.enable) return;
-    const delta = this.clock.getDelta();
-
-    this.vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Blink, this.blinkValue);
-    this.vrm.update(delta);
+  // フレーム毎回に呼ばれる(vrm.update() は呼び出し側でまとめて 1 回だけ行う)
+  update = (delta: number) => {
+    if (!this.vrm) return;
+    this.time += delta;
+    this.vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Blink, this.enable ? this.blinkValue : 0);
   };
 }

@@ -34,6 +34,8 @@ var flightPathCache = {};
 
 /* CONSTANTS */
 
+var ONE_TOSS_MAX_DWELL_RATIO = 0.5;
+
 var LEFT = 0,
   RIGHT = 1;
 
@@ -526,6 +528,11 @@ export const CreateSiteswap = function (siteswapStr, options) {
         dwellDuration = siteswap.beatDuration * parseFloat(siteswapStr.substring(dIx + 2, siteswapStr.indexOf('}')));
       } else {
         dwellDuration = siteswap.dwellDuration;
+        // '1' は手から手への受け渡しなので、持つ時間を短くして空中時間を確保する
+        // (dwellRatio のままだと空中時間が 0.05 秒ほどになり、ボールと手が高速で振り回される)
+        if (numBeats == 1 && !sync) {
+          dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * ONE_TOSS_MAX_DWELL_RATIO);
+        }
       }
 
       var numBounces = 0;
@@ -1835,7 +1842,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
         noGA: false,
       };
 
-      ga = new BounceGA(gaConfig, fitnessConfig);
+      var ga = new BounceGA(gaConfig, fitnessConfig);
       ga.evolve();
 
       if (!ga.ableToFindSolution) {

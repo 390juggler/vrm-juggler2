@@ -2640,1196 +2640,6 @@ var index = {
 
 /***/ }),
 
-/***/ "./node_modules/three-ik/build/three-ik.module.js":
-/*!********************************************************!*\
-  !*** ./node_modules/three-ik/build/three-ik.module.js ***!
-  \********************************************************/
-/*! exports provided: IK, IKChain, IKJoint, IKBallConstraint, IKHelper */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IK", function() { return IK; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IKChain", function() { return IKChain; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IKJoint", function() { return IKJoint; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IKBallConstraint", function() { return IKBallConstraint; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IKHelper", function() { return IKHelper; });
-/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-
-
-var t1 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-var t2 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-var t3 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-var m1 = new three__WEBPACK_IMPORTED_MODULE_0__["Matrix4"]();
-function getWorldPosition(object, target) {
-  return target.setFromMatrixPosition(object.matrixWorld);
-}
-
-function getCentroid(positions, target) {
-  target.set(0, 0, 0);
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-  try {
-    for (var _iterator = positions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var position = _step.value;
-      target.add(position);
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-  target.divideScalar(positions.length);
-  return target;
-}
-function setQuaternionFromDirection(direction, up, target) {
-  var x = t1;
-  var y = t2;
-  var z = t3;
-  var m = m1;
-  var el = m1.elements;
-  z.copy(direction);
-  x.crossVectors(up, z);
-  if (x.lengthSq() === 0) {
-    if (Math.abs(up.z) === 1) {
-      z.x += 0.0001;
-    } else {
-      z.z += 0.0001;
-    }
-    z.normalize();
-    x.crossVectors(up, z);
-  }
-  x.normalize();
-  y.crossVectors(z, x);
-  el[0] = x.x;el[4] = y.x;el[8] = z.x;
-  el[1] = x.y;el[5] = y.y;el[9] = z.y;
-  el[2] = x.z;el[6] = y.z;el[10] = z.z;
-  target.setFromRotationMatrix(m);
-}
-function transformPoint(vector, matrix, target) {
-  var e = matrix.elements;
-  var x = vector.x * e[0] + vector.y * e[4] + vector.z * e[8] + e[12];
-  var y = vector.x * e[1] + vector.y * e[5] + vector.z * e[9] + e[13];
-  var z = vector.x * e[2] + vector.y * e[6] + vector.z * e[10] + e[14];
-  var w = vector.x * e[3] + vector.y * e[7] + vector.z * e[11] + e[15];
-  target.set(x / w, y / w, z / w);
-}
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-
-
-
-
-var asyncGenerator = function () {
-  function AwaitValue(value) {
-    this.value = value;
-  }
-
-  function AsyncGenerator(gen) {
-    var front, back;
-
-    function send(key, arg) {
-      return new Promise(function (resolve, reject) {
-        var request = {
-          key: key,
-          arg: arg,
-          resolve: resolve,
-          reject: reject,
-          next: null
-        };
-
-        if (back) {
-          back = back.next = request;
-        } else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
-
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
-
-        if (value instanceof AwaitValue) {
-          Promise.resolve(value.value).then(function (arg) {
-            resume("next", arg);
-          }, function (arg) {
-            resume("throw", arg);
-          });
-        } else {
-          settle(result.done ? "return" : "normal", result.value);
-        }
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
-
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value: value,
-            done: true
-          });
-          break;
-
-        case "throw":
-          front.reject(value);
-          break;
-
-        default:
-          front.resolve({
-            value: value,
-            done: false
-          });
-          break;
-      }
-
-      front = front.next;
-
-      if (front) {
-        resume(front.key, front.arg);
-      } else {
-        back = null;
-      }
-    }
-
-    this._invoke = send;
-
-    if (typeof gen.return !== "function") {
-      this.return = undefined;
-    }
-  }
-
-  if (typeof Symbol === "function" && Symbol.asyncIterator) {
-    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
-      return this;
-    };
-  }
-
-  AsyncGenerator.prototype.next = function (arg) {
-    return this._invoke("next", arg);
-  };
-
-  AsyncGenerator.prototype.throw = function (arg) {
-    return this._invoke("throw", arg);
-  };
-
-  AsyncGenerator.prototype.return = function (arg) {
-    return this._invoke("return", arg);
-  };
-
-  return {
-    wrap: function (fn) {
-      return function () {
-        return new AsyncGenerator(fn.apply(this, arguments));
-      };
-    },
-    await: function (value) {
-      return new AwaitValue(value);
-    }
-  };
-}();
-
-
-
-
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-
-
-
-
-
-
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
-
-var inherits = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-};
-
-
-
-
-
-
-
-
-
-
-
-var possibleConstructorReturn = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-
-
-
-
-
-var slicedToArray = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if (Symbol.iterator in Object(arr)) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
-
-var Z_AXIS = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 1);
-var DEG2RAD = three__WEBPACK_IMPORTED_MODULE_0__["Math"].DEG2RAD;
-var RAD2DEG = three__WEBPACK_IMPORTED_MODULE_0__["Math"].RAD2DEG;
-var IKBallConstraint = function () {
-  function IKBallConstraint(angle) {
-    classCallCheck(this, IKBallConstraint);
-    this.angle = angle;
-  }
-  createClass(IKBallConstraint, [{
-    key: '_apply',
-    value: function _apply(joint) {
-      var direction = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(joint._getDirection());
-      var parentDirection = joint._localToWorldDirection(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(Z_AXIS)).normalize();
-      var currentAngle = direction.angleTo(parentDirection) * RAD2DEG;
-      if (this.angle / 2 < currentAngle) {
-        direction.normalize();
-        var correctionAxis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(parentDirection, direction).normalize();
-        parentDirection.applyAxisAngle(correctionAxis, this.angle * DEG2RAD * 0.5);
-        joint._setDirection(parentDirection);
-        return true;
-      }
-      return false;
-    }
-  }]);
-  return IKBallConstraint;
-}();
-
-var Y_AXIS = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0);
-var IKJoint = function () {
-  function IKJoint(bone) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        constraints = _ref.constraints;
-    classCallCheck(this, IKJoint);
-    this.constraints = constraints || [];
-    this.bone = bone;
-    this.distance = 0;
-    this._originalDirection = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-    this._direction = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-    this._worldPosition = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-    this._isSubBase = false;
-    this._subBasePositions = null;
-    this.isIKJoint = true;
-    this._updateWorldPosition();
-  }
-  createClass(IKJoint, [{
-    key: '_setIsSubBase',
-    value: function _setIsSubBase() {
-      this._isSubBase = true;
-      this._subBasePositions = [];
-    }
-  }, {
-    key: '_applySubBasePositions',
-    value: function _applySubBasePositions() {
-      if (this._subBasePositions.length === 0) {
-        return;
-      }
-      getCentroid(this._subBasePositions, this._worldPosition);
-      this._subBasePositions.length = 0;
-    }
-  }, {
-    key: '_applyConstraints',
-    value: function _applyConstraints() {
-      if (!this.constraints) {
-        return;
-      }
-      var constraintApplied = false;
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-      try {
-        for (var _iterator = this.constraints[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var constraint = _step.value;
-          if (constraint && constraint._apply) {
-            var applied = constraint._apply(this);
-            constraintApplied = constraintApplied || applied;
-          }
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-      return constraintApplied;
-    }
-  }, {
-    key: '_setDistance',
-    value: function _setDistance(distance) {
-      this.distance = distance;
-    }
-  }, {
-    key: '_getDirection',
-    value: function _getDirection() {
-      return this._direction;
-    }
-  }, {
-    key: '_setDirection',
-    value: function _setDirection(direction) {
-      this._direction.copy(direction);
-    }
-  }, {
-    key: '_getDistance',
-    value: function _getDistance() {
-      return this.distance;
-    }
-  }, {
-    key: '_updateMatrixWorld',
-    value: function _updateMatrixWorld() {
-      this.bone.updateMatrixWorld(true);
-    }
-  }, {
-    key: '_getWorldPosition',
-    value: function _getWorldPosition() {
-      return this._worldPosition;
-    }
-  }, {
-    key: '_getWorldDirection',
-    value: function _getWorldDirection(joint) {
-      return new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().subVectors(this._getWorldPosition(), joint._getWorldPosition()).normalize();
-    }
-  }, {
-    key: '_updateWorldPosition',
-    value: function _updateWorldPosition() {
-      getWorldPosition(this.bone, this._worldPosition);
-    }
-  }, {
-    key: '_setWorldPosition',
-    value: function _setWorldPosition(position) {
-      this._worldPosition.copy(position);
-    }
-  }, {
-    key: '_localToWorldDirection',
-    value: function _localToWorldDirection(direction) {
-      if (this.bone.parent) {
-        var parent = this.bone.parent.matrixWorld;
-        direction.transformDirection(parent);
-      }
-      return direction;
-    }
-  }, {
-    key: '_worldToLocalDirection',
-    value: function _worldToLocalDirection(direction) {
-      if (this.bone.parent) {
-        var inverseParent = new three__WEBPACK_IMPORTED_MODULE_0__["Matrix4"]().getInverse(this.bone.parent.matrixWorld);
-        direction.transformDirection(inverseParent);
-      }
-      return direction;
-    }
-  }, {
-    key: '_applyWorldPosition',
-    value: function _applyWorldPosition() {
-      var direction = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(this._direction);
-      var position = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(this._getWorldPosition());
-      var parent = this.bone.parent;
-      if (parent) {
-        this._updateMatrixWorld();
-        var inverseParent = new three__WEBPACK_IMPORTED_MODULE_0__["Matrix4"]().getInverse(this.bone.parent.matrixWorld);
-        transformPoint(position, inverseParent, position);
-        this.bone.position.copy(position);
-        this._updateMatrixWorld();
-        this._worldToLocalDirection(direction);
-        setQuaternionFromDirection(direction, Y_AXIS, this.bone.quaternion);
-      } else {
-        this.bone.position.copy(position);
-      }
-      this.bone.updateMatrix();
-      this._updateMatrixWorld();
-    }
-  }, {
-    key: '_getWorldDistance',
-    value: function _getWorldDistance(joint) {
-      return this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()));
-    }
-  }]);
-  return IKJoint;
-}();
-
-var IKChain = function () {
-  function IKChain() {
-    classCallCheck(this, IKChain);
-    this.isIKChain = true;
-    this.totalLengths = 0;
-    this.base = null;
-    this.effector = null;
-    this.effectorIndex = null;
-    this.chains = new Map();
-    this.origin = null;
-    this.iterations = 100;
-    this.tolerance = 0.01;
-    this._depth = -1;
-    this._targetPosition = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
-  }
-  createClass(IKChain, [{
-    key: 'add',
-    value: function add(joint) {
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          target = _ref.target;
-      if (this.effector) {
-        throw new Error('Cannot add additional joints to a chain with an end effector.');
-      }
-      if (!joint.isIKJoint) {
-        if (joint.isBone) {
-          joint = new IKJoint(joint);
-        } else {
-          throw new Error('Invalid joint in an IKChain. Must be an IKJoint or a THREE.Bone.');
-        }
-      }
-      this.joints = this.joints || [];
-      this.joints.push(joint);
-      if (this.joints.length === 1) {
-        this.base = this.joints[0];
-        this.origin = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(this.base._getWorldPosition());
-      }
-      else {
-          var previousJoint = this.joints[this.joints.length - 2];
-          previousJoint._updateMatrixWorld();
-          previousJoint._updateWorldPosition();
-          joint._updateWorldPosition();
-          var distance = previousJoint._getWorldDistance(joint);
-          if (distance === 0) {
-            throw new Error('bone with 0 distance between adjacent bone found');
-          }
-          joint._setDistance(distance);
-          joint._updateWorldPosition();
-          var direction = previousJoint._getWorldDirection(joint);
-          previousJoint._originalDirection = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(direction);
-          joint._originalDirection = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(direction);
-          this.totalLengths += distance;
-        }
-      if (target) {
-        this.effector = joint;
-        this.effectorIndex = joint;
-        this.target = target;
-      }
-      return this;
-    }
-  }, {
-    key: '_hasEffector',
-    value: function _hasEffector() {
-      return !!this.effector;
-    }
-  }, {
-    key: '_getDistanceFromTarget',
-    value: function _getDistanceFromTarget() {
-      return this._hasEffector() ? this.effector._getWorldDistance(this.target) : -1;
-    }
-  }, {
-    key: 'connect',
-    value: function connect(chain) {
-      if (!chain.isIKChain) {
-        throw new Error('Invalid connection in an IKChain. Must be an IKChain.');
-      }
-      if (!chain.base.isIKJoint) {
-        throw new Error('Connecting chain does not have a base joint.');
-      }
-      var index = this.joints.indexOf(chain.base);
-      if (this.target && index === this.joints.length - 1) {
-        throw new Error('Cannot append a chain to an end joint in a chain with a target.');
-      }
-      if (index === -1) {
-        throw new Error('Cannot connect chain that does not have a base joint in parent chain.');
-      }
-      this.joints[index]._setIsSubBase();
-      var chains = this.chains.get(index);
-      if (!chains) {
-        chains = [];
-        this.chains.set(index, chains);
-      }
-      chains.push(chain);
-      return this;
-    }
-  }, {
-    key: '_updateJointWorldPositions',
-    value: function _updateJointWorldPositions() {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-      try {
-        for (var _iterator = this.joints[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var joint = _step.value;
-          joint._updateWorldPosition();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-  }, {
-    key: '_forward',
-    value: function _forward() {
-      this.origin.copy(this.base._getWorldPosition());
-      if (this.target) {
-        this._targetPosition.setFromMatrixPosition(this.target.matrixWorld);
-        this.effector._setWorldPosition(this._targetPosition);
-      } else if (!this.joints[this.joints.length - 1]._isSubBase) {
-        return;
-      }
-      for (var i = 1; i < this.joints.length; i++) {
-        var joint = this.joints[i];
-        if (joint._isSubBase) {
-          joint._applySubBasePositions();
-        }
-      }
-      for (var _i = this.joints.length - 1; _i > 0; _i--) {
-        var _joint = this.joints[_i];
-        var prevJoint = this.joints[_i - 1];
-        var direction = prevJoint._getWorldDirection(_joint);
-        var worldPosition = direction.multiplyScalar(_joint.distance).add(_joint._getWorldPosition());
-        if (prevJoint === this.base && this.base._isSubBase) {
-          this.base._subBasePositions.push(worldPosition);
-        } else {
-          prevJoint._setWorldPosition(worldPosition);
-        }
-      }
-    }
-  }, {
-    key: '_backward',
-    value: function _backward() {
-      if (!this.base._isSubBase) {
-        this.base._setWorldPosition(this.origin);
-      }
-      for (var i = 0; i < this.joints.length - 1; i++) {
-        var joint = this.joints[i];
-        var nextJoint = this.joints[i + 1];
-        var jointWorldPosition = joint._getWorldPosition();
-        var direction = nextJoint._getWorldDirection(joint);
-        joint._setDirection(direction);
-        joint._applyConstraints();
-        direction.copy(joint._direction);
-        if (!(this.base === joint && joint._isSubBase)) {
-          joint._applyWorldPosition();
-        }
-        nextJoint._setWorldPosition(direction.multiplyScalar(nextJoint.distance).add(jointWorldPosition));
-        if (i === this.joints.length - 2) {
-          if (nextJoint !== this.effector) {
-            nextJoint._setDirection(direction);
-          }
-          nextJoint._applyWorldPosition();
-        }
-      }
-      return this._getDistanceFromTarget();
-    }
-  }]);
-  return IKChain;
-}();
-
-var IK = function () {
-  function IK() {
-    classCallCheck(this, IK);
-    this.chains = [];
-    this._needsRecalculated = true;
-    this.isIK = true;
-    this._orderedChains = null;
-  }
-  createClass(IK, [{
-    key: 'add',
-    value: function add(chain) {
-      if (!chain.isIKChain) {
-        throw new Error('Argument is not an IKChain.');
-      }
-      this.chains.push(chain);
-    }
-  }, {
-    key: 'recalculate',
-    value: function recalculate() {
-      this._orderedChains = [];
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-      try {
-        for (var _iterator = this.chains[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var rootChain = _step.value;
-          var orderedChains = [];
-          this._orderedChains.push(orderedChains);
-          var chainsToSave = [rootChain];
-          while (chainsToSave.length) {
-            var chain = chainsToSave.shift();
-            orderedChains.push(chain);
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-            try {
-              for (var _iterator2 = chain.chains.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var subChains = _step2.value;
-                var _iteratorNormalCompletion3 = true;
-                var _didIteratorError3 = false;
-                var _iteratorError3 = undefined;
-                try {
-                  for (var _iterator3 = subChains[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var subChain = _step3.value;
-                    if (chainsToSave.indexOf(subChain) !== -1) {
-                      throw new Error('Recursive chain structure detected.');
-                    }
-                    chainsToSave.push(subChain);
-                  }
-                } catch (err) {
-                  _didIteratorError3 = true;
-                  _iteratorError3 = err;
-                } finally {
-                  try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                      _iterator3.return();
-                    }
-                  } finally {
-                    if (_didIteratorError3) {
-                      throw _iteratorError3;
-                    }
-                  }
-                }
-              }
-            } catch (err) {
-              _didIteratorError2 = true;
-              _iteratorError2 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                  _iterator2.return();
-                }
-              } finally {
-                if (_didIteratorError2) {
-                  throw _iteratorError2;
-                }
-              }
-            }
-          }
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-  }, {
-    key: 'solve',
-    value: function solve() {
-      if (!this._orderedChains) {
-        this.recalculate();
-      }
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-      try {
-        for (var _iterator4 = this._orderedChains[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var subChains = _step4.value;
-          var iterations = 1;
-          while (iterations > 0) {
-            for (var i = subChains.length - 1; i >= 0; i--) {
-              subChains[i]._updateJointWorldPositions();
-            }
-            for (var _i = subChains.length - 1; _i >= 0; _i--) {
-              subChains[_i]._forward();
-            }
-            var withinTolerance = true;
-            for (var _i2 = 0; _i2 < subChains.length; _i2++) {
-              var distanceFromTarget = subChains[_i2]._backward();
-              if (distanceFromTarget > this.tolerance) {
-                withinTolerance = false;
-              }
-            }
-            if (withinTolerance) {
-              break;
-            }
-            iterations--;
-            
-          }
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-    }
-  }, {
-    key: 'getRootBone',
-    value: function getRootBone() {
-      return this.chains[0].base.bone;
-    }
-  }]);
-  return IK;
-}();
-
-var BoneHelper = function (_Object3D) {
-  inherits(BoneHelper, _Object3D);
-  function BoneHelper(height, boneSize, axesSize) {
-    classCallCheck(this, BoneHelper);
-    var _this = possibleConstructorReturn(this, (BoneHelper.__proto__ || Object.getPrototypeOf(BoneHelper)).call(this));
-    if (height !== 0) {
-      var geo = new three__WEBPACK_IMPORTED_MODULE_0__["ConeBufferGeometry"](boneSize, height, 4);
-      geo.applyMatrix(new three__WEBPACK_IMPORTED_MODULE_0__["Matrix4"]().makeRotationAxis(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0), Math.PI / 2));
-      _this.boneMesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geo, new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-        color: 0xff0000,
-        wireframe: true,
-        depthTest: false,
-        depthWrite: false
-      }));
-    } else {
-      _this.boneMesh = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
-    }
-    _this.boneMesh.position.z = height / 2;
-    _this.add(_this.boneMesh);
-    _this.axesHelper = new three__WEBPACK_IMPORTED_MODULE_0__["AxesHelper"](axesSize);
-    _this.add(_this.axesHelper);
-    return _this;
-  }
-  return BoneHelper;
-}(three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]);
-var IKHelper = function (_Object3D2) {
-  inherits(IKHelper, _Object3D2);
-  function IKHelper(ik) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        color = _ref.color,
-        showBones = _ref.showBones,
-        boneSize = _ref.boneSize,
-        showAxes = _ref.showAxes,
-        axesSize = _ref.axesSize,
-        wireframe = _ref.wireframe;
-    classCallCheck(this, IKHelper);
-    var _this2 = possibleConstructorReturn(this, (IKHelper.__proto__ || Object.getPrototypeOf(IKHelper)).call(this));
-    boneSize = boneSize || 0.1;
-    axesSize = axesSize || 0.2;
-    if (!ik.isIK) {
-      throw new Error('IKHelper must receive an IK instance.');
-    }
-    _this2.ik = ik;
-    _this2._meshes = new Map();
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-    try {
-      for (var _iterator = _this2.ik.chains[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var rootChain = _step.value;
-        var chainsToMeshify = [rootChain];
-        while (chainsToMeshify.length) {
-          var chain = chainsToMeshify.shift();
-          for (var i = 0; i < chain.joints.length; i++) {
-            var joint = chain.joints[i];
-            var nextJoint = chain.joints[i + 1];
-            var distance = nextJoint ? nextJoint.distance : 0;
-            if (chain.base === joint && chain !== rootChain) {
-              continue;
-            }
-            var mesh = new BoneHelper(distance, boneSize, axesSize);
-            mesh.matrixAutoUpdate = false;
-            _this2._meshes.set(joint, mesh);
-            _this2.add(mesh);
-          }
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
-          try {
-            for (var _iterator2 = chain.chains.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var subChains = _step2.value;
-              var _iteratorNormalCompletion3 = true;
-              var _didIteratorError3 = false;
-              var _iteratorError3 = undefined;
-              try {
-                for (var _iterator3 = subChains[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                  var subChain = _step3.value;
-                  chainsToMeshify.push(subChain);
-                }
-              } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-              } finally {
-                try {
-                  if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                    _iterator3.return();
-                  }
-                } finally {
-                  if (_didIteratorError3) {
-                    throw _iteratorError3;
-                  }
-                }
-              }
-            }
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
-          }
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-    _this2.showBones = showBones !== undefined ? showBones : true;
-    _this2.showAxes = showAxes !== undefined ? showAxes : true;
-    _this2.wireframe = wireframe !== undefined ? wireframe : true;
-    _this2.color = color || new three__WEBPACK_IMPORTED_MODULE_0__["Color"](0xff0077);
-    return _this2;
-  }
-  createClass(IKHelper, [{
-    key: 'updateMatrixWorld',
-    value: function updateMatrixWorld(force) {
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-      try {
-        for (var _iterator4 = this._meshes[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var _ref2 = _step4.value;
-          var _ref3 = slicedToArray(_ref2, 2);
-          var joint = _ref3[0];
-          var mesh = _ref3[1];
-          mesh.matrix.copy(joint.bone.matrixWorld);
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-      get(IKHelper.prototype.__proto__ || Object.getPrototypeOf(IKHelper.prototype), 'updateMatrixWorld', this).call(this, force);
-    }
-  }, {
-    key: 'showBones',
-    get: function get$$1() {
-      return this._showBones;
-    },
-    set: function set$$1(showBones) {
-      if (showBones === this._showBones) {
-        return;
-      }
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
-      try {
-        for (var _iterator5 = this._meshes[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var _ref4 = _step5.value;
-          var _ref5 = slicedToArray(_ref4, 2);
-          var mesh = _ref5[1];
-          if (showBones) {
-            mesh.add(mesh.boneMesh);
-          } else {
-            mesh.remove(mesh.boneMesh);
-          }
-        }
-      } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
-          }
-        } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
-          }
-        }
-      }
-      this._showBones = showBones;
-    }
-  }, {
-    key: 'showAxes',
-    get: function get$$1() {
-      return this._showAxes;
-    },
-    set: function set$$1(showAxes) {
-      if (showAxes === this._showAxes) {
-        return;
-      }
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
-      try {
-        for (var _iterator6 = this._meshes[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var _ref6 = _step6.value;
-          var _ref7 = slicedToArray(_ref6, 2);
-          var mesh = _ref7[1];
-          if (showAxes) {
-            mesh.add(mesh.axesHelper);
-          } else {
-            mesh.remove(mesh.axesHelper);
-          }
-        }
-      } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-            _iterator6.return();
-          }
-        } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
-          }
-        }
-      }
-      this._showAxes = showAxes;
-    }
-  }, {
-    key: 'wireframe',
-    get: function get$$1() {
-      return this._wireframe;
-    },
-    set: function set$$1(wireframe) {
-      if (wireframe === this._wireframe) {
-        return;
-      }
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
-      try {
-        for (var _iterator7 = this._meshes[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var _ref8 = _step7.value;
-          var _ref9 = slicedToArray(_ref8, 2);
-          var mesh = _ref9[1];
-          if (mesh.boneMesh.material) {
-            mesh.boneMesh.material.wireframe = wireframe;
-          }
-        }
-      } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion7 && _iterator7.return) {
-            _iterator7.return();
-          }
-        } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
-          }
-        }
-      }
-      this._wireframe = wireframe;
-    }
-  }, {
-    key: 'color',
-    get: function get$$1() {
-      return this._color;
-    },
-    set: function set$$1(color) {
-      if (this._color && this._color.equals(color)) {
-        return;
-      }
-      color = color && color.isColor ? color : new three__WEBPACK_IMPORTED_MODULE_0__["Color"](color);
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
-      try {
-        for (var _iterator8 = this._meshes[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var _ref10 = _step8.value;
-          var _ref11 = slicedToArray(_ref10, 2);
-          var mesh = _ref11[1];
-          if (mesh.boneMesh.material) {
-            mesh.boneMesh.material.color = color;
-          }
-        }
-      } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion8 && _iterator8.return) {
-            _iterator8.return();
-          }
-        } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
-          }
-        }
-      }
-      this._color = color;
-    }
-  }]);
-  return IKHelper;
-}(three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]);
-
-if (typeof window !== 'undefined' && _typeof(window.THREE) === 'object') {
-  window.THREE.IK = IK;
-  window.THREE.IKChain = IKChain;
-  window.THREE.IKJoint = IKJoint;
-  window.THREE.IKBallConstraint = IKBallConstraint;
-  window.THREE.IKHelper = IKHelper;
-}
-
-
-
-
-/***/ }),
-
 /***/ "./node_modules/three/build/three.module.js":
 /*!**************************************************!*\
   !*** ./node_modules/three/build/three.module.js ***!
@@ -60545,10 +59355,6 @@ var Renderer = /** @class */ (function () {
             //light.position.set(2, 2, -2).normalize();
             //this.scene.add(light);
         };
-        this.animate = function () {
-            requestAnimationFrame(_this.animate);
-            _this.render();
-        };
         this.render = function () {
             _this.resize();
             _this.controls.update();
@@ -60582,11 +59388,12 @@ var Renderer = /** @class */ (function () {
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! exports provided: default */
+/*! exports provided: DEFAULT_MODEL_PATH, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_MODEL_PATH", function() { return DEFAULT_MODEL_PATH; });
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 /* harmony import */ var three_examples_jsm_loaders_GLTFLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! three/examples/jsm/loaders/GLTFLoader */ "./node_modules/three/examples/jsm/loaders/GLTFLoader.js");
 /* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixiv/three-vrm */ "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js");
@@ -60595,141 +59402,273 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interface_window__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./interface/window */ "./src/interface/window.ts");
 /* harmony import */ var _classes_Renderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./classes/Renderer */ "./src/classes/Renderer.ts");
 /* harmony import */ var _motion_juggling__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./motion/juggling */ "./src/motion/juggling/index.ts");
-/* harmony import */ var _motion_blink__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./motion/blink */ "./src/motion/blink/index.ts");
-/* harmony import */ var _motion_facial__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./motion/facial */ "./src/motion/facial/index.ts");
-/* harmony import */ var _options_index__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./options/index */ "./src/options/index.ts");
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
+/* harmony import */ var _motion_body__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./motion/body */ "./src/motion/body/index.ts");
+/* harmony import */ var _motion_blink__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./motion/blink */ "./src/motion/blink/index.ts");
+/* harmony import */ var _motion_facial__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./motion/facial */ "./src/motion/facial/index.ts");
+/* harmony import */ var _options_index__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./options/index */ "./src/options/index.ts");
 
 
 
 
 
 
-//import VRMLoader from './classes/VRMLoader';
 
 
 
 
+
+// モデルを指定しなかった時に読み込む VRM(ページからの相対パス)
+var DEFAULT_MODEL_PATH = './models/default.vrm';
+// フレームが大きく飛んだ時(タブを裏にした時など)に動きが暴れないようにする上限(秒)
+var MAX_DELTA = 0.1;
 var VRMJuggler = /** @class */ (function () {
     function VRMJuggler(selector, modelPath) {
         var _this = this;
         if (selector === void 0) { selector = ''; }
-        if (modelPath === void 0) { modelPath = ''; }
+        if (modelPath === void 0) { modelPath = DEFAULT_MODEL_PATH; }
+        this.clock = new three__WEBPACK_IMPORTED_MODULE_0__["Clock"]();
+        this.loadId = 0;
         this.showGui = false;
+        this.messageKind = 'none';
+        this.loggedError = false;
         this.animate = function () {
-            for (var i = 0; i < _this.animates.length; i++) {
-                _this.animates[i]();
-            }
             requestAnimationFrame(_this.animate);
+            var delta = Math.min(_this.clock.getDelta(), MAX_DELTA);
+            try {
+                if (_this.vrm && _this.body) {
+                    var frame = _this.juggling.update(delta);
+                    _this.body.update(frame, delta);
+                    _this.blink.update(delta);
+                    _this.facial.update();
+                    _this.vrm.update(delta);
+                }
+                _this.renderer.render();
+            }
+            catch (e) {
+                // 1 回のエラーでアニメーションが止まらないようにする
+                if (!_this.loggedError)
+                    console.error(e);
+                _this.loggedError = true;
+            }
         };
-        if (selector === '' || modelPath === '')
+        this.switchGUI = function (e) {
+            if (e.key !== 'Escape' && e.keyCode !== 27)
+                return;
+            _this.showGui = !_this.showGui;
+            if (_this.showGui) {
+                _this.gui.show();
+            }
+            else {
+                _this.gui.hide();
+            }
+        };
+        if (selector === '')
             return;
         this.selector = selector;
-        this.modelPath = modelPath;
-        this.animates = [];
-        this.options = new _options_index__WEBPACK_IMPORTED_MODULE_9__["default"]();
-        this.init();
+        this.options = new _options_index__WEBPACK_IMPORTED_MODULE_10__["default"]();
+        this.renderer = new _classes_Renderer__WEBPACK_IMPORTED_MODULE_5__["default"](this.selector);
+        if (!this.renderer.container) {
+            console.error("VRMJuggler: " + selector + " \u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093");
+            return;
+        }
+        this.createMessageArea(this.renderer.container);
+        this.juggling = new _motion_juggling__WEBPACK_IMPORTED_MODULE_6__["default"](this.renderer.scene, this.options.siteswapNums, this.options.siteswap);
+        this.juggling.visible = false;
+        this.juggling.speed = this.options.speed;
+        this.blink = new _motion_blink__WEBPACK_IMPORTED_MODULE_8__["default"]();
+        this.facial = new _motion_facial__WEBPACK_IMPORTED_MODULE_9__["default"](this.options.facial);
+        this.createGUI();
+        document.addEventListener('keyup', this.switchGUI, false);
+        this.loadModel(modelPath || DEFAULT_MODEL_PATH);
         this.animate();
     }
-    VRMJuggler.prototype.init = function () {
-        this.renderer = new _classes_Renderer__WEBPACK_IMPORTED_MODULE_5__["default"](this.selector);
-        this.addAnimates(this.renderer.render);
-        this.juggling = new _motion_juggling__WEBPACK_IMPORTED_MODULE_6__["default"](String(this.options.siteswapNums), this.options.siteswap);
-        this.blink = new _motion_blink__WEBPACK_IMPORTED_MODULE_7__["default"]();
-        this.facial = new _motion_facial__WEBPACK_IMPORTED_MODULE_8__["default"](this.options.facial);
-        this.loadModel();
-        //this.renderer.scene.add(res.scene);
-        this.createGUI();
-        document.addEventListener('keyup', this.switchGUI.bind(this), false);
-    };
-    VRMJuggler.prototype.loadModel = function () {
+    /**
+     * VRM を読み込んで差し替える。何度呼んでもよい(前のモデルは破棄される)。
+     */
+    VRMJuggler.prototype.loadModel = function (modelPath) {
         var _this = this;
-        var loader = new three_examples_jsm_loaders_GLTFLoader__WEBPACK_IMPORTED_MODULE_1__["GLTFLoader"]();
-        loader.load(this.modelPath, function (gltf) { return __awaiter(_this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_a) {
-                _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRM"].from(gltf).then(function (vrm) {
-                    _this.renderer.scene.add(vrm.scene);
-                    _this.juggling.init(vrm, _this.renderer.scene, _this.renderer.camera);
-                    _this.addAnimates(_this.juggling.update);
-                    _this.blink.init(vrm);
-                    _this.addAnimates(_this.blink.update);
-                    _this.facial.init(vrm);
-                    _this.addAnimates(_this.facial.update);
-                });
-                return [2 /*return*/];
-            });
-        }); });
+        var loadId = ++this.loadId;
+        if (this.messageKind !== 'error')
+            this.showMessage('モデルを読み込んでいます…');
+        return new Promise(function (resolve) {
+            var onError = function (error) {
+                if (loadId !== _this.loadId)
+                    return resolve(false);
+                console.error(error);
+                _this.showMessage('VRM を読み込めませんでした。VRM 0.x 形式のファイルか確認してください。' +
+                    (_this.vrm ? '(前のモデルのまま続けます)' : ''), true);
+                resolve(false);
+            };
+            new three_examples_jsm_loaders_GLTFLoader__WEBPACK_IMPORTED_MODULE_1__["GLTFLoader"]().load(modelPath, function (gltf) {
+                _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRM"].from(gltf)
+                    .then(function (vrm) {
+                    // 読み込み中に別のモデルが指定された場合は捨てる
+                    if (loadId !== _this.loadId) {
+                        vrm.dispose();
+                        return resolve(false);
+                    }
+                    _this.setVRM(vrm);
+                    if (_this.messageKind === 'loading')
+                        _this.clearMessage();
+                    resolve(true);
+                })
+                    .catch(onError);
+            }, function (progress) {
+                if (loadId !== _this.loadId || !progress.total || _this.messageKind === 'error')
+                    return;
+                var percent = Math.floor((progress.loaded / progress.total) * 100);
+                _this.showMessage("\u30E2\u30C7\u30EB\u3092\u8AAD\u307F\u8FBC\u3093\u3067\u3044\u307E\u3059\u2026 " + percent + "%");
+            }, onError);
+        });
     };
-    VRMJuggler.prototype.addAnimates = function (fn) {
-        this.animates.push(fn);
+    VRMJuggler.prototype.setVRM = function (vrm) {
+        var _a;
+        var scene = this.renderer.scene;
+        if (this.vrm) {
+            scene.remove(this.vrm.scene);
+            (_a = this.body) === null || _a === void 0 ? void 0 : _a.dispose(scene);
+            this.vrm.dispose();
+        }
+        this.vrm = vrm;
+        scene.add(vrm.scene);
+        this.body = new _motion_body__WEBPACK_IMPORTED_MODULE_7__["default"](vrm, scene);
+        this.body.armAngle = Number(this.options.siteswap.armAngle);
+        this.body.enableBodyMotion = this.options.bodyMotion;
+        this.body.enableNeck = this.options.neck;
+        this.juggling.setAvatarMetrics(this.body.metrics);
+        this.juggling.visible = true;
+        this.blink.init(vrm);
+        this.facial.init(vrm);
+    };
+    /**
+     * サイトスワップを変更する。投げられないパターンの場合は今のパターンのまま、理由を画面に表示する。
+     */
+    VRMJuggler.prototype.setSiteswap = function (siteswap) {
+        var _a, _b;
+        var result = this.juggling.setPattern(siteswap, this.options.siteswap);
+        if (result.ok) {
+            this.options.siteswapNums = result.siteswap;
+            this.clearMessage();
+            // ページ側の入力欄などが追従できるように通知する
+            (_a = this.renderer.container) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new CustomEvent('siteswapchange', { detail: { siteswap: result.siteswap } }));
+        }
+        else {
+            this.showSiteswapError(result);
+        }
+        (_b = this.gui) === null || _b === void 0 ? void 0 : _b.updateDisplay();
+        return result;
+    };
+    // ---- メッセージ表示 ----
+    VRMJuggler.prototype.createMessageArea = function (container) {
+        if (getComputedStyle(container).position === 'static')
+            container.style.position = 'relative';
+        var el = document.createElement('div');
+        el.className = 'vrm-juggler-message';
+        el.setAttribute('role', 'status');
+        Object.assign(el.style, {
+            position: 'absolute',
+            left: '12px',
+            bottom: '12px',
+            maxWidth: 'calc(100% - 24px)',
+            boxSizing: 'border-box',
+            padding: '10px 14px',
+            borderRadius: '8px',
+            font: '14px/1.6 sans-serif',
+            color: '#fff',
+            background: 'rgba(40, 40, 40, 0.85)',
+            display: 'none',
+            zIndex: '10',
+        });
+        container.appendChild(el);
+        this.message = el;
+    };
+    VRMJuggler.prototype.showMessage = function (text, isError) {
+        if (isError === void 0) { isError = false; }
+        if (!this.message)
+            return;
+        this.messageKind = isError ? 'error' : 'loading';
+        this.message.textContent = text;
+        this.message.style.background = isError ? 'rgba(170, 40, 40, 0.9)' : 'rgba(40, 40, 40, 0.85)';
+        this.message.style.display = 'block';
+    };
+    VRMJuggler.prototype.clearMessage = function () {
+        this.messageKind = 'none';
+        if (this.message)
+            this.message.style.display = 'none';
+    };
+    VRMJuggler.prototype.showSiteswapError = function (result) {
+        var _this = this;
+        if (!this.message)
+            return;
+        this.showMessage("\u300C" + result.siteswap + "\u300D\u306F\u6295\u3052\u3089\u308C\u307E\u305B\u3093: " + result.message, true);
+        if (result.suggestions && result.suggestions.length > 0) {
+            var line_1 = document.createElement('div');
+            line_1.style.marginTop = '6px';
+            line_1.appendChild(document.createTextNode('近いパターン: '));
+            result.suggestions.forEach(function (s) {
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = s;
+                Object.assign(button.style, {
+                    margin: '0 4px',
+                    padding: '2px 10px',
+                    border: '1px solid #fff',
+                    borderRadius: '4px',
+                    background: 'transparent',
+                    color: '#fff',
+                    font: 'inherit',
+                    cursor: 'pointer',
+                });
+                button.addEventListener('click', function () { return _this.setSiteswap(s); });
+                line_1.appendChild(button);
+            });
+            this.message.appendChild(line_1);
+        }
+        var note = document.createElement('div');
+        note.style.opacity = '0.8';
+        note.textContent = "\u3044\u307E\u306F\u300C" + this.juggling.currentSiteswap + "\u300D\u3092\u7D9A\u3051\u3066\u3044\u307E\u3059\u3002";
+        this.message.appendChild(note);
+    };
+    // ---- パラメータ調整 UI ----
+    VRMJuggler.prototype.setOptions = function () {
+        var result = this.juggling.setPattern(this.juggling.currentSiteswap, this.options.siteswap);
+        if (!result.ok)
+            this.showSiteswapError(result);
     };
     VRMJuggler.prototype.createGUI = function () {
         var _this = this;
+        var options = this.options;
+        var siteswapOptions = options.siteswap;
         this.gui = new dat_gui__WEBPACK_IMPORTED_MODULE_3__["GUI"]({});
         var siteswap = this.gui.addFolder('ジャグリング');
         siteswap
-            .add(this.options, 'siteswapNums')
-            .name('サイトスワップ数')
-            .onFinishChange(function (value) {
-            _this.setOptions();
-        });
+            .add(options, 'siteswapNums')
+            .name('サイトスワップ')
+            .onFinishChange(function (value) { return _this.setSiteswap(value); });
         siteswap
-            .add(this.options.siteswap, 'beatDuration', 0.05, 0.5)
+            .add(siteswapOptions, 'beatDuration', 0.05, 0.5)
             .name('高さ')
             .listen()
             .onFinishChange(function (value) {
-            _this.options.siteswap.beatDurationAltitude = String(value);
+            siteswapOptions.beatDurationAltitude = String(value);
             _this.setOptions();
         });
         siteswap
-            .add(this.options.siteswap.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
+            .add(options, 'speed', 0.2, 1.5)
+            .name('スピード')
+            .onChange(function (value) {
+            _this.juggling.speed = Number(value);
+        });
+        siteswap
+            .add(siteswapOptions.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
             .name('小道具')
             .listen()
             .onFinishChange(function (value) {
-            _this.options.siteswap.props.map(function (prop) {
-                prop.type = value;
-                return prop;
-            });
+            siteswapOptions.props.forEach(function (prop) { return (prop.type = value); });
             _this.setOptions();
         });
         siteswap
-            .add(this.options.siteswap, 'dwellPath', {
+            .add(siteswapOptions, 'dwellPath', {
             Cascade: '(30)(10)',
             'Reverse Cascade': '(10)(30)',
             Shower: '(30)(10).(10)(30)',
@@ -60738,202 +59677,128 @@ var VRMJuggler = /** @class */ (function () {
         })
             .name('Dwell')
             .listen()
-            .onFinishChange(function (value) {
-            _this.setOptions();
-        });
-        var altitude = this.gui.addFolder('ジャグリング(高度な設定)');
-        altitude
-            .add(this.options.siteswap, 'beatDurationAltitude')
+            .onFinishChange(function () { return _this.setOptions(); });
+        var advanced = this.gui.addFolder('ジャグリング(高度な設定)');
+        advanced
+            .add(siteswapOptions, 'beatDurationAltitude')
             .name('高さ')
             .listen()
-            .onChange(function (value) {
-            _this.options.siteswap.beatDuration = value;
+            .onFinishChange(function (value) {
+            var beatDuration = Number(value);
+            if (!(beatDuration > 0))
+                return;
+            siteswapOptions.beatDuration = beatDuration;
             _this.setOptions();
         });
-        altitude
-            .addColor(this.options.siteswap, 'propsColor')
+        advanced
+            .addColor(siteswapOptions, 'propsColor')
             .name('小道具の色')
             .onChange(function (value) {
-            _this.options.siteswap.props = _this.options.siteswap.props.map(function (prop) {
-                prop.color = value;
-                return prop;
-            });
+            siteswapOptions.props.forEach(function (prop) { return (prop.color = value); });
             _this.setOptions();
         });
-        altitude
-            .add(this.options.siteswap, 'propsRadius')
+        advanced
+            .add(siteswapOptions, 'propsRadius')
             .name('小道具の大きさ')
-            .onChange(function (value) {
-            _this.options.siteswap.props = _this.options.siteswap.props.map(function (prop) {
-                prop.radius = value;
-                return prop;
-            });
+            .onFinishChange(function (value) {
+            var radius = Number(value);
+            if (!(radius > 0))
+                return;
+            siteswapOptions.props.forEach(function (prop) { return (prop.radius = radius); });
             _this.setOptions();
         });
-        altitude
-            .add(this.options.siteswap, 'dwellPath')
+        advanced
+            .add(siteswapOptions, 'dwellPath')
             .name('Dwell')
             .listen()
-            .onChange(function (value) {
+            .onFinishChange(function () { return _this.setOptions(); });
+        ['dwellRatio', 'dwellCatchScale', 'dwellTossScale', 'emptyCatchScale', 'emptyTossScale'].forEach(function (key) {
+            advanced.add(siteswapOptions, key).onFinishChange(function (value) {
+                siteswapOptions[key] = Number(value);
+                _this.setOptions();
+            });
+        });
+        advanced
+            .add(siteswapOptions, 'armAngle', 0.0, 0.5)
+            .name('肘の開き')
+            .onFinishChange(function (value) {
+            if (_this.body)
+                _this.body.armAngle = Number(value);
             _this.setOptions();
         });
-        altitude.add(this.options.siteswap, 'dwellCatchScale').onChange(function (value) {
-            _this.setOptions();
-        });
-        altitude.add(this.options.siteswap, 'dwellTossScale').onChange(function (value) {
-            _this.setOptions();
-        });
-        altitude.add(this.options.siteswap, 'emptyCatchScale').onChange(function (value) {
-            _this.setOptions();
-        });
-        altitude.add(this.options.siteswap, 'emptyTossScale').onChange(function (value) {
-            _this.setOptions();
-        });
-        altitude.add(this.options.siteswap, 'armAngle', 0.0, 0.5).onChange(function (value) {
-            _this.setOptions();
-        });
-        altitude.add(this.options.siteswap, 'dwellRatio').onChange(function (value) {
-            _this.setOptions();
-        });
-        altitude
-            .addColor(this.options, 'backgroundColor')
+        advanced
+            .addColor(options, 'backgroundColor')
             .name('背景色')
             .onChange(function (value) {
             _this.renderer.scene.background = new three__WEBPACK_IMPORTED_MODULE_0__["Color"](value);
         });
-        var surfaces = altitude.addFolder('surfaces');
-        surfaces
-            .add(this.options.siteswap.surfaces[0].position, 'x')
-            .name('position:x')
-            .onChange(function (value) {
-            _this.setOptions();
+        var surfaces = advanced.addFolder('surfaces');
+        var surface = siteswapOptions.surfaces[0];
+        ['x', 'y', 'z'].forEach(function (axis) {
+            return surfaces
+                .add(surface.position, axis)
+                .name("position:" + axis)
+                .onFinishChange(function () { return _this.setOptions(); });
+        });
+        ['x', 'y', 'z'].forEach(function (axis) {
+            return surfaces
+                .add(surface.normal, axis)
+                .name("normal:" + axis)
+                .onFinishChange(function () { return _this.setOptions(); });
         });
         surfaces
-            .add(this.options.siteswap.surfaces[0].position, 'y')
-            .name('position:y')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
-        surfaces
-            .add(this.options.siteswap.surfaces[0].position, 'z')
-            .name('position:z')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
-        surfaces
-            .add(this.options.siteswap.surfaces[0].normal, 'x')
-            .name('normal:x')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
-        surfaces
-            .add(this.options.siteswap.surfaces[0].normal, 'y')
-            .name('normal:y')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
-        surfaces
-            .add(this.options.siteswap.surfaces[0].normal, 'z')
-            .name('normal:z')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
-        surfaces
-            .add(this.options.siteswap.surfaces[0], 'scale')
+            .add(surface, 'scale')
             .name('scale')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
+            .onFinishChange(function () { return _this.setOptions(); });
         surfaces
-            .addColor(this.options.siteswap.surfaces[0], 'color')
+            .addColor(surface, 'color')
             .name('color')
-            .onChange(function (value) {
-            _this.setOptions();
-        });
+            .onChange(function () { return _this.setOptions(); });
         var emotions = this.gui.addFolder('表情');
-        emotions
-            .add(this.options.facial.emotion, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Joy, 0.0, 1.0)
-            .name('喜')
-            .onChange(function (value) {
-            _this.facial.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Joy] = value;
-        });
-        emotions
-            .add(this.options.facial.emotion, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Angry, 0.0, 1.0)
-            .name('怒')
-            .onChange(function (value) {
-            _this.facial.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Angry] = value;
-        });
-        emotions
-            .add(this.options.facial.emotion, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Sorrow, 0.0, 1.0)
-            .name('哀')
-            .onChange(function (value) {
-            _this.facial.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Sorrow] = value;
-        });
-        emotions
-            .add(this.options.facial.emotion, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Fun, 0.0, 1.0)
-            .name('楽')
-            .onChange(function (value) {
-            _this.facial.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Fun] = value;
+        var emotionNames = [
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Joy, '喜'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Angry, '怒'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Sorrow, '哀'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.Fun, '楽'],
+        ];
+        emotionNames.forEach(function (_a) {
+            var key = _a[0], name = _a[1];
+            return emotions.add(options.facial.emotion, key, 0.0, 1.0).name(name);
         });
         var mouth = this.gui.addFolder('口の形');
-        mouth
-            .add(this.options.facial.mouth, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.A, 0.0, 1.0)
-            .name('あ')
-            .onChange(function (value) {
-            _this.facial.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.A] = value;
-        });
-        mouth
-            .add(this.options.facial.mouth, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.I, 0.0, 1.0)
-            .name('い')
-            .onChange(function (value) {
-            _this.facial.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.I] = value;
-        });
-        mouth
-            .add(this.options.facial.mouth, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.U, 0.0, 1.0)
-            .name('う')
-            .onChange(function (value) {
-            _this.facial.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.U] = value;
-        });
-        mouth
-            .add(this.options.facial.mouth, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.E, 0.0, 1.0)
-            .name('え')
-            .onChange(function (value) {
-            _this.facial.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.E] = value;
-        });
-        mouth
-            .add(this.options.facial.mouth, _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.O, 0.0, 1.0)
-            .name('お')
-            .onChange(function (value) {
-            _this.facial.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.O] = value;
+        var mouthNames = [
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.A, 'あ'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.I, 'い'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.U, 'う'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.E, 'え'],
+            [_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_2__["VRMSchema"].BlendShapePresetName.O, 'お'],
+        ];
+        mouthNames.forEach(function (_a) {
+            var key = _a[0], name = _a[1];
+            return mouth.add(options.facial.mouth, key, 0.0, 1.0).name(name);
         });
         this.gui
-            .add(this.options, 'blink')
+            .add(options, 'blink')
             .name('まばたき')
             .onChange(function (value) {
             _this.blink.enable = value;
         });
         this.gui
-            .add(this.options, 'neck')
-            .name('首振り')
+            .add(options, 'neck')
+            .name('首の動き')
             .onChange(function (value) {
-            _this.juggling.enableNeck = value;
+            if (_this.body)
+                _this.body.enableNeck = value;
+        });
+        this.gui
+            .add(options, 'bodyMotion')
+            .name('体の動き')
+            .onChange(function (value) {
+            if (_this.body)
+                _this.body.enableBodyMotion = value;
         });
         if (!this.showGui)
             this.gui.hide();
-    };
-    VRMJuggler.prototype.switchGUI = function (e) {
-        if (e.keyCode !== 27)
-            return;
-        this.showGui = !this.showGui;
-        if (this.showGui) {
-            this.gui.show();
-        }
-        else {
-            this.gui.hide();
-        }
-    };
-    VRMJuggler.prototype.setOptions = function () {
-        this.juggling.setOptions(String(this.options.siteswapNums), this.options.siteswap);
     };
     return VRMJuggler;
 }());
@@ -60966,31 +59831,28 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixiv/three-vrm */ "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js");
-/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__);
-
+/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixiv/three-vrm */ "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js");
+/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__);
 
 var Blink = /** @class */ (function () {
     function Blink() {
         var _this = this;
+        this.time = 0;
         this.enable = true;
-        // フレーム毎回に呼ばれる
-        this.update = function () {
-            if (!_this.enable)
+        // フレーム毎回に呼ばれる(vrm.update() は呼び出し側でまとめて 1 回だけ行う)
+        this.update = function (delta) {
+            if (!_this.vrm)
                 return;
-            var delta = _this.clock.getDelta();
-            _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].BlendShapePresetName.Blink, _this.blinkValue);
-            _this.vrm.update(delta);
+            _this.time += delta;
+            _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Blink, _this.enable ? _this.blinkValue : 0);
         };
-        this.clock = new three__WEBPACK_IMPORTED_MODULE_0__["Clock"]();
     }
     Blink.prototype.init = function (vrm) {
         this.vrm = vrm;
     };
     Object.defineProperty(Blink.prototype, "blinkValue", {
         get: function () {
-            return Math.pow(Math.sin((this.clock.elapsedTime * 1) / 3), 1024) + Math.pow(Math.sin((this.clock.elapsedTime * 4) / 7), 1024);
+            return Math.pow(Math.sin(this.time / 3), 1024) + Math.pow(Math.sin((this.time * 4) / 7), 1024);
         },
         enumerable: false,
         configurable: true
@@ -60998,6 +59860,363 @@ var Blink = /** @class */ (function () {
     return Blink;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Blink);
+
+
+/***/ }),
+
+/***/ "./src/motion/body/index.ts":
+/*!**********************************!*\
+  !*** ./src/motion/body/index.ts ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixiv/three-vrm */ "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js");
+/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../juggling/tracks */ "./src/motion/juggling/tracks.ts");
+
+
+
+/**
+ * ジャグリング中の全身の動き。
+ *
+ * - 腕: 解析的な 2 関節 IK。ボールが手のひらに乗るように手首の位置と向きを決め、
+ *       肘は「下・後ろ・少し外」に向けて安定させる。前腕のひねりは前腕と手首に分配する。
+ * - 指: ボールを持っている間は握り、投げた後は開く。
+ * - 下半身: 拍に合わせて膝を軽く曲げ伸ばしする(キャッチで沈み、投げで伸びる)。
+ * - 上半身: 前傾・呼吸・左右の手に合わせた胸のひねり、投げる側の肩を少し上げる。
+ * - 頭: パターンの頂点付近を見る。目線はボールを少し追う。
+ */
+var Bone = _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName;
+// 前方(VRM 0.x は -Z を向いている)
+var FORWARD = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, -1);
+var UP = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0);
+// 腕
+var ELBOW_POLE_BACK = 0.35; // 肘を後ろへ向ける強さ
+var ELBOW_POLE_OUT_BASE = 0.25; // 肘を外へ向ける強さ(armAngle が加わる)
+var FOREARM_TWIST_SHARE = 0.6; // 手のひらを上に向けるひねりのうち前腕が受け持つ割合
+var FINGER_INWARD = 0.35; // 指先を体の内側へ向ける量
+var PALM_GAP = 0.012; // ボール表面と手のひらのすき間
+// 指
+var GRIP_HOLDING = 1.0;
+var GRIP_EMPTY = 0.35;
+var GRIP_SMOOTH = 25; // 1/s
+var FINGER_CURL = [0.35, 0.75, 0.55]; // Proximal, Intermediate, Distal(rad, grip = 1 の時)
+var FINGER_CURL_OPEN = [0.1, 0.2, 0.1];
+// 下半身
+var KNEE_BASE = 0.1; // rad
+var KNEE_BOUNCE = 0.08; // rad
+var KNEE_BOUNCE_PHASE = 0.2; // 拍の中で一番沈むタイミング(キャッチ直後)
+// 上半身
+var SPINE_LEAN = 0.05; // rad(前傾)
+var BREATH_AMPLITUDE = 0.012;
+var BREATH_PERIOD = 3.6; // s
+var CHEST_TWIST = 0.035;
+var SHOULDER_FORWARD = 0.08;
+var SHOULDER_RAISE_GAIN = 0.9;
+var SHOULDER_RAISE_MAX = 0.12;
+// 頭・視線
+var HEAD_PITCH_MIN = -0.2;
+var HEAD_PITCH_MAX = 0.4;
+var NECK_SHARE = 0.4;
+var HEAD_FOLLOW_X = 0.25; // 頭が一番高いボールの横位置を追う割合
+var EYE_FOLLOW_X = 0.7;
+var GAZE_SMOOTH = 6; // 1/s
+function worldPosition(node) {
+    return node.getWorldPosition(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
+}
+function worldQuaternion(node) {
+    return node.getWorldQuaternion(new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]());
+}
+/** (a1, b1) の向きを (a2, b2) に移す回転。a を正確に合わせ、b は a に直交する成分だけ合わせる */
+function frameRotation(a1, b1, a2, b2) {
+    var basis = function (a, b) {
+        var x = a.clone().normalize();
+        var z = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(x, b).normalize();
+        var y = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(z, x);
+        return new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromRotationMatrix(new three__WEBPACK_IMPORTED_MODULE_0__["Matrix4"]().makeBasis(x, y, z));
+    };
+    return basis(a2, b2).multiply(basis(a1, b1).conjugate());
+}
+/** q の axis 周りのひねり角(swing-twist 分解) */
+function twistAngle(q, axis) {
+    var projection = q.x * axis.x + q.y * axis.y + q.z * axis.z;
+    var angle = 2 * Math.atan2(projection, q.w);
+    if (angle > Math.PI)
+        angle -= 2 * Math.PI;
+    if (angle < -Math.PI)
+        angle += 2 * Math.PI;
+    return angle;
+}
+var Body = /** @class */ (function () {
+    function Body(vrm, scene) {
+        var _this = this;
+        this.rest = new Map();
+        this.hipsRestY = 0;
+        this.legLength = 0;
+        this.gazeX = 0;
+        this.headGazeX = 0;
+        this.breathTime = 0;
+        this.lookTarget = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
+        this.armAngle = 0.3;
+        this.enableBodyMotion = true;
+        this.enableNeck = true;
+        this.vrm = vrm;
+        this.vrm.scene.updateMatrixWorld(true);
+        this.hips = this.node(Bone.Hips);
+        if (this.hips)
+            this.hipsRestY = this.hips.position.y;
+        var upperLeg = this.node(Bone.LeftUpperLeg);
+        var lowerLeg = this.node(Bone.LeftLowerLeg);
+        var foot = this.node(Bone.LeftFoot);
+        if (upperLeg && lowerLeg && foot) {
+            this.legLength =
+                worldPosition(upperLeg).distanceTo(worldPosition(lowerLeg)) +
+                    worldPosition(lowerLeg).distanceTo(worldPosition(foot));
+        }
+        var eye = this.node(Bone.LeftEye) || this.node(Bone.Head);
+        this.eyeY = eye ? worldPosition(eye).y : 1.5;
+        // 休止姿勢(T ポーズ)の回転を覚えておく
+        Object.values(Bone).forEach(function (name) {
+            var node = _this.node(name);
+            if (node)
+                _this.rest.set(node, node.quaternion.clone());
+        });
+        this.arms = [this.createArm(_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"]), this.createArm(_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"])];
+        this.baseHandY = Object(_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["handBaseY"])(this.metrics);
+        scene.add(this.lookTarget);
+        if (this.vrm.lookAt)
+            this.vrm.lookAt.target = this.lookTarget;
+    }
+    Body.prototype.dispose = function (scene) {
+        scene.remove(this.lookTarget);
+    };
+    Body.prototype.node = function (name) {
+        return this.vrm.humanoid.getBoneNode(name);
+    };
+    Object.defineProperty(Body.prototype, "metrics", {
+        get: function () {
+            var arm = this.arms[_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"]];
+            return {
+                shoulderY: worldPosition(arm.upper).y,
+                upperArmLength: arm.upperLength,
+                armLength: arm.upperLength + arm.lowerLength,
+            };
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Body.prototype.createArm = function (h) {
+        var _this = this;
+        var isLeft = h === _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"];
+        var pick = function (left, right) {
+            return _this.node(isLeft ? left : right);
+        };
+        var upper = pick(Bone.LeftUpperArm, Bone.RightUpperArm);
+        var lower = pick(Bone.LeftLowerArm, Bone.RightLowerArm);
+        var hand = pick(Bone.LeftHand, Bone.RightHand);
+        var middle = pick(Bone.LeftMiddleProximal, Bone.RightMiddleProximal);
+        var upperPos = worldPosition(upper);
+        var lowerPos = worldPosition(lower);
+        var handPos = worldPosition(hand);
+        var side = Math.sign(handPos.x - upperPos.x) || (isLeft ? -1 : 1);
+        var restUpperDir = lowerPos.clone().sub(upperPos).normalize();
+        var restLowerDir = handPos.clone().sub(lowerPos).normalize();
+        var middlePos = middle ? worldPosition(middle) : handPos.clone().addScaledVector(restLowerDir, 0.08);
+        var restFingerDir = middlePos.clone().sub(handPos).normalize();
+        // VRM の T ポーズは手のひらが下向き
+        var restPalmNormal = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -1, 0);
+        // 手のひらの中心は手首と中指の付け根の間、少し手のひら側
+        var palmOffset = middlePos.clone().sub(handPos).multiplyScalar(0.6).addScaledVector(restPalmNormal, 0.02);
+        var fingers = [];
+        var fingerNames = ['Index', 'Middle', 'Ring', 'Little'];
+        var jointNames = ['Proximal', 'Intermediate', 'Distal'];
+        fingerNames.forEach(function (finger) {
+            return jointNames.forEach(function (joint, j) {
+                var name = "" + (isLeft ? 'left' : 'right') + finger + joint;
+                var node = _this.node(name);
+                if (node)
+                    fingers.push({ node: node, joint: j });
+            });
+        });
+        // 親指は元の実装の角度を使う(軽く曲げて手のひら側へ)
+        var thumbs = [];
+        var thumbPose = [
+            ['Proximal', new three__WEBPACK_IMPORTED_MODULE_0__["Euler"](0, (-side * Math.PI) / 12, (-side * Math.PI) / 12)],
+            ['Distal', new three__WEBPACK_IMPORTED_MODULE_0__["Euler"](0, (-side * Math.PI) / 3, 0)],
+        ];
+        thumbPose.forEach(function (_a) {
+            var joint = _a[0], euler = _a[1];
+            var node = _this.node((isLeft ? 'left' : 'right') + "Thumb" + joint);
+            if (node)
+                thumbs.push({ node: node, rest: node.quaternion.clone(), euler: euler });
+        });
+        return {
+            side: side,
+            shoulder: pick(Bone.LeftShoulder, Bone.RightShoulder),
+            upper: upper,
+            lower: lower,
+            hand: hand,
+            upperLength: upperPos.distanceTo(lowerPos),
+            lowerLength: lowerPos.distanceTo(handPos),
+            restUpperDir: restUpperDir,
+            restLowerDir: restLowerDir,
+            restFingerDir: restFingerDir,
+            restPalmNormal: restPalmNormal,
+            palmOffset: palmOffset,
+            restWorld: { upper: worldQuaternion(upper), lower: worldQuaternion(lower), hand: worldQuaternion(hand) },
+            fingers: fingers,
+            thumbs: thumbs,
+            grip: GRIP_EMPTY,
+            lastForearmDir: FORWARD.clone(),
+        };
+    };
+    /** 休止姿勢の回転に、ローカルのオイラー角を掛けて設定する */
+    Body.prototype.pose = function (name, x, y, z) {
+        var node = this.node(name);
+        if (!node)
+            return;
+        var rest = this.rest.get(node);
+        node.quaternion.setFromEuler(new three__WEBPACK_IMPORTED_MODULE_0__["Euler"](x, y, z));
+        if (rest)
+            node.quaternion.premultiply(rest);
+    };
+    Body.prototype.update = function (frame, delta) {
+        var _this = this;
+        this.breathTime += delta;
+        this.updateLowerBody(frame);
+        this.updateUpperBody(frame, delta);
+        this.vrm.scene.updateMatrixWorld(true);
+        this.arms.forEach(function (arm, h) {
+            _this.solveArm(arm, frame.hands[h], frame.propRadius);
+            _this.updateFingers(arm, frame.hands[h].holding, delta);
+        });
+    };
+    Body.prototype.updateLowerBody = function (frame) {
+        var _this = this;
+        var phase = frame.beat - Math.floor(frame.beat);
+        var bounce = this.enableBodyMotion ? 0.5 * (1 + Math.cos(2 * Math.PI * (phase - KNEE_BOUNCE_PHASE))) : 0;
+        var knee = KNEE_BASE + KNEE_BOUNCE * bounce;
+        // 太もも前・すね後ろ・足首前に同じ角度だけ曲げると、足の位置がほぼ変わらずに腰が沈む
+        [Bone.LeftUpperLeg, Bone.RightUpperLeg].forEach(function (b) { return _this.pose(b, knee, 0, 0); });
+        [Bone.LeftLowerLeg, Bone.RightLowerLeg].forEach(function (b) { return _this.pose(b, -2 * knee, 0, 0); });
+        [Bone.LeftFoot, Bone.RightFoot].forEach(function (b) { return _this.pose(b, knee, 0, 0); });
+        if (this.hips) {
+            this.hips.position.y = this.hipsRestY - this.legLength * (1 - Math.cos(knee));
+        }
+    };
+    Body.prototype.updateUpperBody = function (frame, delta) {
+        var _this = this;
+        var motion = this.enableBodyMotion ? 1 : 0;
+        var breath = BREATH_AMPLITUDE * Math.sin((2 * Math.PI * this.breathTime) / BREATH_PERIOD) * motion;
+        // 1 拍ごとに左右の手が交互に投げるので、胸のひねりは 2 拍で 1 往復
+        var sway = Math.sin(Math.PI * frame.beat) * motion;
+        this.pose(Bone.Spine, -SPINE_LEAN, 0, 0);
+        this.pose(Bone.Chest, breath, CHEST_TWIST * sway * 0.5, 0);
+        this.pose(Bone.UpperChest, breath * 0.5, CHEST_TWIST * sway * 0.5, CHEST_TWIST * sway * 0.3);
+        // 肩: 少し前へ、手が上がった時に少し上がる
+        this.arms.forEach(function (arm, h) {
+            var hand = frame.hands[h];
+            var raise = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp((hand.position.y - _this.baseHandY) * SHOULDER_RAISE_GAIN, 0, SHOULDER_RAISE_MAX) *
+                motion;
+            _this.pose(h === _juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"] ? Bone.LeftShoulder : Bone.RightShoulder, 0, arm.side * SHOULDER_FORWARD, arm.side * raise);
+        });
+        // 視線: 頭はパターンの頂点を、目はさらに一番高いボールを追う
+        var followX = frame.highestProp.x;
+        var k = 1 - Math.exp(-GAZE_SMOOTH * delta);
+        this.gazeX += (followX * EYE_FOLLOW_X - this.gazeX) * k;
+        this.headGazeX += (followX * HEAD_FOLLOW_X - this.headGazeX) * k;
+        var target = frame.gazeTarget;
+        this.lookTarget.position.set(this.gazeX, target.y, target.z);
+        if (!this.enableNeck) {
+            this.pose(Bone.Neck, 0, 0, 0);
+            this.pose(Bone.Head, 0, 0, 0);
+            return;
+        }
+        var distance = Math.max(0.1, Math.abs(target.z));
+        var pitch = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(Math.atan2(target.y - this.eyeY, distance), HEAD_PITCH_MIN, HEAD_PITCH_MAX) +
+            SPINE_LEAN;
+        var yaw = -Math.atan2(this.headGazeX, distance);
+        this.pose(Bone.Neck, pitch * NECK_SHARE, yaw * NECK_SHARE, 0);
+        this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), -sway * 0.02);
+    };
+    Body.prototype.solveArm = function (arm, hand, propRadius) {
+        var palmNormal = hand.palmNormal;
+        // 指先の向き: 前方・少し内側と、前腕の向きの中間(手首の曲がりすぎを防ぐ)
+        var fingerDir = FORWARD.clone()
+            .addScaledVector(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0), -arm.side * FINGER_INWARD)
+            .normalize()
+            .add(arm.lastForearmDir)
+            .normalize();
+        // 手の向き(休止姿勢からの回転)。手のひらの向きを優先して合わせる
+        var handDelta = frameRotation(arm.restPalmNormal, arm.restFingerDir, palmNormal, fingerDir);
+        // 手のひらの中心がボールの真下に来るような手首の位置
+        var palmTarget = hand.position.clone().addScaledVector(palmNormal, -(propRadius + PALM_GAP));
+        var wristTarget = palmTarget.sub(arm.palmOffset.clone().applyQuaternion(handDelta));
+        // 2 関節 IK
+        var shoulder = worldPosition(arm.upper);
+        var toWrist = wristTarget.clone().sub(shoulder);
+        var L1 = arm.upperLength;
+        var L2 = arm.lowerLength;
+        var d = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(toWrist.length(), Math.abs(L1 - L2) + 1e-3, L1 + L2 - 1e-3);
+        var dir = toWrist.normalize();
+        var a = (L1 * L1 - L2 * L2 + d * d) / (2 * d);
+        var hgt = Math.sqrt(Math.max(L1 * L1 - a * a, 0));
+        var pole = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](arm.side * (ELBOW_POLE_OUT_BASE + this.armAngle), -1, ELBOW_POLE_BACK).normalize();
+        var polePerp = pole.clone().addScaledVector(dir, -pole.dot(dir));
+        if (polePerp.lengthSq() < 1e-8)
+            polePerp.set(0, -1, 0);
+        polePerp.normalize();
+        var elbow = shoulder.clone().addScaledVector(dir, a).addScaledVector(polePerp, hgt);
+        var wrist = shoulder.clone().addScaledVector(dir, d);
+        var upperDir = elbow.clone().sub(shoulder).normalize();
+        var lowerDir = wrist.clone().sub(elbow).normalize();
+        var hinge = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(upperDir, lowerDir);
+        if (hinge.lengthSq() < 1e-8)
+            hinge.crossVectors(upperDir, polePerp);
+        hinge.normalize();
+        arm.lastForearmDir.copy(lowerDir);
+        var restUpperHinge = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(arm.restUpperDir, FORWARD).normalize();
+        var restLowerHinge = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().crossVectors(arm.restLowerDir, FORWARD).normalize();
+        // 上腕
+        var upperWorld = frameRotation(arm.restUpperDir, restUpperHinge, upperDir, hinge).multiply(arm.restWorld.upper);
+        var parentWorld = worldQuaternion(arm.upper.parent);
+        arm.upper.quaternion.copy(parentWorld.clone().conjugate().multiply(upperWorld));
+        // 前腕: 肘の曲げ + 手のひらを返すひねりの一部
+        var lowerDelta = frameRotation(arm.restLowerDir, restLowerHinge, lowerDir, hinge);
+        var relative = lowerDelta.clone().conjugate().multiply(handDelta);
+        var twist = twistAngle(relative, arm.restLowerDir) * FOREARM_TWIST_SHARE;
+        lowerDelta.multiply(new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromAxisAngle(arm.restLowerDir, twist));
+        var lowerWorld = lowerDelta.multiply(arm.restWorld.lower);
+        arm.lower.quaternion.copy(upperWorld.clone().conjugate().multiply(lowerWorld));
+        // 手
+        var handWorld = handDelta.multiply(arm.restWorld.hand);
+        arm.hand.quaternion.copy(lowerWorld.clone().conjugate().multiply(handWorld));
+    };
+    Body.prototype.updateFingers = function (arm, holding, delta) {
+        var _this = this;
+        var target = holding ? GRIP_HOLDING : GRIP_EMPTY;
+        arm.grip += (target - arm.grip) * (1 - Math.exp(-GRIP_SMOOTH * delta));
+        // T ポーズ(手のひら下向き)で z 軸周りに回すと指が手のひら側に曲がる
+        arm.fingers.forEach(function (_a) {
+            var node = _a.node, joint = _a.joint;
+            var angle = FINGER_CURL_OPEN[joint] + (FINGER_CURL[joint] - FINGER_CURL_OPEN[joint]) * arm.grip;
+            var rest = _this.rest.get(node);
+            node.quaternion.setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 1), -arm.side * angle);
+            if (rest)
+                node.quaternion.premultiply(rest);
+        });
+        arm.thumbs.forEach(function (_a) {
+            var node = _a.node, rest = _a.rest, euler = _a.euler;
+            node.quaternion.setFromEuler(euler).premultiply(rest);
+        });
+    };
+    return Body;
+}());
+/* harmony default export */ __webpack_exports__["default"] = (Body);
 
 
 /***/ }),
@@ -61017,8 +60236,10 @@ __webpack_require__.r(__webpack_exports__);
 var Facial = /** @class */ (function () {
     function Facial(options) {
         var _this = this;
-        // フレーム毎回に呼ばれる
+        // フレーム毎回に呼ばれる(反映は vrm.update() で行われる)
         this.update = function () {
+            if (!_this.vrm)
+                return;
             _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Joy, _this.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Joy]);
             _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Angry, _this.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Angry]);
             _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Sorrow, _this.emotion[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Sorrow]);
@@ -61028,7 +60249,6 @@ var Facial = /** @class */ (function () {
             _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.U, _this.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.U]);
             _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.E, _this.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.E]);
             _this.vrm.blendShapeProxy.setValue(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.O, _this.mouth[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.O]);
-            _this.vrm.blendShapeProxy.update();
         };
         this.emotion = options.emotion;
         this.mouth = options.mouth;
@@ -61056,6 +60276,13 @@ __webpack_require__.r(__webpack_exports__);
 // Most of the ideas below are from http://www.benknowscode.com/2012/09/path-interpolation-using-cubic-bezier_9742.html
 // The only thing I can take any credit for is modifying the algorithm to accomodate variable input control points and
 // the "matchVelocity" idea.
+// ベジェ制御点を dwell 開始/終了点からどれだけ離してよいか(m)
+var MAX_CONTROL_OFFSET = 0.1;
+function clampLength(x, y, z, max) {
+    var len = Math.sqrt(x * x + y * y + z * z);
+    var k = len > max ? max / len : 1;
+    return { x: x * k, y: y * k, z: z * k };
+}
 var interpolateBezierSpline = function (P, t, v_0, v_T, v_0scale, v_Tscale, matchVelocity) {
     // t goes from 0 to 1
     /* dwellPath object looks like this */
@@ -61077,14 +60304,18 @@ var interpolateBezierSpline = function (P, t, v_0, v_T, v_0scale, v_Tscale, matc
         if (P.length == 1) {
             P.push(P[0]);
         }
+        // 制御点のオフセット(速度×スケール)に上限を設ける。
+        // 上限がないと '1' のような空中時間の短い投げで速度が大きくなり、手が大きく振り出されてしまう。
+        var c0Offset = clampLength(v_0.dx * v_0scale, v_0.dy * v_0scale, v_0.dz * v_0scale, MAX_CONTROL_OFFSET);
+        var c1Offset = clampLength(v_T.dx * v_Tscale, v_T.dy * v_Tscale, v_T.dz * v_Tscale, MAX_CONTROL_OFFSET);
         var C = [{
-                x: P[0].x + v_0.dx * v_0scale,
-                y: P[0].y + v_0.dy * v_0scale,
-                z: P[0].z + v_0.dz * v_0scale
+                x: P[0].x + c0Offset.x,
+                y: P[0].y + c0Offset.y,
+                z: P[0].z + c0Offset.z
             }, {
-                x: P.last().x - v_T.dx * v_Tscale,
-                y: P.last().y - v_T.dy * v_Tscale,
-                z: P.last().z - v_T.dz * v_Tscale
+                x: P.last().x - c1Offset.x,
+                y: P.last().y - c1Offset.y,
+                z: P.last().z - c1Offset.z
             }];
         var eps = .00001;
         var c = [];
@@ -61790,6 +61021,7 @@ function sumThrows(str) {
 }
 var flightPathCache = {};
 /* CONSTANTS */
+var ONE_TOSS_MAX_DWELL_RATIO = 0.5;
 var LEFT = 0, RIGHT = 1;
 /* core functions */
 var CreateSiteswap = function (siteswapStr, options) {
@@ -62250,6 +61482,11 @@ var CreateSiteswap = function (siteswapStr, options) {
             }
             else {
                 dwellDuration = siteswap.dwellDuration;
+                // '1' は手から手への受け渡しなので、持つ時間を短くして空中時間を確保する
+                // (dwellRatio のままだと空中時間が 0.05 秒ほどになり、ボールと手が高速で振り回される)
+                if (numBeats == 1 && !sync) {
+                    dwellDuration = Math.min(dwellDuration, siteswap.beatDuration * ONE_TOSS_MAX_DWELL_RATIO);
+                }
             }
             var numBounces = 0;
             var bounceOrder = [];
@@ -63226,7 +62463,7 @@ var CreateSiteswap = function (siteswapStr, options) {
                 fitnessThreshold: 0.05,
                 noGA: false,
             };
-            ga = new _BounceGA__WEBPACK_IMPORTED_MODULE_3__["default"](gaConfig, fitnessConfig);
+            var ga = new _BounceGA__WEBPACK_IMPORTED_MODULE_3__["default"](gaConfig, fitnessConfig);
             ga.evolve();
             if (!ga.ableToFindSolution) {
                 /* TODO - improve error to explain why the bounce path couldn't be calculated */
@@ -63385,396 +62622,394 @@ var CreateSiteswap = function (siteswapStr, options) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixiv/three-vrm */ "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js");
-/* harmony import */ var _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var three_ik__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! three-ik */ "./node_modules/three-ik/build/three-ik.module.js");
-/* harmony import */ var _Siteswap__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Siteswap */ "./src/motion/juggling/Siteswap.js");
+/* harmony import */ var _Siteswap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Siteswap */ "./src/motion/juggling/Siteswap.js");
+/* harmony import */ var _tracks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tracks */ "./src/motion/juggling/tracks.ts");
+/* harmony import */ var _validate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./validate */ "./src/motion/juggling/validate.ts");
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 
 
 
+var RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
+// 視線はパターンの頂点より少し下を見る
+var GAZE_BELOW_PEAK = 0.05;
 var Juggling = /** @class */ (function () {
-    function Juggling(siteswapNums, options, motionBlur) {
-        var _this = this;
+    function Juggling(scene, siteswapStr, options, motionBlur) {
         if (motionBlur === void 0) { motionBlur = false; }
-        this.randomColors = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
+        this.metrics = _tracks__WEBPACK_IMPORTED_MODULE_2__["DEFAULT_METRICS"];
+        this.transform = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["makeTransform"])(_tracks__WEBPACK_IMPORTED_MODULE_2__["DEFAULT_METRICS"]);
         this.surfaceMeshes = [];
         this.propMeshes = [];
-        this.enableNeck = true;
-        this.left = true;
-        this.drawSurfaces = function () {
-            if (_this.surfaceMeshes.length !== 0) {
-                _this.surfaceMeshes.forEach(function (mesh, index) {
-                    _this.scene.remove(mesh);
-                    mesh.geometry.dispose();
-                    mesh.material.dispose();
-                });
-                _this.surfaceMeshes.splice(0);
-            }
-            _this.siteswap.surfaces.map(function (a) {
-                var surface = {
-                    position: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.position.x, a.position.y, a.position.z),
-                    normal: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.normal.x, a.normal.y, a.normal.z),
-                    axis1: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.axis1.x, a.axis1.y, a.axis1.z),
-                    axis2: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.axis2.x, a.axis2.y, a.axis2.z),
-                    scale: a.scale,
-                };
-                var surfaceGeom = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
-                surfaceGeom.vertices.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().copy(surface.position).add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().add(surface.axis1).add(surface.axis2)));
-                surfaceGeom.vertices.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()
-                    .copy(surface.position)
-                    .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().add(surface.axis1).negate().add(surface.axis2)));
-                surfaceGeom.vertices.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()
-                    .copy(surface.position)
-                    .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().add(surface.axis1).add(surface.axis2).negate()));
-                surfaceGeom.vertices.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()
-                    .copy(surface.position)
-                    .add(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]().add(surface.axis2).negate().add(surface.axis1)));
-                surfaceGeom.faces.push(new three__WEBPACK_IMPORTED_MODULE_0__["Face3"](0, 1, 2));
-                surfaceGeom.faces.push(new three__WEBPACK_IMPORTED_MODULE_0__["Face3"](2, 0, 3));
-                var surfaceMesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](surfaceGeom, new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({ color: a.color ? a.color : 'grey', side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"] }));
-                _this.surfaceMeshes.push(surfaceMesh);
-                _this.scene.add(surfaceMesh);
-            });
-        };
-        this.drawProps = function () {
-            if (_this.propMeshes.length !== 0) {
-                _this.propMeshes.forEach(function (mesh, index) {
-                    _this.scene.remove(mesh[0]);
-                    mesh[0].geometry.dispose();
-                    mesh[0].material.dispose();
-                });
-                _this.propMeshes.splice(0);
-            }
-            /* create each prop and add to empty this.propMeshes array */
-            for (var i = 0; i < _this.siteswap.numProps; i++) {
-                var geometry = void 0;
-                if (_this.siteswap.props[i].type == 'ball') {
-                    geometry = new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](_this.siteswap.props[i].radius, 20);
-                }
-                else if (_this.siteswap.props[i].type == 'club') {
-                    geometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.008, 0.02, 0.02, 7, 5);
-                    geometry.vertices.map(function (v) {
-                        v.y += 0.01;
-                    });
-                    var clubHandle = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.015, 0.008, 0.18, 7, 5);
-                    clubHandle.vertices.map(function (v) {
-                        v.y += 0.11;
-                    });
-                    var clubBody1 = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.04, 0.015, 0.18, 7, 5);
-                    clubBody1.vertices.map(function (v) {
-                        v.y += 0.29;
-                    });
-                    var clubBody2 = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.02, 0.04, 0.11, 7, 5);
-                    clubBody2.vertices.map(function (v) {
-                        v.y += 0.43;
-                    });
-                    three__WEBPACK_IMPORTED_MODULE_0__["GeometryUtils"].merge(geometry, clubHandle);
-                    three__WEBPACK_IMPORTED_MODULE_0__["GeometryUtils"].merge(geometry, clubBody1);
-                    three__WEBPACK_IMPORTED_MODULE_0__["GeometryUtils"].merge(geometry, clubBody2);
-                    // move entire club down to correct center of gravity
-                    geometry.vertices.map(function (v) {
-                        v.y -= 0.2;
-                    });
-                }
-                else if (_this.siteswap.props[i].type == 'ring') {
-                    // ring meshes
-                    var points = [];
-                    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, 0.01));
-                    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.18, 0.01));
-                    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.18, -0.01));
-                    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, -0.01));
-                    points.push(new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, 0.01));
-                    geometry = new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
-                }
-                var numTails = _this.motionBlur ? 2 : 0;
-                var tmpPropMeshes = [];
-                var propColor = _this.siteswap.props[i].color == 'random'
-                    ? _this.randomColors[i % _this.randomColors.length]
-                    : _this.siteswap.props[i].color;
-                for (var j = 0; j <= numTails; j++) {
-                    var material = void 0;
-                    if (j == 0) {
-                        material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
-                            color: propColor,
-                        });
-                        //material = new THREE.MeshBasicMaterial( { color: propColor, wireframe: true } );
-                    }
-                    else {
-                        material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"]({
-                            color: propColor,
-                            transparent: true,
-                            opacity: 1 - (1 / (numTails + 1)) * j,
-                        });
-                    }
-                    var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, material);
-                    _this.scene.add(mesh);
-                    tmpPropMeshes.push(mesh);
-                }
-                _this.propMeshes.push(tmpPropMeshes);
-            }
-        };
-        // フレーム毎回に呼ばれる
-        this.update = function () {
-            _this.updateProps();
-            // 目線
-            _this.lookAt.position.x = 0;
-            if (_this.enableNeck) {
-                //const lookAt = this.propMeshes.reduce((prev, current) => Math.max(prev, current[0].position.y), 0);
-                //this.lookAt.position.y = this.siteswap.maxVertex - lookAt < 0.1 ? lookAt : this.siteswap.maxVertex - 0.1;
-                if (_this.left) {
-                    _this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.Head).rotation.z += Math.random() * 0.01;
-                    _this.left = _this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.Head).rotation.z <= 0.1;
-                }
-                else {
-                    _this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.Head).rotation.z -= Math.random() * 0.01;
-                    _this.left = _this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.Head).rotation.z <= -0.1;
-                }
-            }
-            else {
-                //this.lookAt.position.y = this.siteswap.maxVertex;
-            }
-            _this.lookAt.position.y = _this.siteswap.maxVertex;
-            _this.lookAt.position.z = _this.propMeshes[0][0].position.z;
-            // 首、頭の角度
-            var rad = Math.atan2(_this.lookAt.position.y - 1.6, _this.lookAt.position.z * -1);
-            _this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.Neck).rotation.x = rad / 2;
-            _this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.Head).rotation.x = rad / 2;
-            _this.vrm.update(_this.clock.getDelta());
-            // ターゲットの移動
-            _this.updateTargets();
-            // IKの更新
-            _this.ik.left_arm.ik.solve();
-            _this.ik.right_arm.ik.solve();
-            // 腕の更新
-            _this.updateArm(_this.ik.left_arm.bones, _this.ik.left_arm.nodes, Math.PI / 2);
-            _this.updateArm(_this.ik.right_arm.bones, _this.ik.right_arm.nodes, -Math.PI / 2);
-        };
-        this.updateProps = function () {
-            if (_this.startTime === 0) {
-                _this.startTime = new Date().getTime();
-            }
-            var timeElapsed = (new Date().getTime() - _this.startTime) * 0.6;
-            var t = timeElapsed % (_this.siteswap.states.length * _this.siteswap.beatDuration * 1000); // need to *1000 b/c timeElapsed is in ms
-            _this.step = Math.floor((t / (_this.siteswap.states.length * _this.siteswap.beatDuration * 1000)) * _this.siteswap.numSteps);
-            /* update prop mesh positions and rotations */
-            for (var i = 0; i < _this.propMeshes.length; i++) {
-                if (!_this.siteswap.propPositions || _this.siteswap.propPositions[i] === undefined)
-                    return;
-                for (var j = 0; j < _this.propMeshes[i].length; j++) {
-                    var stepIx = _this.step - j * Math.floor(_this.siteswap.numStepsPerBeat / 8); // the 10 here is the tail length factor
-                    if (stepIx < 0)
-                        stepIx += _this.siteswap.numSteps;
-                    var correction = {
-                        x: 0,
-                        y: -1 * (-0.04 + _this.siteswap.armAngle * 0.12),
-                        z: -1 * (0.075 - _this.siteswap.armAngle * 0.05),
-                    };
-                    _this.propMeshes[i][j].position.x = _this.siteswap.propPositions[i][stepIx].x + correction.x;
-                    _this.propMeshes[i][j].position.y = _this.siteswap.propPositions[i][stepIx].y + correction.y;
-                    _this.propMeshes[i][j].position.z = _this.siteswap.propPositions[i][stepIx].z + correction.z;
-                    /* apply current rotation */
-                    _this.propMeshes[i][j].quaternion.set(1, 0, 0, 0);
-                    // rotate rings so they are in correct position by default
-                    if (_this.siteswap.props[i].type == 'ring') {
-                        var rotateRing = new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]();
-                        rotateRing.setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0), Math.PI / 2);
-                        _this.propMeshes[i][j].quaternion.multiply(rotateRing);
-                    }
-                    var q = _this.siteswap.propRotations[i][stepIx];
-                    _this.propMeshes[i][j].quaternion.multiplyQuaternions(q, _this.propMeshes[i][j].quaternion);
-                }
-            }
-        };
-        this.updateTargets = function () {
-            if (_this.siteswap.jugglerHandPositions === undefined)
-                return;
-            _this.ik.left_arm.pivot.position.x = _this.siteswap.jugglerHandPositions[0][0][_this.step].x;
-            _this.ik.left_arm.pivot.position.y = _this.siteswap.jugglerHandPositions[0][0][_this.step].y;
-            _this.ik.left_arm.pivot.position.z = _this.siteswap.jugglerHandPositions[0][0][_this.step].z;
-            _this.ik.right_arm.pivot.position.x = _this.siteswap.jugglerHandPositions[0][1][_this.step].x;
-            _this.ik.right_arm.pivot.position.y = _this.siteswap.jugglerHandPositions[0][1][_this.step].y;
-            _this.ik.right_arm.pivot.position.z = _this.siteswap.jugglerHandPositions[0][1][_this.step].z;
-        };
-        // 腕の更新
-        this.updateArm = function (bones, nodes, offset) {
-            var q = [new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"](), new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"](), new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"](), new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]()];
-            var armAngle = [new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"](), new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]()];
-            q[0].setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0), offset);
-            q[1].setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0), Math.PI / 3);
-            q[2].setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 0, 0), Math.PI / 3);
-            armAngle[0].setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 1), offset > 0 ? _this.siteswap.armAngle : -_this.siteswap.armAngle);
-            armAngle[1].setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 1), offset > 0 ? -_this.siteswap.armAngle : _this.siteswap.armAngle);
-            nodes[0].setRotationFromQuaternion(bones[0].quaternion.multiply(q[0]).multiply(armAngle[0]));
-            nodes[1].setRotationFromQuaternion(bones[1].quaternion.multiply(armAngle[1]).multiply(q[1]));
-            nodes[2].setRotationFromQuaternion(bones[2].quaternion.multiply(q[2]));
-            //nodes[3].setRotationFromQuaternion(bones[3].quaternion);
-        };
-        this.siteswapNums = siteswapNums;
-        this.options = options;
-        this.motionBlur = motionBlur !== null && motionBlur !== void 0 ? motionBlur : false;
-        this.step = 0;
-        this.startTime = 0;
-        this.setSiteswap();
-        this.lookAt = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
-        this.clock = new three__WEBPACK_IMPORTED_MODULE_0__["Clock"]();
-        // IKの準備
-        this.ik = {
-            left_arm: {
-                ik: new three_ik__WEBPACK_IMPORTED_MODULE_2__["IK"](),
-                chain: new three_ik__WEBPACK_IMPORTED_MODULE_2__["IKChain"](),
-                pivot: null,
-                boneNames: [
-                    _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftUpperArm,
-                    _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftLowerArm,
-                    _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftHand,
-                ],
-                bones: [],
-                nodes: [],
-            },
-            right_arm: {
-                ik: new three_ik__WEBPACK_IMPORTED_MODULE_2__["IK"](),
-                chain: new three_ik__WEBPACK_IMPORTED_MODULE_2__["IKChain"](),
-                pivot: null,
-                boneNames: [
-                    _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightUpperArm,
-                    _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightLowerArm,
-                    _pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightHand,
-                ],
-                bones: [],
-                nodes: [],
-            },
-        };
-    }
-    Juggling.prototype.setSiteswap = function () {
-        this.siteswap = Object(_Siteswap__WEBPACK_IMPORTED_MODULE_3__["CreateSiteswap"])(this.siteswapNums, this.options);
-    };
-    Juggling.prototype.setOptions = function (siteswapNums, options) {
-        this.siteswapNums = siteswapNums;
-        this.options = options;
-        this.setSiteswap();
-        this.drawProps();
-        this.drawSurfaces();
-    };
-    Juggling.prototype.init = function (vrm, scene, camera) {
-        var _this = this;
-        this.vrm = vrm;
-        camera.add(this.lookAt);
+        this.time = 0;
+        this.speed = 1;
+        this.tmpQuaternion = new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]();
         this.scene = scene;
-        this.vrm.lookAt.target = this.lookAt;
-        //右人差し指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightIndexDistal).rotation.z = -Math.PI / 18;
-        //右人差し指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightIndexIntermediate).rotation.z = -Math.PI / 3.6;
-        //右人差し指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.RightIndexProximal).rotation.z = -Math.PI / 6;
-        //右小指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightLittleDistal).rotation.z = -Math.PI / 18;
-        //右小指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightLittleIntermediate).rotation.z = -Math.PI / 3.6;
-        //右小指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.RightLittleProximal).rotation.z = -Math.PI / 6;
-        //右中指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightMiddleDistal).rotation.z = -Math.PI / 18;
-        //右中指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightMiddleIntermediate).rotation.z = -Math.PI / 3.6;
-        //右中指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.RightMiddleProximal).rotation.z = -Math.PI / 6;
-        //右薬指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightRingDistal).rotation.z = -Math.PI / 18;
-        //右薬指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightRingIntermediate).rotation.z = -Math.PI / 3.6;
-        //右薬指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.RightRingProximal).rotation.z = -Math.PI / 6;
-        //右親指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightThumbDistal).rotation.y = -Math.PI / 3;
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.RightThumbDistal).rotation.y = -Math.PI / 3;
-        //右親指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.RightThumbDistal).rotation.y = -Math.PI / 3;
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.RightThumbIntermediate).rotation.z = -Math.PI / 3.6;
-        //右親指第一指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftThumbProximal).rotation.y = Math.PI / 12;
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftThumbProximal).rotation.z = Math.PI / 12;
-        //左人差し指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftIndexDistal).rotation.z = Math.PI / 18;
-        //左人差し指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftIndexIntermediate).rotation.z = Math.PI / 3.6;
-        //左人差し指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.LeftIndexProximal).rotation.z = Math.PI / 6;
-        //左小指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftLittleDistal).rotation.z = Math.PI / 18;
-        //左小指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftLittleIntermediate).rotation.z = Math.PI / 3.6;
-        //左小指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.LeftLittleProximal).rotation.z = Math.PI / 6;
-        //左中指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftMiddleDistal).rotation.z = Math.PI / 18;
-        //左中指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftMiddleIntermediate).rotation.z = Math.PI / 3.6;
-        //左中指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.LeftMiddleProximal).rotation.z = Math.PI / 6;
-        //左薬指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftRingDistal).rotation.z = Math.PI / 18;
-        //左薬指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftRingIntermediate).rotation.z = Math.PI / 3.6;
-        //左薬指第一指骨
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.LeftRingProximal).rotation.z = Math.PI / 6;
-        //左親指第三指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftThumbDistal).rotation.y = Math.PI / 3;
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.LeftThumbDistal).rotation.y = Math.PI / 3;
-        //左親指第二指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftThumbDistal).rotation.y = Math.PI / 3;
-        //this.vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName.LeftThumbIntermediate).rotation.z = Math.PI / 3.6;
-        //左親指第一指骨
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftThumbProximal).rotation.y = Math.PI / 12;
-        this.vrm.humanoid.getBoneNode(_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_1__["VRMSchema"].HumanoidBoneName.LeftThumbProximal).rotation.z = Math.PI / 12;
+        this.siteswapStr = siteswapStr;
+        this.options = options;
+        this.motionBlur = motionBlur;
+        this.group = new three__WEBPACK_IMPORTED_MODULE_0__["Group"]();
+        this.scene.add(this.group);
+        this.frame = {
+            hands: [_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"], _tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"]].map(function () { return ({
+                position: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
+                palmNormal: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0),
+                holding: false,
+            }); }),
+            beat: 0,
+            gazeTarget: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
+            propRadius: 0.05,
+            highestProp: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
+        };
+        var result = this.setPattern(siteswapStr, options);
+        if (!result.ok) {
+            // 初期値が不正な場合は 3 ボールカスケードで始める
+            this.setPattern('3', options);
+        }
+    }
+    Object.defineProperty(Juggling.prototype, "visible", {
+        set: function (value) {
+            this.group.visible = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Juggling.prototype, "currentSiteswap", {
+        get: function () {
+            return this.siteswapStr;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     * パターンを切り替える。投げられないパターンの場合は何も変えずにエラー内容を返す。
+     */
+    Juggling.prototype.setPattern = function (input, options) {
+        var check = Object(_validate__WEBPACK_IMPORTED_MODULE_3__["precheckSiteswap"])(input);
+        if (!check.ok)
+            return check;
+        // gunswap は options.props をボールの数に合わせて増減させるので、再生中のパターンに影響しないようコピーを渡す
+        var siteswap = Object(_Siteswap__WEBPACK_IMPORTED_MODULE_1__["CreateSiteswap"])(check.siteswap, __assign(__assign({}, options), { props: (options.props || []).map(function (prop) { return (__assign({}, prop)); }) }));
+        if (siteswap.errorMessage || !siteswap.validPattern || !siteswap.propPositions) {
+            var result = {
+                ok: false,
+                siteswap: check.siteswap,
+                message: Object(_validate__WEBPACK_IMPORTED_MODULE_3__["translateGunswapError"])(siteswap.errorMessage || 'Invalid syntax'),
+            };
+            // "A" のように大文字で書かれた 10 以上の投げ
+            var lower = check.siteswap.toLowerCase();
+            if (lower !== check.siteswap && Object(_validate__WEBPACK_IMPORTED_MODULE_3__["isVanilla"])(lower)) {
+                var lowerCheck = Object(_validate__WEBPACK_IMPORTED_MODULE_3__["precheckSiteswap"])(lower);
+                result.message += ' 10 以上の投げのつもりなら小文字で書きます(a = 10, b = 11 …)。';
+                result.suggestions = lowerCheck.ok ? [lower] : lowerCheck.suggestions;
+            }
+            return result;
+        }
+        var changed = check.siteswap !== this.siteswapStr || !this.siteswap;
+        this.siteswapStr = check.siteswap;
+        this.options = options;
+        this.siteswap = siteswap;
+        this.rebuild();
+        if (changed)
+            this.time = 0;
+        return { ok: true, siteswap: check.siteswap };
+    };
+    /** アバターの体格に合わせて軌道を変換し直す */
+    Juggling.prototype.setAvatarMetrics = function (metrics) {
+        this.metrics = metrics;
+        this.rebuild();
+    };
+    Juggling.prototype.rebuild = function () {
+        this.transform = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["makeTransform"])(this.metrics);
+        this.tracks = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["buildTracks"])(this.siteswap, this.transform);
         this.drawProps();
         this.drawSurfaces();
-        var _loop_1 = function (section) {
-            this_1.ik[section].ik.isIK = true;
-            // ターゲットの生成
-            var movingTarget = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](0.05), new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({ color: 0xff0000, visible: false }));
-            //movingTarget.position.z = -0.3;
-            var pivot = new three__WEBPACK_IMPORTED_MODULE_0__["Object3D"]();
-            pivot.add(movingTarget);
-            //pivot.position.x = section == 'left_arm' ? -0.25 : 0.25;
-            //pivot.position.y = 1.3;
-            //pivot.position.z = -0.3;
-            this_1.scene.add(pivot);
-            this_1.ik[section].pivot = pivot;
-            // チェーンの生成
-            this_1.ik[section].boneNames.forEach(function (boneName, index) {
-                // ボーンとノードの生成
-                var bone = new three__WEBPACK_IMPORTED_MODULE_0__["Bone"]();
-                var node = _this.vrm.humanoid.getBoneNode(boneName);
-                if (node === null)
-                    return;
-                if (index == 0) {
-                    node.getWorldPosition(bone.position);
-                }
-                else {
-                    bone.position.set(node.position.x, node.position.y, node.position.z);
-                    _this.ik[section].bones[index - 1].add(bone);
-                }
-                _this.ik[section].bones.push(bone);
-                _this.ik[section].nodes.push(node);
-                // チェーンに追加
-                var target = index === _this.ik[section].boneNames.length - 1 ? movingTarget : null;
-                _this.ik[section].chain.add(new three_ik__WEBPACK_IMPORTED_MODULE_2__["IKJoint"](bone, {}), { target: target });
-            });
-            // IKシステムにチェーン追加
-            this_1.ik[section].ik.add(this_1.ik[section].chain);
-            // ルートボーンの追加
-            this_1.scene.add(this_1.ik[section].ik.getRootBone());
-        };
-        var this_1 = this;
-        for (var section in this.ik) {
-            _loop_1(section);
+    };
+    Juggling.prototype.drawSurfaces = function () {
+        var _this = this;
+        this.surfaceMeshes.forEach(function (mesh) {
+            _this.group.remove(mesh);
+            mesh.geometry.dispose();
+            mesh.material.dispose();
+        });
+        this.surfaceMeshes = [];
+        this.siteswap.surfaces.forEach(function (a) {
+            var position = Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["transformPoint"])(a.position, _this.transform, new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
+            var axis1 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.axis1.x, a.axis1.y, a.axis1.z);
+            var axis2 = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.axis2.x, a.axis2.y, a.axis2.z);
+            var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
+            geometry.vertices.push(position.clone().add(axis1).add(axis2));
+            geometry.vertices.push(position.clone().sub(axis1).add(axis2));
+            geometry.vertices.push(position.clone().sub(axis1).sub(axis2));
+            geometry.vertices.push(position.clone().add(axis1).sub(axis2));
+            geometry.faces.push(new three__WEBPACK_IMPORTED_MODULE_0__["Face3"](0, 1, 2));
+            geometry.faces.push(new three__WEBPACK_IMPORTED_MODULE_0__["Face3"](2, 0, 3));
+            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({ color: a.color ? a.color : 'grey', side: three__WEBPACK_IMPORTED_MODULE_0__["DoubleSide"] }));
+            _this.surfaceMeshes.push(mesh);
+            _this.group.add(mesh);
+        });
+    };
+    Juggling.prototype.createPropGeometry = function (prop) {
+        if (prop.type == 'club') {
+            var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.008, 0.02, 0.02, 7, 5);
+            geometry.vertices.forEach(function (v) { return (v.y += 0.01); });
+            var clubHandle = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.015, 0.008, 0.18, 7, 5);
+            clubHandle.vertices.forEach(function (v) { return (v.y += 0.11); });
+            var clubBody1 = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.04, 0.015, 0.18, 7, 5);
+            clubBody1.vertices.forEach(function (v) { return (v.y += 0.29); });
+            var clubBody2 = new three__WEBPACK_IMPORTED_MODULE_0__["CylinderGeometry"](0.02, 0.04, 0.11, 7, 5);
+            clubBody2.vertices.forEach(function (v) { return (v.y += 0.43); });
+            geometry.merge(clubHandle);
+            geometry.merge(clubBody1);
+            geometry.merge(clubBody2);
+            // 重心が原点に来るように下げる
+            geometry.vertices.forEach(function (v) { return (v.y -= 0.2); });
+            return geometry;
         }
+        if (prop.type == 'ring') {
+            var points = [
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, 0.01),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.18, 0.01),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.18, -0.01),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, -0.01),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0.14, 0.01),
+            ];
+            return new three__WEBPACK_IMPORTED_MODULE_0__["LatheGeometry"](points);
+        }
+        return new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](Number(prop.radius) || 0.05, 20, 16);
+    };
+    Juggling.prototype.drawProps = function () {
+        var _this = this;
+        this.propMeshes.forEach(function (meshes) {
+            return meshes.forEach(function (mesh) {
+                _this.group.remove(mesh);
+                mesh.geometry.dispose();
+                mesh.material.dispose();
+            });
+        });
+        this.propMeshes = [];
+        var numTails = this.motionBlur ? 2 : 0;
+        for (var i = 0; i < this.siteswap.numProps; i++) {
+            var prop = this.siteswap.props[i];
+            var color = prop.color == 'random' ? RANDOM_COLORS[i % RANDOM_COLORS.length] : prop.color;
+            var meshes = [];
+            for (var j = 0; j <= numTails; j++) {
+                var material = new three__WEBPACK_IMPORTED_MODULE_0__["MeshLambertMaterial"](j == 0 ? { color: color } : { color: color, transparent: true, opacity: 1 - (1 / (numTails + 1)) * j });
+                var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](this.createPropGeometry(prop), material);
+                this.group.add(mesh);
+                meshes.push(mesh);
+            }
+            this.propMeshes.push(meshes);
+        }
+        var first = this.siteswap.props[0];
+        this.frame.propRadius = first.type == 'ball' ? Number(first.radius) || 0.05 : 0.02;
+    };
+    /** 毎フレーム呼ぶ。delta は秒 */
+    Juggling.prototype.update = function (delta) {
+        var _this = this;
+        var tracks = this.tracks;
+        this.time = (this.time + delta * this.speed) % tracks.period;
+        var stepFloat = (this.time / tracks.period) * tracks.numSteps;
+        var step = Math.floor(stepFloat) % tracks.numSteps;
+        this.updateProps(stepFloat);
+        [_tracks__WEBPACK_IMPORTED_MODULE_2__["LEFT"], _tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"]].forEach(function (h) {
+            var hand = _this.frame.hands[h];
+            var track = tracks.hands[h];
+            Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(track.positions, stepFloat, hand.position);
+            Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(track.palmNormals, stepFloat, hand.palmNormal).normalize();
+            hand.holding = track.holding[step];
+        });
+        this.frame.beat = this.time / this.siteswap.beatDuration;
+        this.frame.gazeTarget.set(0, tracks.peakY - GAZE_BELOW_PEAK, tracks.centerZ);
+        return this.frame;
+    };
+    Juggling.prototype.updateProps = function (stepFloat) {
+        var tracks = this.tracks;
+        var tailGap = Math.floor(this.siteswap.numStepsPerBeat / 8);
+        var ringRotation = new three__WEBPACK_IMPORTED_MODULE_0__["Quaternion"]().setFromAxisAngle(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0), Math.PI / 2);
+        for (var i = 0; i < this.propMeshes.length; i++) {
+            for (var j = 0; j < this.propMeshes[i].length; j++) {
+                var mesh = this.propMeshes[i][j];
+                var s = stepFloat - j * tailGap;
+                if (s < 0)
+                    s += tracks.numSteps;
+                Object(_tracks__WEBPACK_IMPORTED_MODULE_2__["sampleTrack"])(tracks.props[i], s, mesh.position);
+                var i0 = Math.floor(s) % tracks.numSteps;
+                var i1 = (i0 + 1) % tracks.numSteps;
+                this.tmpQuaternion
+                    .copy(this.siteswap.propRotations[i][i0])
+                    .slerp(this.siteswap.propRotations[i][i1], s - Math.floor(s));
+                mesh.quaternion.set(1, 0, 0, 0);
+                if (this.siteswap.props[i].type == 'ring')
+                    mesh.quaternion.multiply(ringRotation);
+                mesh.quaternion.premultiply(this.tmpQuaternion);
+            }
+            var head = this.propMeshes[i][0];
+            if (i === 0 || head.position.y > this.frame.highestProp.y)
+                this.frame.highestProp.copy(head.position);
+        }
+    };
+    Juggling.prototype.dispose = function () {
+        this.propMeshes.forEach(function (meshes) { return meshes.forEach(function (m) { return m.geometry.dispose(); }); });
+        this.surfaceMeshes.forEach(function (m) { return m.geometry.dispose(); });
+        this.scene.remove(this.group);
     };
     return Juggling;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Juggling);
+
+
+/***/ }),
+
+/***/ "./src/motion/juggling/tracks.ts":
+/*!***************************************!*\
+  !*** ./src/motion/juggling/tracks.ts ***!
+  \***************************************/
+/*! exports provided: LEFT, RIGHT, DEFAULT_METRICS, handBaseY, makeTransform, transformPoint, buildTracks, sampleTrack */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LEFT", function() { return LEFT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RIGHT", function() { return RIGHT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_METRICS", function() { return DEFAULT_METRICS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handBaseY", function() { return handBaseY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeTransform", function() { return makeTransform; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transformPoint", function() { return transformPoint; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buildTracks", function() { return buildTracks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sampleTrack", function() { return sampleTrack; });
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+
+/**
+ * gunswap が計算した軌道(ボール・手)を、アバターの体格に合わせた座標に変換し、
+ * 毎フレーム参照しやすい形(手のひらの向き・ボールを持っているか)に前計算する。
+ */
+var LEFT = 0;
+var RIGHT = 1;
+var GRAVITY = 9.8;
+// gunswap の想定する体格(Siteswap.js の getDwellPosition / getElbowPosition より)
+var GUNSWAP_HAND_Y = 1.15;
+var GUNSWAP_ARM_LENGTH = 0.6;
+// 肘を垂らした高さから、手の基準位置をどれだけ上げるか(m)
+var HAND_ABOVE_ELBOW = 0.03;
+// 変換が恒等になる体格(gunswap の元の体格)
+var DEFAULT_METRICS = {
+    shoulderY: GUNSWAP_HAND_Y + GUNSWAP_ARM_LENGTH / 2 - HAND_ABOVE_ELBOW,
+    upperArmLength: GUNSWAP_ARM_LENGTH / 2,
+    armLength: GUNSWAP_ARM_LENGTH,
+};
+/** ボールを持っていない時の手の基準の高さ(ワールド座標) */
+function handBaseY(metrics) {
+    return metrics.shoulderY - metrics.upperArmLength + HAND_ABOVE_ELBOW;
+}
+function makeTransform(metrics) {
+    var horizontalScale = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(metrics.armLength / GUNSWAP_ARM_LENGTH, 0.7, 1.2);
+    var offsetY = handBaseY(metrics) - GUNSWAP_HAND_Y;
+    return { horizontalScale: horizontalScale, offsetY: offsetY };
+}
+function transformPoint(p, t, out) {
+    return out.set(p.x * t.horizontalScale, p.y + t.offsetY, p.z * t.horizontalScale);
+}
+// 手のひらの傾き: 持っている時は手がボールに加える力(加速度 + 重力)の向きに手のひらを向ける
+var PALM_TILT_GAIN_HOLDING = 0.8;
+var PALM_TILT_GAIN_EMPTY = 0.35;
+var PALM_MAX_TILT = 0.75; // rad
+var ACCEL_SMOOTH_TIME = 0.03; // s
+var NORMAL_SMOOTH_TIME = 0.05; // s
+function buildTracks(siteswap, transform) {
+    var numSteps = siteswap.numSteps;
+    var period = siteswap.states.length * siteswap.beatDuration;
+    var stepDuration = period / numSteps;
+    var props = siteswap.propPositions.map(function (track) {
+        return track.map(function (p) { return transformPoint(p, transform, new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()); });
+    });
+    var hands = [LEFT, RIGHT].map(function (hand) {
+        var raw = siteswap.jugglerHandPositions[0][hand];
+        var positions = raw.map(function (p) { return transformPoint(p, transform, new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()); });
+        var holding = raw.map(function (p) { return p.dwell === true; });
+        var palmNormals = computePalmNormals(positions, holding, stepDuration);
+        return { positions: positions, palmNormals: palmNormals, holding: holding };
+    });
+    var peakY = -Infinity;
+    var sumZ = 0;
+    var count = 0;
+    props.forEach(function (track) {
+        return track.forEach(function (p) {
+            peakY = Math.max(peakY, p.y);
+            sumZ += p.z;
+            count++;
+        });
+    });
+    return {
+        numSteps: numSteps,
+        stepDuration: stepDuration,
+        period: period,
+        props: props,
+        hands: hands,
+        peakY: peakY,
+        centerZ: count > 0 ? sumZ / count : -0.35 * transform.horizontalScale,
+    };
+}
+function computePalmNormals(positions, holding, dt) {
+    var n = positions.length;
+    var up = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0);
+    var accel = positions.map(function (p, i) {
+        var prev = positions[(i - 1 + n) % n];
+        var next = positions[(i + 1) % n];
+        return new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]()
+            .copy(next)
+            .addScaledVector(p, -2)
+            .add(prev)
+            .multiplyScalar(1 / (dt * dt));
+    });
+    var smoothAccel = boxSmooth(accel, Math.max(1, Math.round(ACCEL_SMOOTH_TIME / dt)));
+    var axis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+    var raw = smoothAccel.map(function (a, i) {
+        var force = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](a.x, a.y + GRAVITY, a.z);
+        if (force.lengthSq() < 1e-8)
+            return up.clone();
+        force.normalize();
+        var tilt = Math.acos(three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(force.dot(up), -1, 1));
+        var gain = holding[i] ? PALM_TILT_GAIN_HOLDING : PALM_TILT_GAIN_EMPTY;
+        var angle = Math.min(tilt * gain, PALM_MAX_TILT);
+        axis.crossVectors(up, force);
+        if (axis.lengthSq() < 1e-10)
+            return up.clone();
+        axis.normalize();
+        return up.clone().applyAxisAngle(axis, angle);
+    });
+    return boxSmooth(raw, Math.max(1, Math.round(NORMAL_SMOOTH_TIME / dt))).map(function (v) { return v.normalize(); });
+}
+// 周期的な配列に対する移動平均
+function boxSmooth(values, radius) {
+    var n = values.length;
+    var result = [];
+    var sum = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+    for (var k = -radius; k <= radius; k++)
+        sum.add(values[((k % n) + n) % n]);
+    var count = 2 * radius + 1;
+    for (var i = 0; i < n; i++) {
+        result.push(sum.clone().multiplyScalar(1 / count));
+        sum.sub(values[(((i - radius) % n) + n) % n]).add(values[(i + radius + 1) % n]);
+    }
+    return result;
+}
+/** 周期的な軌道から時刻 t の位置を線形補間で取り出す */
+function sampleTrack(track, stepFloat, out) {
+    var n = track.length;
+    var i0 = Math.floor(stepFloat) % n;
+    var i1 = (i0 + 1) % n;
+    return out.copy(track[i0]).lerp(track[i1], stepFloat - Math.floor(stepFloat));
+}
 
 
 /***/ }),
@@ -63922,6 +63157,216 @@ window.negate = negate;
 
 /***/ }),
 
+/***/ "./src/motion/juggling/validate.ts":
+/*!*****************************************!*\
+  !*** ./src/motion/juggling/validate.ts ***!
+  \*****************************************/
+/*! exports provided: normalizeSiteswap, isVanilla, checkVanilla, precheckSiteswap, translateGunswapError */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "normalizeSiteswap", function() { return normalizeSiteswap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isVanilla", function() { return isVanilla; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkVanilla", function() { return checkVanilla; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "precheckSiteswap", function() { return precheckSiteswap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "translateGunswapError", function() { return translateGunswapError; });
+/**
+ * サイトスワップ入力のチェックと、エラーメッセージ(日本語)の生成。
+ *
+ * 通常の非同期サイトスワップ(数字と a〜w だけのもの)はここで詳しく検査し、
+ * どこが悪いのか・近い正しいパターンの候補を返す。
+ * 同時投げ・マルチプレックス・パッシングなどの記法は gunswap の検査結果を日本語に置き換えて使う。
+ */
+var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+var VANILLA_RE = /^[0-9a-w]+$/;
+var MAX_THROW = 32; // 'w'
+var MAX_SUGGESTIONS = 3;
+var MAX_LENGTH_FOR_SUGGESTIONS = 12;
+var MAX_LENGTH_FOR_TWO_CHANGES = 8;
+/** 全角→半角、空白除去 */
+function normalizeSiteswap(input) {
+    return String(input)
+        .normalize('NFKC')
+        .replace(/\s/g, '');
+}
+function throwValue(c) {
+    var code = c.charCodeAt(0);
+    if (code >= 48 && code <= 57)
+        return code - 48;
+    return code - 87; // 'a' = 10
+}
+function throwChar(v) {
+    return v < 10 ? String(v) : String.fromCharCode(v + 87);
+}
+function isVanilla(siteswap) {
+    return VANILLA_RE.test(siteswap);
+}
+/** 非同期サイトスワップが投げられるかを検査する。問題なければ null */
+function findVanillaProblem(values) {
+    var n = values.length;
+    var sum = values.reduce(function (a, b) { return a + b; }, 0);
+    if (sum === 0) {
+        return { message: '投げるものがありません(すべて 0 です)。' };
+    }
+    if (sum % n !== 0) {
+        var avg = Math.round((sum / n) * 100) / 100;
+        return {
+            message: "\u6570\u5B57\u306E\u5E73\u5747\u304C\u6574\u6570\u306B\u306A\u308A\u307E\u305B\u3093(\u5408\u8A08 " + sum + " \u00F7 " + n + " \u500B = " + avg + ")\u3002" +
+                'サイトスワップの平均はボールの数なので、合計が桁数で割り切れる必要があります。',
+        };
+    }
+    // (位置 + 投げの高さ) を桁数で割った余りがすべて異なれば、同じタイミングに 2 つ落ちてこない
+    var landedBy = new Array(n).fill(-1);
+    for (var i = 0; i < n; i++) {
+        var landing = (i + values[i]) % n;
+        if (landedBy[landing] !== -1) {
+            var j = landedBy[landing];
+            return {
+                message: j + 1 + " \u756A\u76EE\u306E\u300C" + throwChar(values[j]) + "\u300D\u3068 " + (i + 1) + " \u756A\u76EE\u306E\u300C" + throwChar(values[i]) + "\u300D\u304C" +
+                    '同じタイミングで同じ手に落ちてきて、ぶつかってしまいます。',
+            };
+        }
+        landedBy[landing] = i;
+    }
+    return null;
+}
+function canonicalRotation(values) {
+    var s = values.map(throwChar).join('');
+    var best = s;
+    for (var i = 1; i < s.length; i++) {
+        var r = s.slice(i) + s.slice(0, i);
+        if (r > best)
+            best = r;
+    }
+    return best;
+}
+/**
+ * 1 か所だけ数字を変える / 隣同士を入れ替える / サイトスワップ操作(隣の投げの着地を入れ替える)
+ * で投げられるパターンになるものを候補として返す。
+ */
+function suggestFixes(values) {
+    var _a;
+    var n = values.length;
+    if (n > MAX_LENGTH_FOR_SUGGESTIONS)
+        return [];
+    var original = values.map(throwChar).join('');
+    var maxValue = Math.min(MAX_THROW, Math.max.apply(Math, __spreadArrays([9], values)) + 1);
+    var found = new Map();
+    var consider = function (candidate, cost) {
+        if (candidate.some(function (v) { return v < 0 || v > MAX_THROW; }))
+            return;
+        if (findVanillaProblem(candidate))
+            return;
+        var text = candidate.map(throwChar).join('');
+        if (text === original)
+            return;
+        var key = canonicalRotation(candidate);
+        var existing = found.get(key);
+        if (!existing || existing.cost > cost)
+            found.set(key, { text: text, cost: cost });
+    };
+    var sum = values.reduce(function (a, b) { return a + b; }, 0);
+    var targetProps = Math.round(sum / n);
+    for (var i = 0; i < n; i++) {
+        var j = (i + 1) % n;
+        if (n > 1) {
+            // 隣同士の入れ替え
+            var swapped = values.slice();
+            _a = [swapped[j], swapped[i]], swapped[i] = _a[0], swapped[j] = _a[1];
+            consider(swapped, 1);
+            // サイトスワップ操作: a b → (b+1) (a-1)
+            var op = values.slice();
+            op[i] = values[j] + 1;
+            op[j] = values[i] - 1;
+            consider(op, 1);
+        }
+        // 1 か所だけ別の数字に変える(ボールの数が変わらないものを優先)
+        for (var v = 0; v <= maxValue; v++) {
+            if (v === values[i])
+                continue;
+            var changed = values.slice();
+            changed[i] = v;
+            var props = changed.reduce(function (a, b) { return a + b; }, 0) / n;
+            consider(changed, 2 + Math.abs(props - targetProps) + Math.abs(v - values[i]) * 0.1);
+        }
+    }
+    // 足りなければ、合計(= ボールの数)を変えずに 2 か所を変えたものも探す
+    if (found.size < MAX_SUGGESTIONS && n <= MAX_LENGTH_FOR_TWO_CHANGES) {
+        for (var i = 0; i < n; i++) {
+            for (var j = i + 1; j < n; j++) {
+                for (var d = -3; d <= 3; d++) {
+                    if (d === 0)
+                        continue;
+                    var changed = values.slice();
+                    changed[i] += d;
+                    changed[j] -= d;
+                    consider(changed, 3 + Math.abs(d) * 0.1);
+                }
+            }
+        }
+    }
+    return Array.from(found.values())
+        .sort(function (a, b) { return a.cost - b.cost; })
+        .slice(0, MAX_SUGGESTIONS)
+        .map(function (c) { return c.text; });
+}
+function checkVanilla(siteswap) {
+    var values = siteswap.split('').map(throwValue);
+    var problem = findVanillaProblem(values);
+    if (!problem)
+        return { ok: true, siteswap: siteswap };
+    return { ok: false, siteswap: siteswap, message: problem.message, suggestions: suggestFixes(values) };
+}
+/** 入力を正規化し、書式として受け付けられるかの一次チェックをする */
+function precheckSiteswap(input) {
+    var siteswap = normalizeSiteswap(input);
+    if (siteswap === '') {
+        return { ok: false, siteswap: siteswap, message: 'サイトスワップを入力してください(例: 3, 441, 531)。' };
+    }
+    if (isVanilla(siteswap))
+        return checkVanilla(siteswap);
+    return { ok: true, siteswap: siteswap };
+}
+/** gunswap(Siteswap.js)のエラーメッセージを日本語にする */
+function translateGunswapError(message) {
+    if (message === 'Invalid syntax') {
+        return ('書き方が正しくありません。使える書き方の例: 3 / 441 / 10 以上は a, b … / ' +
+            '同時投げ (4,4) (6x,4)* / 複数同時 [33]3。');
+    }
+    if (message === 'Cannot determine number of props') {
+        return '数字の平均が整数にならないため、ボールの数が決まりません。';
+    }
+    if (/^Prop landing on 0 toss/.test(message)) {
+        return '「0」(空の手)のタイミングにボールが落ちてきてしまいます。';
+    }
+    if (/^No prop available to toss/.test(message)) {
+        return '投げるタイミングに手の中にボールがありません。落ちてくるタイミングが重なっていないか確認してください。';
+    }
+    if (/more than 1000 beats/.test(message)) {
+        return 'パターンが長すぎて計算できません(1000 拍以内で繰り返しになりません)。';
+    }
+    if (/'1' toss with a dwellRatio/.test(message)) {
+        return '「1」を投げるには、持つ時間の割合(dwellRatio)を 1 より小さくしてください。';
+    }
+    if (message === 'Unable to calculate bounce path') {
+        return 'バウンドの軌道が計算できませんでした。高さや床の設定を見直してください。';
+    }
+    if (message === 'Invalid custom dwell path') {
+        return 'Dwell(手の動き)の書き方が正しくありません。例: (30)(10)';
+    }
+    return "\u3053\u306E\u30D1\u30BF\u30FC\u30F3\u306F\u518D\u751F\u3067\u304D\u307E\u305B\u3093(" + message + ")\u3002";
+}
+
+
+/***/ }),
+
 /***/ "./src/options/index.ts":
 /*!******************************!*\
   !*** ./src/options/index.ts ***!
@@ -63974,6 +63419,8 @@ var Options = /** @class */ (function () {
         };
         this.blink = true;
         this.neck = true;
+        this.bodyMotion = true;
+        this.speed = 1.0;
         this.facial = {
             emotion: (_a = {},
                 _a[_pixiv_three_vrm__WEBPACK_IMPORTED_MODULE_0__["VRMSchema"].BlendShapePresetName.Joy] = 0.0,

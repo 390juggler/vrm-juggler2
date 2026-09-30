@@ -6,117 +6,283 @@ import * as dat from 'dat.gui';
 import window from './interface/window';
 
 import Renderer from './classes/Renderer';
-//import VRMLoader from './classes/VRMLoader';
 import Juggling from './motion/juggling';
+import { SiteswapCheck } from './motion/juggling/validate';
+import Body from './motion/body';
 import Blink from './motion/blink';
 import Facial from './motion/facial';
 
 import Options from './options/index';
 
+// モデルを指定しなかった時に読み込む VRM(ページからの相対パス)
+export const DEFAULT_MODEL_PATH = './models/default.vrm';
+
+// フレームが大きく飛んだ時(タブを裏にした時など)に動きが暴れないようにする上限(秒)
+const MAX_DELTA = 0.1;
+
 export default class VRMJuggler {
   private selector!: string;
-  private modelPath!: string;
-  private renderer!: any;
-  private animates!: any[];
-  private juggling?: any;
-  private blink?: any;
-  private facial?: any;
-  private options?: any;
-  private showGui?: boolean = false;
+  private renderer!: Renderer;
+  private clock = new THREE.Clock();
+  private vrm?: VRM;
+  private loadId = 0;
+  private juggling!: Juggling;
+  private body?: Body;
+  private blink!: Blink;
+  private facial!: Facial;
+  private options!: Options;
+  private showGui: boolean = false;
   private gui?: any;
+  private message?: HTMLElement;
+  private messageKind: 'none' | 'loading' | 'error' = 'none';
+  private loggedError = false;
 
-  constructor(selector: string = '', modelPath: string = '') {
-    if (selector === '' || modelPath === '') return;
+  constructor(selector: string = '', modelPath: string = DEFAULT_MODEL_PATH) {
+    if (selector === '') return;
     this.selector = selector;
-    this.modelPath = modelPath;
-
-    this.animates = [];
 
     this.options = new Options();
+    this.renderer = new Renderer(this.selector);
+    if (!this.renderer.container) {
+      console.error(`VRMJuggler: ${selector} が見つかりません`);
+      return;
+    }
+    this.createMessageArea(this.renderer.container);
 
-    this.init();
+    this.juggling = new Juggling(this.renderer.scene, this.options.siteswapNums, this.options.siteswap);
+    this.juggling.visible = false;
+    this.juggling.speed = this.options.speed;
+    this.blink = new Blink();
+    this.facial = new Facial(this.options.facial);
 
+    this.createGUI();
+    document.addEventListener('keyup', this.switchGUI, false);
+
+    this.loadModel(modelPath || DEFAULT_MODEL_PATH);
     this.animate();
   }
 
-  init() {
-    this.renderer = new Renderer(this.selector);
+  /**
+   * VRM を読み込んで差し替える。何度呼んでもよい(前のモデルは破棄される)。
+   */
+  loadModel(modelPath: string): Promise<boolean> {
+    const loadId = ++this.loadId;
+    if (this.messageKind !== 'error') this.showMessage('モデルを読み込んでいます…');
 
-    this.addAnimates(this.renderer.render);
+    return new Promise((resolve) => {
+      const onError = (error: any) => {
+        if (loadId !== this.loadId) return resolve(false);
+        console.error(error);
+        this.showMessage(
+          'VRM を読み込めませんでした。VRM 0.x 形式のファイルか確認してください。' +
+            (this.vrm ? '(前のモデルのまま続けます)' : ''),
+          true
+        );
+        resolve(false);
+      };
 
-    this.juggling = new Juggling(String(this.options.siteswapNums), this.options.siteswap);
-    this.blink = new Blink();
-    this.facial = new Facial(this.options.facial);
-    this.loadModel();
-    //this.renderer.scene.add(res.scene);
-
-    this.createGUI();
-    document.addEventListener('keyup', this.switchGUI.bind(this), false);
-  }
-
-  loadModel() {
-    const loader = new GLTFLoader();
-    loader.load(this.modelPath, async (gltf: any) => {
-      VRM.from(gltf).then((vrm) => {
-        this.renderer.scene.add(vrm.scene);
-
-        this.juggling.init(vrm, this.renderer.scene, this.renderer.camera);
-        this.addAnimates(this.juggling.update);
-
-        this.blink.init(vrm);
-        this.addAnimates(this.blink.update);
-
-        this.facial.init(vrm);
-        this.addAnimates(this.facial.update);
-      });
+      new GLTFLoader().load(
+        modelPath,
+        (gltf: any) => {
+          VRM.from(gltf)
+            .then((vrm) => {
+              // 読み込み中に別のモデルが指定された場合は捨てる
+              if (loadId !== this.loadId) {
+                vrm.dispose();
+                return resolve(false);
+              }
+              this.setVRM(vrm);
+              if (this.messageKind === 'loading') this.clearMessage();
+              resolve(true);
+            })
+            .catch(onError);
+        },
+        (progress: ProgressEvent) => {
+          if (loadId !== this.loadId || !progress.total || this.messageKind === 'error') return;
+          const percent = Math.floor((progress.loaded / progress.total) * 100);
+          this.showMessage(`モデルを読み込んでいます… ${percent}%`);
+        },
+        onError
+      );
     });
   }
 
-  addAnimates(fn: () => void) {
-    this.animates.push(fn);
+  private setVRM(vrm: VRM) {
+    const scene = this.renderer.scene;
+    if (this.vrm) {
+      scene.remove(this.vrm.scene);
+      this.body?.dispose(scene);
+      this.vrm.dispose();
+    }
+
+    this.vrm = vrm;
+    scene.add(vrm.scene);
+
+    this.body = new Body(vrm, scene);
+    this.body.armAngle = Number(this.options.siteswap.armAngle);
+    this.body.enableBodyMotion = this.options.bodyMotion;
+    this.body.enableNeck = this.options.neck;
+    this.juggling.setAvatarMetrics(this.body.metrics);
+    this.juggling.visible = true;
+
+    this.blink.init(vrm);
+    this.facial.init(vrm);
   }
 
-  animate = () => {
-    for (let i = 0; i < this.animates.length; i++) {
-      this.animates[i]();
+  /**
+   * サイトスワップを変更する。投げられないパターンの場合は今のパターンのまま、理由を画面に表示する。
+   */
+  setSiteswap(siteswap: string): SiteswapCheck {
+    const result = this.juggling.setPattern(siteswap, this.options.siteswap);
+    if (result.ok) {
+      this.options.siteswapNums = result.siteswap;
+      this.clearMessage();
+      // ページ側の入力欄などが追従できるように通知する
+      this.renderer.container?.dispatchEvent(
+        new CustomEvent('siteswapchange', { detail: { siteswap: result.siteswap } })
+      );
+    } else {
+      this.showSiteswapError(result);
     }
+    this.gui?.updateDisplay();
+    return result;
+  }
+
+  private animate = () => {
     requestAnimationFrame(this.animate);
+    const delta = Math.min(this.clock.getDelta(), MAX_DELTA);
+
+    try {
+      if (this.vrm && this.body) {
+        const frame = this.juggling.update(delta);
+        this.body.update(frame, delta);
+        this.blink.update(delta);
+        this.facial.update();
+        this.vrm.update(delta);
+      }
+      this.renderer.render();
+    } catch (e) {
+      // 1 回のエラーでアニメーションが止まらないようにする
+      if (!this.loggedError) console.error(e);
+      this.loggedError = true;
+    }
   };
 
-  createGUI() {
+  // ---- メッセージ表示 ----
+
+  private createMessageArea(container: HTMLElement) {
+    if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+    const el = document.createElement('div');
+    el.className = 'vrm-juggler-message';
+    el.setAttribute('role', 'status');
+    Object.assign(el.style, {
+      position: 'absolute',
+      left: '12px',
+      bottom: '12px',
+      maxWidth: 'calc(100% - 24px)',
+      boxSizing: 'border-box',
+      padding: '10px 14px',
+      borderRadius: '8px',
+      font: '14px/1.6 sans-serif',
+      color: '#fff',
+      background: 'rgba(40, 40, 40, 0.85)',
+      display: 'none',
+      zIndex: '10',
+    });
+    container.appendChild(el);
+    this.message = el;
+  }
+
+  private showMessage(text: string, isError = false) {
+    if (!this.message) return;
+    this.messageKind = isError ? 'error' : 'loading';
+    this.message.textContent = text;
+    this.message.style.background = isError ? 'rgba(170, 40, 40, 0.9)' : 'rgba(40, 40, 40, 0.85)';
+    this.message.style.display = 'block';
+  }
+
+  private clearMessage() {
+    this.messageKind = 'none';
+    if (this.message) this.message.style.display = 'none';
+  }
+
+  private showSiteswapError(result: SiteswapCheck) {
+    if (!this.message) return;
+    this.showMessage(`「${result.siteswap}」は投げられません: ${result.message}`, true);
+    if (result.suggestions && result.suggestions.length > 0) {
+      const line = document.createElement('div');
+      line.style.marginTop = '6px';
+      line.appendChild(document.createTextNode('近いパターン: '));
+      result.suggestions.forEach((s) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = s;
+        Object.assign(button.style, {
+          margin: '0 4px',
+          padding: '2px 10px',
+          border: '1px solid #fff',
+          borderRadius: '4px',
+          background: 'transparent',
+          color: '#fff',
+          font: 'inherit',
+          cursor: 'pointer',
+        });
+        button.addEventListener('click', () => this.setSiteswap(s));
+        line.appendChild(button);
+      });
+      this.message.appendChild(line);
+    }
+    const note = document.createElement('div');
+    note.style.opacity = '0.8';
+    note.textContent = `いまは「${this.juggling.currentSiteswap}」を続けています。`;
+    this.message.appendChild(note);
+  }
+
+  // ---- パラメータ調整 UI ----
+
+  private setOptions() {
+    const result = this.juggling.setPattern(this.juggling.currentSiteswap, this.options.siteswap);
+    if (!result.ok) this.showSiteswapError(result);
+  }
+
+  private createGUI() {
+    const options = this.options;
+    const siteswapOptions = options.siteswap as any;
     this.gui = new dat.GUI({});
 
     const siteswap = this.gui.addFolder('ジャグリング');
     siteswap
-      .add(this.options, 'siteswapNums')
-      .name('サイトスワップ数')
-      .onFinishChange((value: string) => {
-        this.setOptions();
-      });
+      .add(options, 'siteswapNums')
+      .name('サイトスワップ')
+      .onFinishChange((value: string) => this.setSiteswap(value));
 
     siteswap
-      .add(this.options.siteswap, 'beatDuration', 0.05, 0.5)
+      .add(siteswapOptions, 'beatDuration', 0.05, 0.5)
       .name('高さ')
       .listen()
       .onFinishChange((value: number) => {
-        this.options.siteswap.beatDurationAltitude = String(value);
+        siteswapOptions.beatDurationAltitude = String(value);
         this.setOptions();
       });
 
     siteswap
-      .add(this.options.siteswap.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
+      .add(options, 'speed', 0.2, 1.5)
+      .name('スピード')
+      .onChange((value: number) => {
+        this.juggling.speed = Number(value);
+      });
+
+    siteswap
+      .add(siteswapOptions.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
       .name('小道具')
       .listen()
       .onFinishChange((value: string) => {
-        this.options.siteswap.props.map((prop: { type: string; color: string; radius: number; C: number }) => {
-          prop.type = value;
-          return prop;
-        });
+        siteswapOptions.props.forEach((prop: { type: string }) => (prop.type = value));
         this.setOptions();
       });
 
     siteswap
-      .add(this.options.siteswap, 'dwellPath', {
+      .add(siteswapOptions, 'dwellPath', {
         Cascade: '(30)(10)',
         'Reverse Cascade': '(10)(30)',
         Shower: '(30)(10).(10)(30)',
@@ -125,207 +291,134 @@ export default class VRMJuggler {
       })
       .name('Dwell')
       .listen()
-      .onFinishChange((value: string) => {
-        this.setOptions();
-      });
+      .onFinishChange(() => this.setOptions());
 
-    const altitude = this.gui.addFolder('ジャグリング(高度な設定)');
-    altitude
-      .add(this.options.siteswap, 'beatDurationAltitude')
+    const advanced = this.gui.addFolder('ジャグリング(高度な設定)');
+    advanced
+      .add(siteswapOptions, 'beatDurationAltitude')
       .name('高さ')
       .listen()
-      .onChange((value: string) => {
-        this.options.siteswap.beatDuration = value;
+      .onFinishChange((value: string) => {
+        const beatDuration = Number(value);
+        if (!(beatDuration > 0)) return;
+        siteswapOptions.beatDuration = beatDuration;
         this.setOptions();
       });
 
-    altitude
-      .addColor(this.options.siteswap, 'propsColor')
+    advanced
+      .addColor(siteswapOptions, 'propsColor')
       .name('小道具の色')
-      .onChange((value: any) => {
-        this.options.siteswap.props = this.options.siteswap.props.map((prop: { color: string }) => {
-          prop.color = value;
-          return prop;
-        });
+      .onChange((value: string) => {
+        siteswapOptions.props.forEach((prop: { color: string }) => (prop.color = value));
         this.setOptions();
       });
 
-    altitude
-      .add(this.options.siteswap, 'propsRadius')
+    advanced
+      .add(siteswapOptions, 'propsRadius')
       .name('小道具の大きさ')
-      .onChange((value: any) => {
-        this.options.siteswap.props = this.options.siteswap.props.map((prop: { radius: string }) => {
-          prop.radius = value;
-          return prop;
-        });
+      .onFinishChange((value: string) => {
+        const radius = Number(value);
+        if (!(radius > 0)) return;
+        siteswapOptions.props.forEach((prop: { radius: number }) => (prop.radius = radius));
         this.setOptions();
       });
 
-    altitude
-      .add(this.options.siteswap, 'dwellPath')
+    advanced
+      .add(siteswapOptions, 'dwellPath')
       .name('Dwell')
       .listen()
-      .onChange((value: string) => {
+      .onFinishChange(() => this.setOptions());
+
+    ['dwellRatio', 'dwellCatchScale', 'dwellTossScale', 'emptyCatchScale', 'emptyTossScale'].forEach((key) => {
+      advanced.add(siteswapOptions, key).onFinishChange((value: string) => {
+        siteswapOptions[key] = Number(value);
+        this.setOptions();
+      });
+    });
+
+    advanced
+      .add(siteswapOptions, 'armAngle', 0.0, 0.5)
+      .name('肘の開き')
+      .onFinishChange((value: number) => {
+        if (this.body) this.body.armAngle = Number(value);
         this.setOptions();
       });
 
-    altitude.add(this.options.siteswap, 'dwellCatchScale').onChange((value: string) => {
-      this.setOptions();
-    });
-
-    altitude.add(this.options.siteswap, 'dwellTossScale').onChange((value: string) => {
-      this.setOptions();
-    });
-
-    altitude.add(this.options.siteswap, 'emptyCatchScale').onChange((value: string) => {
-      this.setOptions();
-    });
-
-    altitude.add(this.options.siteswap, 'emptyTossScale').onChange((value: string) => {
-      this.setOptions();
-    });
-
-    altitude.add(this.options.siteswap, 'armAngle', 0.0, 0.5).onChange((value: number) => {
-      this.setOptions();
-    });
-
-    altitude.add(this.options.siteswap, 'dwellRatio').onChange((value: string) => {
-      this.setOptions();
-    });
-
-    altitude
-      .addColor(this.options, 'backgroundColor')
+    advanced
+      .addColor(options, 'backgroundColor')
       .name('背景色')
       .onChange((value: string) => {
         this.renderer.scene.background = new THREE.Color(value);
       });
-    const surfaces = altitude.addFolder('surfaces');
+
+    const surfaces = advanced.addFolder('surfaces');
+    const surface = siteswapOptions.surfaces[0];
+    ['x', 'y', 'z'].forEach((axis) =>
+      surfaces
+        .add(surface.position, axis)
+        .name(`position:${axis}`)
+        .onFinishChange(() => this.setOptions())
+    );
+    ['x', 'y', 'z'].forEach((axis) =>
+      surfaces
+        .add(surface.normal, axis)
+        .name(`normal:${axis}`)
+        .onFinishChange(() => this.setOptions())
+    );
     surfaces
-      .add(this.options.siteswap.surfaces[0].position, 'x')
-      .name('position:x')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
-    surfaces
-      .add(this.options.siteswap.surfaces[0].position, 'y')
-      .name('position:y')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
-    surfaces
-      .add(this.options.siteswap.surfaces[0].position, 'z')
-      .name('position:z')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
-    surfaces
-      .add(this.options.siteswap.surfaces[0].normal, 'x')
-      .name('normal:x')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
-    surfaces
-      .add(this.options.siteswap.surfaces[0].normal, 'y')
-      .name('normal:y')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
-    surfaces
-      .add(this.options.siteswap.surfaces[0].normal, 'z')
-      .name('normal:z')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
-    surfaces
-      .add(this.options.siteswap.surfaces[0], 'scale')
+      .add(surface, 'scale')
       .name('scale')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
+      .onFinishChange(() => this.setOptions());
     surfaces
-      .addColor(this.options.siteswap.surfaces[0], 'color')
+      .addColor(surface, 'color')
       .name('color')
-      .onChange((value: string) => {
-        this.setOptions();
-      });
+      .onChange(() => this.setOptions());
 
     const emotions = this.gui.addFolder('表情');
-    emotions
-      .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Joy, 0.0, 1.0)
-      .name('喜')
-      .onChange((value: number) => {
-        this.facial.emotion[VRMSchema.BlendShapePresetName.Joy] = value;
-      });
-    emotions
-      .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Angry, 0.0, 1.0)
-      .name('怒')
-      .onChange((value: number) => {
-        this.facial.emotion[VRMSchema.BlendShapePresetName.Angry] = value;
-      });
-    emotions
-      .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Sorrow, 0.0, 1.0)
-      .name('哀')
-      .onChange((value: number) => {
-        this.facial.emotion[VRMSchema.BlendShapePresetName.Sorrow] = value;
-      });
-    emotions
-      .add(this.options.facial.emotion, VRMSchema.BlendShapePresetName.Fun, 0.0, 1.0)
-      .name('楽')
-      .onChange((value: number) => {
-        this.facial.emotion[VRMSchema.BlendShapePresetName.Fun] = value;
-      });
+    const emotionNames: [VRMSchema.BlendShapePresetName, string][] = [
+      [VRMSchema.BlendShapePresetName.Joy, '喜'],
+      [VRMSchema.BlendShapePresetName.Angry, '怒'],
+      [VRMSchema.BlendShapePresetName.Sorrow, '哀'],
+      [VRMSchema.BlendShapePresetName.Fun, '楽'],
+    ];
+    emotionNames.forEach(([key, name]) => emotions.add(options.facial.emotion, key, 0.0, 1.0).name(name));
 
     const mouth = this.gui.addFolder('口の形');
-    mouth
-      .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.A, 0.0, 1.0)
-      .name('あ')
-      .onChange((value: number) => {
-        this.facial.mouth[VRMSchema.BlendShapePresetName.A] = value;
-      });
-    mouth
-      .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.I, 0.0, 1.0)
-      .name('い')
-      .onChange((value: number) => {
-        this.facial.mouth[VRMSchema.BlendShapePresetName.I] = value;
-      });
-    mouth
-      .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.U, 0.0, 1.0)
-      .name('う')
-      .onChange((value: number) => {
-        this.facial.mouth[VRMSchema.BlendShapePresetName.U] = value;
-      });
-    mouth
-      .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.E, 0.0, 1.0)
-      .name('え')
-      .onChange((value: number) => {
-        this.facial.mouth[VRMSchema.BlendShapePresetName.E] = value;
-      });
-    mouth
-      .add(this.options.facial.mouth, VRMSchema.BlendShapePresetName.O, 0.0, 1.0)
-      .name('お')
-      .onChange((value: number) => {
-        this.facial.mouth[VRMSchema.BlendShapePresetName.O] = value;
-      });
+    const mouthNames: [VRMSchema.BlendShapePresetName, string][] = [
+      [VRMSchema.BlendShapePresetName.A, 'あ'],
+      [VRMSchema.BlendShapePresetName.I, 'い'],
+      [VRMSchema.BlendShapePresetName.U, 'う'],
+      [VRMSchema.BlendShapePresetName.E, 'え'],
+      [VRMSchema.BlendShapePresetName.O, 'お'],
+    ];
+    mouthNames.forEach(([key, name]) => mouth.add(options.facial.mouth, key, 0.0, 1.0).name(name));
 
     this.gui
-      .add(this.options, 'blink')
+      .add(options, 'blink')
       .name('まばたき')
       .onChange((value: boolean) => {
         this.blink.enable = value;
       });
 
     this.gui
-      .add(this.options, 'neck')
-      .name('首振り')
+      .add(options, 'neck')
+      .name('首の動き')
       .onChange((value: boolean) => {
-        this.juggling.enableNeck = value;
+        if (this.body) this.body.enableNeck = value;
+      });
+
+    this.gui
+      .add(options, 'bodyMotion')
+      .name('体の動き')
+      .onChange((value: boolean) => {
+        if (this.body) this.body.enableBodyMotion = value;
       });
 
     if (!this.showGui) this.gui.hide();
   }
 
-  switchGUI(e: any) {
-    if (e.keyCode !== 27) return;
+  private switchGUI = (e: KeyboardEvent) => {
+    if (e.key !== 'Escape' && e.keyCode !== 27) return;
 
     this.showGui = !this.showGui;
 
@@ -334,11 +427,7 @@ export default class VRMJuggler {
     } else {
       this.gui.hide();
     }
-  }
-
-  setOptions() {
-    this.juggling.setOptions(String(this.options.siteswapNums), this.options.siteswap);
-  }
+  };
 }
 
 window.VRMJuggler = window.VRMJuggler || VRMJuggler;

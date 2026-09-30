@@ -21,8 +21,6 @@
     "css-loader": "^3.6.0",
     "http-server": "^0.12.3",
     "mini-css-extract-plugin": "^0.9.0",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
     "terser-webpack-plugin": "^3.0.7",
     "ts-loader": "^7.0.5",
@@ -39,9 +37,9 @@
     "three-ik": "^0.1.0"
   },
   "scripts": {
-    "build": "webpack --env.mode=production --devtool none",
-    "develop": "webpack --env.mode=development --devtool none",
-    "watch": "webpack --env.mode=development --watch --devtool source-map",
-    "start": "webpack-dev-server --env.mode=development --devtool source-map"
+    "build": "node --openssl-legacy-provider node_modules/webpack/bin/webpack.js --env.mode=production --devtool none",
+    "develop": "node --openssl-legacy-provider node_modules/webpack/bin/webpack.js --env.mode=development --devtool none",
+    "watch": "node --openssl-legacy-provider node_modules/webpack/bin/webpack.js --env.mode=development --watch --devtool source-map",
+    "start": "node --openssl-legacy-provider node_modules/webpack-dev-server/bin/webpack-dev-server.js --env.mode=development --devtool source-map"
   }
 }
