@@ -19,6 +19,9 @@ const HAND_ABOVE_ELBOW = 0.03;
 
 export interface AvatarMetrics {
   shoulderY: number;
+  /** 肩(上腕の付け根)の体の中心からの横距離 */
+  shoulderX: number;
+  shoulderZ: number;
   upperArmLength: number;
   armLength: number;
 }
@@ -26,6 +29,8 @@ export interface AvatarMetrics {
 // 変換が恒等になる体格(gunswap の元の体格)
 export const DEFAULT_METRICS: AvatarMetrics = {
   shoulderY: GUNSWAP_HAND_Y + GUNSWAP_ARM_LENGTH / 2 - HAND_ABOVE_ELBOW,
+  shoulderX: 0.225,
+  shoulderZ: 0,
   upperArmLength: GUNSWAP_ARM_LENGTH / 2,
   armLength: GUNSWAP_ARM_LENGTH,
 };
@@ -37,7 +42,13 @@ export const DEFAULT_METRICS: AvatarMetrics = {
 export interface SpaceTransform {
   horizontalScale: number;
   offsetY: number;
+  /** 左右の肩の位置(ワールド座標)と、肩から手(ボールの中心)までの届く距離 */
+  shoulders: THREE.Vector3[];
+  reach: number;
 }
+
+// 肩から手(ボールの中心)までの距離の上限(腕の長さに対する割合)。伸び切ると手首の向きが不自然になる
+const REACH_SHARE = 0.97;
 
 /** ボールを持っていない時の手の基準の高さ(ワールド座標) */
 export function handBaseY(metrics: AvatarMetrics): number {
@@ -47,7 +58,16 @@ export function handBaseY(metrics: AvatarMetrics): number {
 export function makeTransform(metrics: AvatarMetrics): SpaceTransform {
   const horizontalScale = THREE.MathUtils.clamp(metrics.armLength / GUNSWAP_ARM_LENGTH, 0.7, 1.2);
   const offsetY = handBaseY(metrics) - GUNSWAP_HAND_Y;
-  return { horizontalScale, offsetY };
+  const shoulders = [-1, 1].map((side) => new THREE.Vector3(side * metrics.shoulderX, metrics.shoulderY, metrics.shoulderZ));
+  return { horizontalScale, offsetY, shoulders, reach: metrics.armLength * REACH_SHARE };
+}
+
+/** 手の位置を肩から届く範囲に収める */
+export function clampToReach(hand: number, p: THREE.Vector3, t: SpaceTransform) {
+  const shoulder = t.shoulders[hand];
+  const offset = p.clone().sub(shoulder);
+  if (offset.length() > t.reach) p.copy(shoulder).addScaledVector(offset.normalize(), t.reach);
+  return p;
 }
 
 export function transformPoint(p: { x: number; y: number; z: number }, t: SpaceTransform, out: THREE.Vector3) {
@@ -65,6 +85,7 @@ export interface HandTrack {
 export interface ThrowEvent {
   time: number; // 周期の中の時刻(秒)
   hand: number;
+  prop: number;
   value: number; // 投げの高さ(サイトスワップの数字)
   velocity: THREE.Vector3; // リリース時のボールの速度
 }
@@ -141,7 +162,7 @@ export function buildTracks(siteswap: any, transform: SpaceTransform): Tracks {
       if (!flying || air[prev]) return;
       const next = (s + 1) % numSteps;
       const velocity = props[i][next].clone().sub(props[i][s]).multiplyScalar(1 / stepDuration);
-      throws.push({ time: s * stepDuration, hand: props[i][s].x < 0 ? LEFT : RIGHT, value: 0, velocity });
+      throws.push({ time: s * stepDuration, hand: props[i][s].x < 0 ? LEFT : RIGHT, prop: i, value: 0, velocity });
     })
   );
   throws.sort((a, b) => a.time - b.time);

@@ -60326,8 +60326,11 @@ var Body = /** @class */ (function () {
     Object.defineProperty(Body.prototype, "metrics", {
         get: function () {
             var arm = this.arms[_juggling_tracks__WEBPACK_IMPORTED_MODULE_2__["RIGHT"]];
+            var shoulder = worldPosition(arm.upper);
             return {
-                shoulderY: worldPosition(arm.upper).y,
+                shoulderY: shoulder.y,
+                shoulderX: Math.abs(shoulder.x),
+                shoulderZ: shoulder.z,
                 upperArmLength: arm.upperLength,
                 armLength: arm.upperLength + arm.lowerLength,
             };
@@ -63388,6 +63391,7 @@ var FOLLOW_HORIZONTAL = 0.3;
 // キャッチ: 落ちてくる速さの何割で受けるか(siteswap-performer の catchAbsorptionRatio 0.42)と上限
 var CATCH_ABSORB = 0.35;
 var CATCH_HAND_SPEED_MAX = 1.5; // m/s
+var CATCH_HORIZONTAL = 0.3; // 受けた後の横への流れ(縦は沈み込み、横はあまり流れない)
 // 投げる区間: 一定の加速度で加速すると考えて長さを決める
 var THROW_ACCEL = 40; // m/s^2(約 4G)
 var THROW_STROKE_MIN = 0.05; // m
@@ -63410,6 +63414,7 @@ var PALM_SNAP_TIME = 0.06; // s
 var PROP_WIDTH = { ball: 1, club: 1.15, ring: 1.3 };
 // リングは同じ面を飛ぶと輪同士が交差するので、1 本ずつ奥行きをずらして平行な面を飛ばす
 var RING_LAYER_GAP = 0.03; // m
+var RING_LAYER_SPREAD_MAX = 0.12; // m
 // 小道具の握る位置
 var CLUB_GRIP_LOCAL = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, -0.13, 0); // クラブのモデル座標(ノブ側)
 var RING_GRIP_RADIUS = 0.145; // 輪の太さの中央
@@ -63520,7 +63525,7 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
                 p.x *= three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(1 + (table[v] / 7 - 1) * WIDTH_BLEND_THROW, 0.5, 2);
             }
         }
-        return toWorld(toss.hand, p);
+        return Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(toss.hand, toWorld(toss.hand, p), transform);
     };
     var catchPoint = function (toss, incomingValue) {
         var pts = dwellPoints(toss.dwellPathIx);
@@ -63531,7 +63536,12 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
             if (incomingValue === 1)
                 p.y = pts[pts.length - 1].y;
         }
-        return toWorld(toss.hand, p);
+        return Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(toss.hand, toWorld(toss.hand, p), transform);
+    };
+    // リングは 1 本ずつ奥行きをずらす(本数が多くても全体で RING_LAYER_SPREAD_MAX に収める)
+    var ringGap = numProps > 1 ? Math.min(RING_LAYER_GAP, RING_LAYER_SPREAD_MAX / (numProps - 1)) : 0;
+    var layer = function (prop) {
+        return new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, propType === 'ring' ? (prop - (numProps - 1) / 2) * ringGap : 0);
     };
     // ---- 出来事を集める ----
     var flights = [];
@@ -63554,9 +63564,9 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
                 throwHand: toss.hand,
                 catchHand: next.hand,
                 value: toss.numBeats,
-                start: throwPoint(toss, next.hand !== toss.hand),
+                start: Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(toss.hand, throwPoint(toss, next.hand !== toss.hand).add(layer(prop)), transform),
                 velocity: new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](),
-                end: catchPoint(next, toss.numBeats),
+                end: Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(next.hand, catchPoint(next, toss.numBeats).add(layer(prop)), transform),
             });
         });
     });
@@ -63577,10 +63587,7 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
     spread(function (f) { return f.throwHand + ":" + Math.round(f.release * 1000); }, function (f, o) { return releaseOffset.set(f, o); });
     spread(function (f) { return f.catchHand + ":" + Math.round(mod(f.release + f.duration, period) * 1000); }, function (f, o) { return catchOffset.set(f, o); });
     // 重心の放物線(握る位置のずれは、その時刻の小道具の向きから求める)
-    var layer = function (prop) { return (propType === 'ring' ? (prop - (numProps - 1) / 2) * RING_LAYER_GAP : 0); };
     flights.forEach(function (f) {
-        f.start.z += layer(f.prop);
-        f.end.z += layer(f.prop);
         var releaseStep = stepOf(f.release);
         var catchStep = stepOf(f.release + f.duration);
         // throwPoint / catchPoint は手(握る位置)。重心はそこから握る位置のずれを引く
@@ -63633,7 +63640,10 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
         });
         var catchTime = mod(f.release + f.duration, period);
         var vIncoming = flightVelocityAt(f, f.duration);
-        var handVelocity = vIncoming.clone().multiplyScalar(CATCH_ABSORB);
+        var handVelocity = vIncoming
+            .clone()
+            .multiplyScalar(CATCH_ABSORB)
+            .multiply(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](CATCH_HORIZONTAL, 1, CATCH_HORIZONTAL));
         if (handVelocity.length() > CATCH_HAND_SPEED_MAX)
             handVelocity.setLength(CATCH_HAND_SPEED_MAX);
         var handAtCatch = f.end
@@ -63696,7 +63706,7 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
             strokes.push({
                 time: mod(e.time + followTime, period),
                 kind: 'follow',
-                position: e.position.clone().addScaledVector(followVelocity, followTime * ((1 + FOLLOW_END_SPEED) / 2)),
+                position: Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(hand, e.position.clone().addScaledVector(followVelocity, followTime * ((1 + FOLLOW_END_SPEED) / 2)), transform),
                 velocityIn: followVelocity.clone().multiplyScalar(FOLLOW_END_SPEED),
                 velocityOut: followVelocity.clone().multiplyScalar(FOLLOW_END_SPEED),
                 palm: e.palm.clone(),
@@ -63715,7 +63725,7 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
             var dir = e.velocityIn.clone().normalize();
             // 投げる区間の始まりは手の軌道の一番下。縦の速度は 0 にして、横は内側へすくう動きを続ける
             // (上向きの速度で到着させると、その手前で一度下へ潜ってしまう)
-            var start = e.position.clone().addScaledVector(dir, -stroke);
+            var start = Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(hand, e.position.clone().addScaledVector(dir, -stroke), transform);
             var scoop = start.clone().sub(prev.position).multiplyScalar(1 / Math.max(available - duration, 1e-3));
             scoop.y = 0;
             var startVelocity = dir.clone().multiplyScalar(startSpeed).setY(0).add(scoop).multiplyScalar(0.5);
@@ -63751,7 +63761,7 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
             var b = events[bIndex];
             var T = mod(b.time - a.time, period) || period;
             var u = mod(t - a.time, period) / T;
-            positions.push(hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u));
+            positions.push(Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["clampToReach"])(hand, hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u), transform));
             // 手のひら: 区間の両端の向きをなめらかに補間。投げた直後は手首のスナップを足す
             var eased = u * u * (3 - 2 * u);
             var palm = a.palm.clone().lerp(b.palm, eased).normalize();
@@ -63865,7 +63875,7 @@ function buildNaturalTracks(siteswap, transform, propType, propRadius) {
     }
     // 体の動き用: 投げの一覧
     var throws = flights
-        .map(function (f) { return ({ time: f.release, hand: f.throwHand, value: f.value, velocity: f.velocity.clone() }); })
+        .map(function (f) { return ({ time: f.release, hand: f.throwHand, prop: f.prop, value: f.value, velocity: f.velocity.clone() }); })
         .sort(function (a, b) { return a.time - b.time; });
     var gaze = Object(_tracks__WEBPACK_IMPORTED_MODULE_1__["computeGazeTrack"])(inAir, props, numSteps);
     return __assign({ numSteps: numSteps, stepDuration: dt, period: period,
@@ -64005,7 +64015,7 @@ function autoBeatDuration(siteswap, dwellBeats) {
 /*!***************************************!*\
   !*** ./src/motion/juggling/tracks.ts ***!
   \***************************************/
-/*! exports provided: LEFT, RIGHT, GRAVITY, DEFAULT_METRICS, handBaseY, makeTransform, transformPoint, propBaseQuaternion, summarize, buildTracks, computeGazeTrack, boxSmooth, sampleTrack */
+/*! exports provided: LEFT, RIGHT, GRAVITY, DEFAULT_METRICS, handBaseY, makeTransform, clampToReach, transformPoint, propBaseQuaternion, summarize, buildTracks, computeGazeTrack, boxSmooth, sampleTrack */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -64016,6 +64026,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_METRICS", function() { return DEFAULT_METRICS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handBaseY", function() { return handBaseY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeTransform", function() { return makeTransform; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clampToReach", function() { return clampToReach; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transformPoint", function() { return transformPoint; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "propBaseQuaternion", function() { return propBaseQuaternion; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "summarize", function() { return summarize; });
@@ -64051,9 +64062,13 @@ var HAND_ABOVE_ELBOW = 0.03;
 // 変換が恒等になる体格(gunswap の元の体格)
 var DEFAULT_METRICS = {
     shoulderY: GUNSWAP_HAND_Y + GUNSWAP_ARM_LENGTH / 2 - HAND_ABOVE_ELBOW,
+    shoulderX: 0.225,
+    shoulderZ: 0,
     upperArmLength: GUNSWAP_ARM_LENGTH / 2,
     armLength: GUNSWAP_ARM_LENGTH,
 };
+// 肩から手(ボールの中心)までの距離の上限(腕の長さに対する割合)。伸び切ると手首の向きが不自然になる
+var REACH_SHARE = 0.97;
 /** ボールを持っていない時の手の基準の高さ(ワールド座標) */
 function handBaseY(metrics) {
     return metrics.shoulderY - metrics.upperArmLength + HAND_ABOVE_ELBOW;
@@ -64061,7 +64076,16 @@ function handBaseY(metrics) {
 function makeTransform(metrics) {
     var horizontalScale = three__WEBPACK_IMPORTED_MODULE_0__["MathUtils"].clamp(metrics.armLength / GUNSWAP_ARM_LENGTH, 0.7, 1.2);
     var offsetY = handBaseY(metrics) - GUNSWAP_HAND_Y;
-    return { horizontalScale: horizontalScale, offsetY: offsetY };
+    var shoulders = [-1, 1].map(function (side) { return new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](side * metrics.shoulderX, metrics.shoulderY, metrics.shoulderZ); });
+    return { horizontalScale: horizontalScale, offsetY: offsetY, shoulders: shoulders, reach: metrics.armLength * REACH_SHARE };
+}
+/** 手の位置を肩から届く範囲に収める */
+function clampToReach(hand, p, t) {
+    var shoulder = t.shoulders[hand];
+    var offset = p.clone().sub(shoulder);
+    if (offset.length() > t.reach)
+        p.copy(shoulder).addScaledVector(offset.normalize(), t.reach);
+    return p;
 }
 function transformPoint(p, t, out) {
     return out.set(p.x * t.horizontalScale, p.y + t.offsetY, p.z * t.horizontalScale);
@@ -64117,7 +64141,7 @@ function buildTracks(siteswap, transform) {
                 return;
             var next = (s + 1) % numSteps;
             var velocity = props[i][next].clone().sub(props[i][s]).multiplyScalar(1 / stepDuration);
-            throws.push({ time: s * stepDuration, hand: props[i][s].x < 0 ? LEFT : RIGHT, value: 0, velocity: velocity });
+            throws.push({ time: s * stepDuration, hand: props[i][s].x < 0 ? LEFT : RIGHT, prop: i, value: 0, velocity: velocity });
         });
     });
     throws.sort(function (a, b) { return a.time - b.time; });

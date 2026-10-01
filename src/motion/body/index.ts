@@ -220,8 +220,11 @@ export default class Body {
 
   get metrics(): AvatarMetrics {
     const arm = this.arms[RIGHT];
+    const shoulder = worldPosition(arm.upper);
     return {
-      shoulderY: worldPosition(arm.upper).y,
+      shoulderY: shoulder.y,
+      shoulderX: Math.abs(shoulder.x),
+      shoulderZ: shoulder.z,
       upperArmLength: arm.upperLength,
       armLength: arm.upperLength + arm.lowerLength,
     };
