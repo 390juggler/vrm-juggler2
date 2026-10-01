@@ -114,6 +114,16 @@ const RING_DEPTH_ROUNDS = 3;
 // 前の縁を少し内側へ向ける。空中では輪の面の中で少し回る
 const RING_INWARD_YAW = 10;
 const RING_SPIN_PER_FLIGHT = 0.5; // 回転
+// ふつうのリングは手を高く上げて扱う。前腕がほぼ縦になる高さで受け、肩の高さまで持ち上げてから腕全体で投げる
+// (ボールのように胸より下で持つと、輪が体の前で低く小さく見えてしまう)
+// 下げすぎると肘より手が下がって前腕が寝てしまうので、投げる区間の沈み込みは浅くする
+const RING_CATCH_LIFT = 0.3; // m(ボールの受ける高さから)
+const RING_THROW_LIFT = 0.28; // m(ボールの投げる高さから)
+const RING_STROKE_MAX = 0.1; // m
+const RING_CLOSER = 0.12; // m(手を体へ近づけ、肩の前で前腕を立てる)
+const RING_MIN_X = 0.15; // m(顔の高さで持つので、輪が頭に近づきすぎないよう肩の前で扱う)
+// 握り方: 親指を輪の内側、ほかの指を外側にかけ、人差し指の付け根(手のひら側)に縁を乗せる。手のひらは内側斜め上を向く
+const RING_PALM_INWARD = 0.8;
 
 // 投げの形。ふだんは normal(内側で投げて外側で受ける)。空中で小道具同士がぶつかるパターンでは、投げの高さごとに
 // 形を選び直す(実際のジャグラーも 423 や 534 の 4 は柱のようにまっすぐ上げ、53 の 3 は少し外で受ける)
@@ -252,18 +262,22 @@ export function buildNaturalTracks(
     return pts[0].x > pts[pts.length - 1].x && pts[pts.length - 1].x > 0;
   };
   const width = PROP_WIDTH[propType] || 1;
-  const toWorld = (hand: number, p: { x: number; y: number; z: number }) =>
+  // lift > 0(リングを肩の高さで扱う)の時は手を体へ寄せる
+  const toWorld = (hand: number, p: { x: number; y: number; z: number }, lift = 0) =>
     transformPoint(
-      { x: (hand === LEFT ? -1 : 1) * p.x * width, y: 1.15 + p.y, z: p.z - 0.35 },
+      { x: (hand === LEFT ? -1 : 1) * p.x * width, y: 1.15 + p.y + lift, z: p.z - 0.35 + (lift > 0 ? RING_CLOSER : 0) },
       transform,
       new THREE.Vector3()
     );
 
-  // 手(握る位置)を体の中心から離す(パンケーキだけ)
+  // '1'(手渡し)は胸の前を低く渡す(顔の高さで渡すと輪が顔に当たる)
+  const throwLift = (value: number) => (propType === 'ring' && value > 1 ? RING_THROW_LIFT : 0);
+  const catchLift = (incomingValue: number) => (propType === 'ring' && incomingValue > 1 ? RING_CATCH_LIFT : 0);
+  // 手(握る位置)を体の中心から離す(リング・パンケーキ)
+  const minX = propType === 'pancake' ? PANCAKE_MIN_X : propType === 'ring' ? RING_MIN_X : 0;
   const keepOut = (hand: number, p: THREE.Vector3) => {
-    if (propType !== 'pancake') return p;
     const side = hand === RIGHT ? 1 : -1;
-    if (p.x * side < PANCAKE_MIN_X) p.x = side * PANCAKE_MIN_X;
+    if (p.x * side < minX) p.x = side * minX;
     return p;
   };
   const catchX = (baseX: number, incomingValue: number) => {
@@ -283,7 +297,7 @@ export function buildNaturalTracks(
         p.x *= THREE.MathUtils.clamp(1 + (table[v] / 7 - 1) * WIDTH_BLEND_THROW, 0.5, 2);
       }
     }
-    return clampToReach(toss.hand, keepOut(toss.hand, toWorld(toss.hand, p)), transform);
+    return clampToReach(toss.hand, keepOut(toss.hand, toWorld(toss.hand, p, throwLift(toss.numBeats))), transform);
   };
   const catchPoint = (toss: any, incomingValue: number) => {
     const pts = dwellPoints(toss.dwellPathIx);
@@ -293,7 +307,7 @@ export function buildNaturalTracks(
       // '1' は横へ押し出す手渡しなので、投げた高さのまま受ける(手のひらが受け手の方へ横を向く)
       if (incomingValue === 1) p.y = pts[pts.length - 1].y;
     }
-    return clampToReach(toss.hand, toWorld(toss.hand, p), transform);
+    return clampToReach(toss.hand, toWorld(toss.hand, p, catchLift(incomingValue)), transform);
   };
 
   // ---- 出来事を集める ----
@@ -570,7 +584,8 @@ export function buildNaturalTracks(
       const speed = e.velocityIn.length();
       if (speed < 1e-3) return;
       const startSpeed = speed * THROW_STROKE_START_SPEED;
-      let stroke = THREE.MathUtils.clamp((speed * speed) / (2 * THROW_ACCEL), THROW_STROKE_MIN, THROW_STROKE_MAX);
+      const strokeMax = propType === 'ring' ? RING_STROKE_MAX : THROW_STROKE_MAX;
+      let stroke = THREE.MathUtils.clamp((speed * speed) / (2 * THROW_ACCEL), THROW_STROKE_MIN, strokeMax);
       let duration = stroke / ((speed + startSpeed) / 2);
       if (duration > available * THROW_STROKE_MAX_SHARE) {
         duration = available * THROW_STROKE_MAX_SHARE;
@@ -596,7 +611,7 @@ export function buildNaturalTracks(
   });
 
   // ---- 手の軌道 ----
-  const restPosition = (hand: number) => toWorld(hand, { x: 0.2, y: 0, z: 0 });
+  const restPosition = (hand: number) => toWorld(hand, { x: 0.2, y: 0, z: 0 }, throwLift(3));
   const hands: HandTrack[] = [LEFT, RIGHT].map((hand) => {
     const events = handEvents[hand];
     const positions: THREE.Vector3[] = [];
@@ -713,6 +728,7 @@ export function buildNaturalTracks(
           const ringNormal = new THREE.Vector3(0, 1, 0).applyQuaternion(meshQ(prop, s));
           const edge = new THREE.Vector3().crossVectors(ringNormal, toCenter).normalize();
           n.lerp(toCenter, 0.6);
+          if (propType === 'ring') n.add(new THREE.Vector3(-side * RING_PALM_INWARD, 0, 0)).normalize();
           const orth = n.clone().addScaledVector(edge, -n.dot(edge));
           n.copy(orth.lengthSq() > 0.05 ? orth : n).normalize();
           const wrap = new THREE.Vector3().crossVectors(n, edge).normalize();

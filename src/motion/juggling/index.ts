@@ -59,6 +59,9 @@ const BOUNCE_ERROR = 'Unable to calculate bounce path';
 const BOUNCE_TEMPO_STEP = 1.25;
 const BOUNCE_TEMPO_TRIES = 6;
 
+// リングを投げる時のテンポ(1 拍の長さ)の倍率。3 リングで頂点が肩の 60cm ほど上になる
+const RING_TEMPO_SCALE = 1.2;
+
 export default class Juggling {
   private scene: THREE.Scene;
   private siteswapStr: string;
@@ -145,8 +148,11 @@ export default class Juggling {
         beatDuration,
         props: (options.props || []).map((prop) => ({ ...prop })),
       });
+    // リングは大きいので、ボールより高く(ゆっくり)投げる
+    const propType = options.props?.[0]?.type;
+    const tempoScale = propType === 'ring' || propType === 'pancake' ? RING_TEMPO_SCALE : 1;
     let beatDuration = this.autoTempo
-      ? autoBeatDuration(check.siteswap, Number(options.dwellRatio))
+      ? autoBeatDuration(check.siteswap, Number(options.dwellRatio)) * tempoScale
       : Number(options.beatDuration);
     let siteswap = create(beatDuration);
     // 自動テンポで床で跳ねる時間が足りない時(2 回跳ねる、上へ投げて跳ねさせる…)は、ゆっくりにして試す

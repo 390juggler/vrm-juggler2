@@ -26,6 +26,8 @@ const UP = new THREE.Vector3(0, 1, 0);
 
 // 腕
 const ELBOW_POLE_BACK = 0.35; // 肘を後ろへ向ける強さ
+// リングは肩の前で前腕を立てて持つので、肘を手首の下へ置く
+const ELBOW_POLE_BACK_BY_PROP: { [propType: string]: number } = { ring: 0 };
 const ELBOW_POLE_OUT_BASE = 0.25; // 肘を外へ向ける強さ(armAngle が加わる)
 const FOREARM_TWIST_SHARE = 0.6; // 手のひらを上に向けるひねりのうち前腕が受け持つ割合
 const FINGER_INWARD = 0.35; // 指先を体の内側へ向ける量
@@ -337,7 +339,7 @@ export default class Body {
     this.vrm.scene.updateMatrixWorld(true);
 
     this.arms.forEach((arm, h) => {
-      this.solveArm(arm, frame.hands[h], frame.propRadius);
+      this.solveArm(arm, frame.hands[h], frame.propRadius, frame.propType);
       this.updateFingers(arm, frame.hands[h].holding, frame.propType, delta);
     });
   }
@@ -433,7 +435,7 @@ export default class Body {
     this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), 0);
   }
 
-  private solveArm(arm: ArmRig, hand: JugglingFrame['hands'][number], propRadius: number) {
+  private solveArm(arm: ArmRig, hand: JugglingFrame['hands'][number], propRadius: number, propType: string) {
     const palmNormal = hand.palmNormal;
 
     // 指先の向き: 指定があればそれ(クラブのハンドルに巻き付く向きなど)。
@@ -464,7 +466,8 @@ export default class Body {
     const a = (L1 * L1 - L2 * L2 + d * d) / (2 * d);
     const hgt = Math.sqrt(Math.max(L1 * L1 - a * a, 0));
 
-    const pole = new THREE.Vector3(arm.side * (ELBOW_POLE_OUT_BASE + this.armAngle), -1, ELBOW_POLE_BACK).normalize();
+    const poleBack = ELBOW_POLE_BACK_BY_PROP[propType] ?? ELBOW_POLE_BACK;
+    const pole = new THREE.Vector3(arm.side * (ELBOW_POLE_OUT_BASE + this.armAngle), -1, poleBack).normalize();
     const polePerp = pole.clone().addScaledVector(dir, -pole.dot(dir));
     if (polePerp.lengthSq() < 1e-8) polePerp.set(0, -1, 0);
     polePerp.normalize();
