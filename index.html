@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 共有リンクの設定(?ss=531 など)を引き継いで dist/ を開く -->
+    <script>
+      location.replace('./dist/' + location.search + location.hash);
+    </script>
     <meta http-equiv="refresh" content="0; url=./dist/" />
     <title>VRM Juggler</title>
   </head>

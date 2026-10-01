@@ -78,13 +78,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ### 操作用のメソッド
 
-| メソッド                  | 内容                                                                                                   |
-| :------------------------ | :----------------------------------------------------------------------------------------------------- |
-| `loadModel(path)`         | VRM を読み込んで差し替えます(何度呼んでも OK)。ファイル選択の場合は `URL.createObjectURL(file)` を渡す |
-| `setSiteswap('531')`      | サイトスワップを変更します。投げられないパターンの場合は今のパターンのまま、理由と近い候補を表示します |
+| メソッド                                 | 内容                                                                                                   |
+| :--------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `loadModel(path)`                        | VRM を読み込んで差し替えます(何度呼んでも OK)。ファイル選択の場合は `URL.createObjectURL(file)` を渡す |
+| `setSiteswap('531')`                     | サイトスワップを変更します。投げられないパターンの場合は今のパターンのまま、理由と近い候補を表示します |
+| `setProp('club')`                        | 小道具を変えます(`'ball'` / `'club'` / `'ring'`)                                                       |
+| `setSpeed(0.5)`                          | 再生速度(1 が実時間。0.05 〜 2)。体の動きや髪の揺れも同じ速さになります                                |
+| `pause()` / `play()` / `togglePause()`   | 一時停止・再生                                                                                         |
+| `step()`                                 | 一時停止して 1/30 秒だけ進めます(コマ送り)                                                             |
+| `setBodyMotion(1.5)`                     | 体の動きの大きさ(0 で止まる、1 が標準、2 で大きく)                                                     |
+| `setCameraView('side')`                  | カメラ: `'front'` 正面 / `'diagonal'` 斜め / `'side'` 横 / `'close'` 上半身に寄る                      |
+| `setBackground(null)`                    | 背景: `null` で透明、`'#ffffff'` で単色、`['#上の色', '#下の色']` でグラデーション                     |
+| `startRecording()` / `stopRecording()`   | 表示を録画します。`stopRecording()` は動画(mp4 か webm の Blob)を返します                              |
+| `getState()`                             | いまの状態 `{ siteswap, prop, speed, paused, bodyMotion, camera, recording }`                          |
+| `canvas`                                 | 描画している canvas                                                                                    |
+| `VRMJuggler.presets`                     | デモのパターン一覧(サイトスワップ・ボールの数・名前・説明)                                             |
 
 `setSiteswap` の戻り値は `{ ok, siteswap, message, suggestions }` です。
-パターンが変わると、表示場所の要素に `siteswapchange` イベント(`e.detail.siteswap`)が送られます。
+表示場所の要素には次のイベントが送られます。
+
+- `siteswapchange`: パターンが変わった時(`e.detail.siteswap`)
+- `statechange`: パターン・小道具・速さ・一時停止・カメラなどが変わった時(`e.detail` は `getState()` と同じ)
+
+## デモページ
+
+- パターン一覧(ボールの数ごと。選ぶと説明が出ます)
+- 小道具、一時停止・コマ送り・スピード、体の動き、カメラ(正面・斜め・横・寄り)
+- VRM の読み込み、リンクのコピー(いまの設定入りの URL)、録画(mp4 か webm で保存)
+- 設定はブラウザに保存され、次に開いた時も同じ状態から始まります
+- キー操作: Space で一時停止、→ でコマ送り、Esc で詳細設定
+- スマートフォンでは操作パネルが画面の下に並びます(▾ でたためます)
+
+### URL で設定を指定する
+
+例: `https://390juggler.github.io/vrm-juggler2/?ss=531&prop=club&cam=diagonal`
+
+| パラメータ | 内容                                                                 |
+| :--------- | :------------------------------------------------------------------- |
+| `ss`       | サイトスワップ                                                       |
+| `prop`     | 小道具(`ball` / `club` / `ring`)                                     |
+| `speed`    | 再生速度                                                             |
+| `body`     | 体の動きの大きさ(0 〜 2)                                             |
+| `cam`      | カメラ(`front` / `diagonal` / `side` / `close`)                      |
+| `bg`       | `transparent` で背景を透明に。`ffffff` のように色も指定できます      |
+| `ui`       | `0` で操作パネルを出さない                                           |
+| `model`    | 読み込む VRM の URL(置いてあるサーバーが読み込みを許可している必要があります) |
+
+### 配信ソフト(OBS など)で使う
+
+ブラウザソースに `https://390juggler.github.io/vrm-juggler2/?bg=transparent&ui=0&ss=531` のような URL を指定すると、
+背景が透明で操作パネルのない画面になります(床の影は残ります)。
 
 ### 投げられないサイトスワップ
 
@@ -105,7 +148,7 @@ Esc キー押下でパラメータ調整用の UI を開くことができます
 | ジャグリング関係 | サイトスワップ | string   | 例: 3, 441, 531, 97531, (4,4), (6x,4)*, [43]23                            |
 |                  | 高さ           | number   | 0.05 ～ 0.5 (1 拍の秒数。動かすと自動テンポは切れます)                   |
 |                  | 高さを自動で決める | check | true or false (パターンに合わせてテンポを決める)                         |
-|                  | スピード       | number   | 0.2 ～ 1.5 (1 が実時間)                                                  |
+|                  | スピード       | number   | 0.05 ～ 2 (1 が実時間)                                                   |
 |                  | 小道具の種類   | string   | 'ball' or 'club' or 'ring'                                               |
 |                  | Dwell(投げ方)  | string   | 'Cascade' or 'Reverse Cascade' or 'Shower' or 'Windmill' or 'Mills Mess' |
 | 高度な設定       | 肘の開き       | number   | 0.0 ～ 0.5                                                               |

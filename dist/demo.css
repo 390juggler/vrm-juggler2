@@ -1,0 +1,355 @@
+:root {
+  --accent: #3d5bd9;
+  --accent-soft: #e6eafb;
+  --text: #23262f;
+  --muted: #6b7080;
+  --line: #d6d9e3;
+  --panel: rgba(255, 255, 255, 0.88);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font: 14px/1.5 system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  color: var(--text);
+  background: linear-gradient(#fbfbfd 0%, #eef0f5 60%, #dfe2ea 100%);
+}
+
+#vrm-juggler {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* ---- 操作パネル ---- */
+
+.panel {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 20;
+  width: 316px;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 4px 20px rgba(30, 35, 60, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+h2 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+section {
+  margin-top: 12px;
+}
+
+.siteswap-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.siteswap-row label {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.siteswap-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 16px/1.2 ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  background: #fff;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover,
+.button:hover {
+  border-color: var(--accent);
+}
+
+button:focus-visible,
+.button:focus-within,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button.primary {
+  border-color: var(--accent);
+  color: #fff;
+  background: var(--accent);
+}
+
+button.icon {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* 1 つだけ選ぶボタンの並び */
+.segmented {
+  display: flex;
+}
+
+.segmented button {
+  flex: 1;
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.segmented button:first-child {
+  margin-left: 0;
+  border-radius: 6px 0 0 6px;
+}
+
+.segmented button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.segmented button[aria-pressed='true'] {
+  position: relative;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+/* パターン一覧 */
+.presets {
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  gap: 4px 6px;
+  align-items: start;
+}
+
+.presets .balls {
+  padding-top: 3px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.presets .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.presets button {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 13px;
+}
+
+.presets button[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: #fff;
+  background: var(--accent);
+}
+
+.description {
+  min-height: 2.8em;
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.description strong {
+  color: var(--text);
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.slider span {
+  width: 4.5em;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.slider input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.slider output {
+  width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#record[aria-pressed='true'] {
+  border-color: #c92a2a;
+  color: #fff;
+  background: #c92a2a;
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+section.buttons button,
+section.buttons .button {
+  padding: 6px 10px;
+}
+
+/* 背の低い画面ではキー操作の説明を省く */
+@media (max-height: 800px) {
+  .hint {
+    display: none;
+  }
+}
+
+/* たたんだ時はサイトスワップの入力だけ */
+.panel.collapsed .panel-body {
+  display: none;
+}
+
+.panel.collapsed #collapse span {
+  display: inline-block;
+  transform: rotate(-90deg);
+}
+
+.toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  z-index: 30;
+  transform: translate(-50%, -8px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(35, 38, 47, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* 画面には出さないが、キーボードで選べるファイル選択 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---- スマートフォン: 画面の下に並べる ---- */
+
+@media (max-width: 700px) {
+  body {
+    height: 100dvh;
+  }
+
+  .panel {
+    position: static;
+    order: 2;
+    width: auto;
+    max-height: 46dvh;
+    border-radius: 14px 14px 0 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(30, 35, 60, 0.1);
+  }
+
+  .panel-header {
+    margin-bottom: 4px;
+  }
+
+  h1 {
+    font-size: 14px;
+  }
+
+  button,
+  .button {
+    padding: 8px 12px;
+  }
+
+  .presets button {
+    padding: 4px 10px;
+  }
+}
+
+/* ---- 配信用: ?ui=0 で操作パネルを消す、?bg=transparent で背景を透明に ---- */
+
+.no-ui .panel {
+  display: none;
+}
+
+.transparent,
+.transparent body {
+  background: transparent;
+}
