@@ -42,7 +42,7 @@ const PATTERNS = [
     ...PATTERN_PRESETS.map((p) => p.siteswap),
   ]),
 ];
-const PROPS = ['ball', 'club', 'ring'];
+const PROPS = ['ball', 'club', 'ring', 'pancake'];
 
 describe.each(PROPS)('%s', (prop) => {
   it.each(PATTERNS)('%s: 軌道に異常値・瞬間移動がない', (siteswap) => {
@@ -123,6 +123,87 @@ describe('手の動きのなめらかさ', () => {
       if (Math.max(a, b) > 0.3 && Math.max(a, b) / Math.max(1e-6, Math.min(a, b)) > 2) spikes++;
     }
     expect(spikes / n).toBeLessThan(0.02);
+  });
+});
+
+// 輪同士が交差している時刻の割合(輪の上の点から相手の輪までの距離が輪の幅の半分より近い)
+function ringTouchShare(tracks: Tracks) {
+  const R = 0.145;
+  let touching = 0;
+  let samples = 0;
+  for (let k = 0; k < tracks.numSteps; k += 2) {
+    samples++;
+    const rings = tracks.props.map((track, i) => ({
+      c: track[k],
+      n: new THREE.Vector3(0, 1, 0).applyQuaternion(tracks.propRotations![i][k]),
+    }));
+    const hit = rings.some((A, a) =>
+      rings.some((B, b) => {
+        if (b <= a || A.c.distanceTo(B.c) > 2 * R + 0.03) return false;
+        const u = new THREE.Vector3().crossVectors(A.n, Math.abs(A.n.x) < 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0)).normalize();
+        const v = new THREE.Vector3().crossVectors(A.n, u);
+        for (let i = 0; i < 36; i++) {
+          const angle = (2 * Math.PI * i) / 36;
+          const p = A.c.clone().addScaledVector(u, R * Math.cos(angle)).addScaledVector(v, R * Math.sin(angle));
+          const q = p.clone().sub(B.c);
+          q.addScaledVector(B.n, -q.dot(B.n));
+          if (q.lengthSq() < 1e-9) continue;
+          if (p.distanceTo(q.setLength(R).add(B.c)) < 0.012) return true;
+        }
+        return false;
+      })
+    );
+    if (hit) touching++;
+  }
+  return touching / samples;
+}
+
+describe('リング', () => {
+  const inFlight = (tracks: Tracks, prop: number, k: number) =>
+    !tracks.hands.some((hand) => hand.holding[k] && hand.positions[k].distanceTo(tracks.props[prop][k]) < 0.3);
+
+  it('ふつうの投げは輪の面が体の横を向く(横から見ると丸く、正面からは細く見える)', () => {
+    const { tracks } = build('3', 'ring');
+    for (let k = 0; k < tracks.numSteps; k += 5) {
+      tracks.props.forEach((_, prop) => {
+        const normal = new THREE.Vector3(0, 1, 0).applyQuaternion(tracks.propRotations![prop][k]);
+        expect(Math.abs(normal.x)).toBeGreaterThan(0.95);
+      });
+    }
+  });
+
+  it('パンケーキは水平に投げて受け、空中でクラブのように 1 回転する', () => {
+    const { tracks } = build('3', 'pancake');
+    const normalAt = (prop: number, time: number) => {
+      const k = Math.round(time / tracks.stepDuration) % tracks.numSteps;
+      return new THREE.Vector3(0, 1, 0).applyQuaternion(tracks.propRotations![prop][k]);
+    };
+    tracks.throws.forEach((t) => {
+      // 投げる時はほぼ水平(少し手前を上げる)
+      expect(normalAt(t.prop, t.time).y).toBeGreaterThan(0.85);
+      // 空中の真ん中あたりで裏返っている
+      let k = Math.round(t.time / tracks.stepDuration);
+      let steps = 0;
+      while (inFlight(tracks, t.prop, (k + 1) % tracks.numSteps)) {
+        k++;
+        steps++;
+      }
+      expect(normalAt(t.prop, t.time + (steps / 2) * tracks.stepDuration).y).toBeLessThan(-0.8);
+      // 受ける時はほぼ水平
+      expect(normalAt(t.prop, k * tracks.stepDuration).y).toBeGreaterThan(0.85);
+    });
+  });
+
+  it.each(['ring', 'pancake'])('%s: 基本のパターンでは輪同士が交差しない', (prop) => {
+    ['3', '4', '423', '441', '531', '51', '(4,4)'].forEach((siteswap) => {
+      expect(ringTouchShare(build(siteswap, prop).tracks)).toBe(0);
+    });
+  });
+
+  it.each(['ring', 'pancake'])('%s: パターン一覧のどれでも、輪がかすめる時間はわずか', (prop) => {
+    PATTERN_PRESETS.forEach(({ siteswap }) => {
+      expect(ringTouchShare(build(siteswap, prop).tracks)).toBeLessThan(0.02);
+    });
   });
 });
 

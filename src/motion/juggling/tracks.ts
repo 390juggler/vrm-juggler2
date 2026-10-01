@@ -109,7 +109,7 @@ export interface Tracks {
 /** 小道具のモデルの基準の向き(gunswap の回転に掛ける) */
 export function propBaseQuaternion(type: string): THREE.Quaternion {
   const q = new THREE.Quaternion(1, 0, 0, 0);
-  if (type === 'ring') q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2));
+  if (type === 'ring' || type === 'pancake') q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2));
   return q;
 }
 

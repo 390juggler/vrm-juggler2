@@ -75,24 +75,45 @@ const PALM_SNAP_SPEED_MAX = 6; // m/s
 const PALM_STROKE_SHARE = 0.8; // 投げる区間の始まりで、手のひらをどれだけ投げる方向へ向けておくか
 const PALM_SNAP_TIME = 0.06; // s
 
+// 小道具の種類。pancake はリングを水平に持ち、クラブのように縦に回して投げる(パンケーキ)
+const isRingType = (propType: string) => propType === 'ring' || propType === 'pancake';
+
 // 小道具が大きいほど幅を広く投げる(空中で重ならないように)
-const PROP_WIDTH: { [type: string]: number } = { ball: 1, club: 1.15, ring: 1.3 };
-// リングは同じ面を飛ぶと輪同士が交差するので、1 本ずつ奥行きをずらして平行な面を飛ばす
-const RING_LAYER_GAP = 0.03; // m
-const RING_LAYER_SPREAD_MAX = 0.12; // m
+const PROP_WIDTH: { [type: string]: number } = { ball: 1, club: 1.15, ring: 1.3, pancake: 1.3 };
+// パンケーキは水平に持った輪が横に 30cm ほど広がるので、手を体の中心へ寄せすぎない(左右の輪が重ならないように)
+const PANCAKE_MIN_X = 0.17; // m
 
 // 小道具の握る位置
 const CLUB_GRIP_LOCAL = new THREE.Vector3(0, -0.13, 0); // クラブのモデル座標(ノブ側)
 const RING_GRIP_RADIUS = 0.145; // 輪の太さの中央
+// パンケーキは手前の縁を握る(リングのモデル座標。輪の面は xz、+z が手前になる向きで持つ)
+const PANCAKE_GRIP_LOCAL = new THREE.Vector3(0, 0, RING_GRIP_RADIUS);
 
-// クラブの向き: 前方からの仰角(度)。キャッチでほぼ真上、運ぶ間に斜め上まで前へ倒し、手首を返して投げる。
-// 空中では「投げの高さ / 2 の整数部分」回転 + キャッチでほぼ縦になる分だけ回る('1' は回転せずに手渡す)
-const CLUB_RELEASE_PITCH = 40;
-const CLUB_CATCH_PITCH = 85;
-const CLUB_LOW_PITCH = 15; // 運ぶ途中で一番前へ倒れる角度
-const CLUB_LOW_AT = 0.65; // 手に持っている時間のうち、一番倒れるタイミング
-const CLUB_INWARD_YAW = 12; // 体の内側へ向ける角度
-const RING_SPIN_PER_FLIGHT = 0.5; // リングが 1 回のフライトで回る量(回転)
+// クラブ・パンケーキの向き: 前方からの仰角(度)。空中では横軸まわりに
+// 「投げの高さ / 2 の整数部分」回転 + キャッチの角度になる分だけ回る('1' は回転せずに手渡す)
+// - クラブ: キャッチでほぼ真上、運ぶ間に斜め上まで前へ倒し、手首を返して投げる
+// - パンケーキ: 輪をほぼ水平に受け、少し下げてから、手首を返して手前の縁から跳ね上げる
+interface Spin {
+  release: number;
+  catch: number;
+  low: number; // 運ぶ途中で一番前へ倒れる角度
+  lowAt: number; // 手に持っている時間のうち、一番倒れるタイミング
+  inwardYaw: number; // 体の内側へ向ける角度
+}
+const CLUB_SPIN: Spin = { release: 40, catch: 85, low: 15, lowAt: 0.65, inwardYaw: 12 };
+const PANCAKE_SPIN: Spin = { release: 25, catch: 0, low: -10, lowAt: 0.6, inwardYaw: 0 };
+// リング同士は、すれ違う時に輪が同じ面に重なると交差してしまう(パンケーキは回る途中で正面を向いて立つ)。
+// 交差する時は、投げごとに飛ぶ面の奥行きを少しずらす(手は持っている間に奥行きを持ち替える)
+const RING_DEPTH_OPTIONS = [0, -0.05, 0.05, -0.09, 0.09]; // m
+const RING_CHECK_INTERVAL = 0.005; // s(交差を調べる時刻の間隔)
+const RING_CIRCLE_POINTS = 32;
+const RING_TOUCH = 0.015; // m(輪の幅の半分。これより近いと交差している)
+const RING_DEPTH_ROUNDS = 3;
+
+// ふつうのリング: 輪の面を体の横向き(横から見ると丸く、正面からは細く見える)にして、
+// 前の縁を少し内側へ向ける。空中では輪の面の中で少し回る
+const RING_INWARD_YAW = 10;
+const RING_SPIN_PER_FLIGHT = 0.5; // 回転
 
 // 投げの形。ふだんは normal(内側で投げて外側で受ける)。空中で小道具同士がぶつかるパターンでは、投げの高さごとに
 // 形を選び直す(実際のジャグラーも 423 や 534 の 4 は柱のようにまっすぐ上げ、53 の 3 は少し外で受ける)
@@ -194,7 +215,8 @@ export function buildNaturalTracks(
   siteswap: any,
   transform: SpaceTransform,
   propType: string,
-  propRadius: number
+  propRadius: number,
+  ringDepths?: number[]
 ): Tracks {
   const beat: number = siteswap.beatDuration;
   const period: number = siteswap.states.length * beat;
@@ -211,7 +233,9 @@ export function buildNaturalTracks(
   const gripOffset = (prop: number, step: number, out = new THREE.Vector3()) => {
     const q = meshQ(prop, step);
     if (propType === 'club') return out.copy(CLUB_GRIP_LOCAL).applyQuaternion(q);
+    if (propType === 'pancake') return out.copy(PANCAKE_GRIP_LOCAL).applyQuaternion(q);
     if (propType === 'ring') {
+      // 輪の一番下を握る
       const axis = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
       const down = new THREE.Vector3(0, -1, 0);
       out.copy(down).addScaledVector(axis, -axis.dot(down));
@@ -235,6 +259,13 @@ export function buildNaturalTracks(
       new THREE.Vector3()
     );
 
+  // 手(握る位置)を体の中心から離す(パンケーキだけ)
+  const keepOut = (hand: number, p: THREE.Vector3) => {
+    if (propType !== 'pancake') return p;
+    const side = hand === RIGHT ? 1 : -1;
+    if (p.x * side < PANCAKE_MIN_X) p.x = side * PANCAKE_MIN_X;
+    return p;
+  };
   const catchX = (baseX: number, incomingValue: number) => {
     if (incomingValue === 1) return ONE_CATCH_X;
     const v = Math.min(incomingValue, 8);
@@ -252,7 +283,7 @@ export function buildNaturalTracks(
         p.x *= THREE.MathUtils.clamp(1 + (table[v] / 7 - 1) * WIDTH_BLEND_THROW, 0.5, 2);
       }
     }
-    return clampToReach(toss.hand, toWorld(toss.hand, p), transform);
+    return clampToReach(toss.hand, keepOut(toss.hand, toWorld(toss.hand, p)), transform);
   };
   const catchPoint = (toss: any, incomingValue: number) => {
     const pts = dwellPoints(toss.dwellPathIx);
@@ -264,11 +295,6 @@ export function buildNaturalTracks(
     }
     return clampToReach(toss.hand, toWorld(toss.hand, p), transform);
   };
-
-  // リングは 1 本ずつ奥行きをずらす(本数が多くても全体で RING_LAYER_SPREAD_MAX に収める)
-  const ringGap = numProps > 1 ? Math.min(RING_LAYER_GAP, RING_LAYER_SPREAD_MAX / (numProps - 1)) : 0;
-  const layer = (prop: number) =>
-    new THREE.Vector3(0, 0, propType === 'ring' ? (prop - (numProps - 1) / 2) * ringGap : 0);
 
   // ---- 出来事を集める ----
   // 形を選べる投げの種類('4'、'5'、'6x' …)。内側で投げて外側で受けるパターン(カスケード系)の 3 以上の投げだけ
@@ -308,9 +334,9 @@ export function buildNaturalTracks(
           throwHand: toss.hand,
           catchHand: next.hand,
           value: toss.numBeats,
-          start: clampToReach(toss.hand, start.add(layer(prop)), transform),
+          start: clampToReach(toss.hand, keepOut(toss.hand, start), transform),
           velocity: new THREE.Vector3(),
-          end: clampToReach(next.hand, end.add(layer(prop)), transform),
+          end: clampToReach(next.hand, keepOut(next.hand, end), transform),
           segments: [],
         };
         if (toss.numBounces > 0) {
@@ -383,8 +409,19 @@ export function buildNaturalTracks(
   }
   const { flights, holds: holdTosses } = makeFlights(styles);
 
-  if (propType === 'club' || propType === 'ring') {
+  if (propType === 'club' || isRingType(propType)) {
     orientations = buildOrientations(propType, flights, numProps, numSteps, period, siteswap);
+  }
+
+  // リング同士が交差しないように選んだ、投げごとの面の奥行き(下で選び、もう一度作り直す)
+  if (ringDepths) {
+    flights.forEach((f, i) => {
+      if (!ringDepths[i]) return;
+      f.start.z += ringDepths[i];
+      f.end.z += ringDepths[i];
+      clampToReach(f.throwHand, f.start, transform);
+      clampToReach(f.catchHand, f.end, transform);
+    });
   }
 
   // 同じ手・同じ時刻の投げ/キャッチ(マルチプレックス)は横に並べる
@@ -578,7 +615,9 @@ export function buildNaturalTracks(
       const b = events[bIndex];
       const T = mod(b.time - a.time, period) || period;
       const u = mod(t - a.time, period) / T;
-      positions.push(clampToReach(hand, hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u), transform));
+      // 投げた後(手が空の間)は中心へ寄ってよい
+      const p = hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u);
+      positions.push(clampToReach(hand, a.kind === 'throw' || a.kind === 'follow' ? p : keepOut(hand, p), transform));
 
       // 手のひら: 区間の両端の向きをなめらかに補間。投げた直後は手首のスナップを足す
       const eased = u * u * (3 - 2 * u);
@@ -649,7 +688,7 @@ export function buildNaturalTracks(
   }
 
   // クラブは握ったハンドルに垂直な向きへ手のひらを向け、指はハンドルに巻き付く向きにする。
-  // リングは手のひらを輪の中心側へ向ける
+  // リングは手のひらを輪の中心側へ向け、指は握った縁に巻き付く向きにする
   if (propType !== 'ball') {
     [LEFT, RIGHT].forEach((hand) => {
       const side = hand === RIGHT ? 1 : -1;
@@ -670,13 +709,19 @@ export function buildNaturalTracks(
           fingers[s].copy(wrap);
         } else {
           const toCenter = props[prop][s].clone().sub(hands[hand].positions[s]).normalize();
-          n.lerp(toCenter, 0.6).normalize();
+          // 握った所の縁の向き(輪の接線)
+          const ringNormal = new THREE.Vector3(0, 1, 0).applyQuaternion(meshQ(prop, s));
+          const edge = new THREE.Vector3().crossVectors(ringNormal, toCenter).normalize();
+          n.lerp(toCenter, 0.6);
+          const orth = n.clone().addScaledVector(edge, -n.dot(edge));
+          n.copy(orth.lengthSq() > 0.05 ? orth : n).normalize();
+          const wrap = new THREE.Vector3().crossVectors(n, edge).normalize();
+          if (wrap.dot(defaultFinger) < 0) wrap.negate();
+          fingers[s].copy(wrap);
         }
       }
       // 持ち替えの瞬間に手首が跳ねないようにならす
-      if (propType === 'club') {
-        hands[hand].fingerDirs = boxSmooth(fingers, Math.max(1, Math.round(0.04 / dt))).map((v) => v.normalize());
-      }
+      hands[hand].fingerDirs = boxSmooth(fingers, Math.max(1, Math.round(0.04 / dt))).map((v) => v.normalize());
     });
   }
 
@@ -684,6 +729,12 @@ export function buildNaturalTracks(
   const throws: ThrowEvent[] = flights
     .map((f) => ({ time: f.release, hand: f.throwHand, prop: f.prop, value: f.value, velocity: f.velocity.clone() }))
     .sort((a, b) => a.time - b.time);
+
+  // リング同士が交差していたら、投げごとに飛ぶ面の奥行きを選び直して作り直す
+  if (isRingType(propType) && !ringDepths && orientations && flights.every((f) => !f.bounce)) {
+    const depths = chooseRingDepths(flights, period, dt, props, orientations);
+    if (depths.some((d) => d !== 0)) return buildNaturalTracks(siteswap, transform, propType, propRadius, depths);
+  }
 
   const gaze = computeGazeTrack(inAir, props, numSteps);
   return {
@@ -697,6 +748,125 @@ export function buildNaturalTracks(
     throws,
     ...summarize(props, transform),
   };
+}
+
+/** 2 つの輪(中心・法線)が交差しているか。輪 a の上の点から輪 b までの距離で調べる */
+function ringsTouch(ca: THREE.Vector3, na: THREE.Vector3, cb: THREE.Vector3, nb: THREE.Vector3) {
+  const u = new THREE.Vector3().crossVectors(na, Math.abs(na.x) < 0.9 ? new THREE.Vector3(1, 0, 0) : UP).normalize();
+  const v = new THREE.Vector3().crossVectors(na, u);
+  const p = new THREE.Vector3();
+  const q = new THREE.Vector3();
+  for (let i = 0; i < RING_CIRCLE_POINTS; i++) {
+    const angle = (2 * Math.PI * i) / RING_CIRCLE_POINTS;
+    p.copy(ca)
+      .addScaledVector(u, RING_GRIP_RADIUS * Math.cos(angle))
+      .addScaledVector(v, RING_GRIP_RADIUS * Math.sin(angle));
+    // 輪 b の上で p にいちばん近い点
+    q.copy(p).sub(cb);
+    q.addScaledVector(nb, -q.dot(nb));
+    if (q.lengthSq() < 1e-10) continue;
+    q.setLength(RING_GRIP_RADIUS).add(cb);
+    if (p.distanceTo(q) < RING_TOUCH) return true;
+  }
+  return false;
+}
+
+/**
+ * リング同士が交差しないように、投げごとに飛ぶ面の奥行き(z のずれ)を選ぶ。
+ * 一度作った軌道(輪の中心と向き)で交差している時刻を数え、交差が減るように 1 本ずつ奥行きを選び直す。
+ * 奥行きをずらすと、空中ではその投げの分だけ、手の中では受けた投げから次の投げへ徐々にずれるとみなす。
+ */
+function chooseRingDepths(
+  flights: Flight[],
+  period: number,
+  dt: number,
+  props: THREE.Vector3[][],
+  rotations: THREE.Quaternion[][]
+): number[] {
+  const numSteps = props[0].length;
+  const stride = Math.max(1, Math.round(RING_CHECK_INTERVAL / dt));
+  // 時刻ごと・輪ごとに: 中心、法線、どの投げの奥行きをどれだけ使うか
+  type Sample = { center: THREE.Vector3; normal: THREE.Vector3; a: number; b: number; w: number };
+  const samples: Sample[][] = [];
+  for (let step = 0; step < numSteps; step += stride) {
+    const t = step * dt;
+    const row: Sample[] = [];
+    props.forEach((track, prop) => {
+      const own = flights.map((f, ix) => ({ f, ix })).filter(({ f }) => f.prop === prop);
+      if (own.length === 0) return;
+      const center = track[step];
+      const normal = new THREE.Vector3(0, 1, 0).applyQuaternion(rotations[prop][step]);
+      const flying = own.find(({ f }) => {
+        const tau = since(t, f.release, period);
+        return tau >= 0 && tau < f.duration;
+      });
+      if (flying) {
+        row.push({ center, normal, a: flying.ix, b: flying.ix, w: 0 });
+        return;
+      }
+      const sinceCatch = (f: Flight) => since(t, f.release + f.duration, period);
+      const untilRelease = (f: Flight) => since(f.release, t, period);
+      const previous = own.reduce((best, x) => (sinceCatch(x.f) < sinceCatch(best.f) ? x : best));
+      const next = own.reduce((best, x) => (untilRelease(x.f) < untilRelease(best.f) ? x : best));
+      const held = sinceCatch(previous.f) + untilRelease(next.f) || period;
+      const w = THREE.MathUtils.clamp(sinceCatch(previous.f) / held, 0, 1);
+      row.push({ center, normal, a: previous.ix, b: next.ix, w: w * w * (3 - 2 * w) });
+    });
+    samples.push(row);
+  }
+
+  const a = new THREE.Vector3();
+  const b = new THREE.Vector3();
+  const touching = (depths: number[]) => {
+    let count = 0;
+    samples.forEach((row) => {
+      for (let i = 0; i < row.length; i++) {
+        const A = row[i];
+        a.copy(A.center).setZ(A.center.z + depths[A.a] * (1 - A.w) + depths[A.b] * A.w);
+        for (let j = i + 1; j < row.length; j++) {
+          const B = row[j];
+          b.copy(B.center).setZ(B.center.z + depths[B.a] * (1 - B.w) + depths[B.b] * B.w);
+          if (a.distanceTo(b) > 2 * RING_GRIP_RADIUS + RING_TOUCH) continue;
+          if (ringsTouch(a, A.normal, b, B.normal)) count++;
+        }
+      }
+    });
+    return count;
+  };
+
+  // まず左右の手ごとに投げの面をずらす(カスケードですれ違う輪は投げた手が違う)。次に 1 本ずつ選び直す
+  let depths = flights.map(() => 0);
+  let best = touching(depths);
+  RING_DEPTH_OPTIONS.forEach((left) =>
+    RING_DEPTH_OPTIONS.forEach((right) => {
+      if (best === 0) return;
+      const candidate = flights.map((f) => (f.throwHand === LEFT ? left : right));
+      const count = touching(candidate);
+      if (count < best) {
+        best = count;
+        depths = candidate;
+      }
+    })
+  );
+  for (let round = 0; round < RING_DEPTH_ROUNDS && best > 0; round++) {
+    let improved = false;
+    flights.forEach((_, i) => {
+      let chosen = depths[i];
+      RING_DEPTH_OPTIONS.forEach((depth) => {
+        if (depth === chosen || best === 0) return;
+        depths[i] = depth;
+        const count = touching(depths);
+        if (count < best) {
+          best = count;
+          chosen = depth;
+          improved = true;
+        }
+        depths[i] = chosen;
+      });
+    });
+    if (!improved) break;
+  }
+  return depths;
 }
 
 /** start から end へ duration 秒で届く速度と縦の動きを決める(跳ねる投げは床で跳ねる動きを解く) */
@@ -729,8 +899,8 @@ function flightVelocityAt(f: Flight, tau: number) {
 
 /**
  * クラブ・リングの向き(モデルの回転)を時刻ごとに作る。
- * クラブ: 手の内側へ少し向けた前方を基準に、仰角だけを変える(空中では横軸まわりに回転)。
- * リング: 輪を正面に向けて立て、車輪のように回す。
+ * クラブ・パンケーキ: 手の内側へ少し向けた前方を基準に、仰角だけを変える(空中では横軸まわりに回転)。
+ * リング: 輪の面を体の横向きに立て、空中では面の中で少し回す。
  */
 function buildOrientations(
   propType: string,
@@ -743,23 +913,36 @@ function buildOrientations(
   const dt = period / numSteps;
   const X = new THREE.Vector3(1, 0, 0);
   const Y = new THREE.Vector3(0, 1, 0);
-  const FORWARD = new THREE.Vector3(0, 0, -1);
+  const Z = new THREE.Vector3(0, 0, 1);
   const rad = THREE.MathUtils.degToRad;
-  const yawOf = (hand: number) => rad(CLUB_INWARD_YAW) * (hand === RIGHT ? 1 : -1);
+  const smooth = (x: number) => x * x * (3 - 2 * x);
 
+  const spin = propType === 'pancake' ? PANCAKE_SPIN : CLUB_SPIN;
+  const inwardYaw = propType === 'ring' ? RING_INWARD_YAW : spin.inwardYaw;
+  const yawOf = (hand: number) => rad(inwardYaw) * (hand === RIGHT ? 1 : -1);
+
+  // クラブのモデルは y 軸が柄の向き。pitch = 90° で真上、0° で前を向く
   const clubQ = (pitch: number, yaw: number) =>
     new THREE.Quaternion()
       .setFromAxisAngle(Y, yaw)
       .multiply(new THREE.Quaternion().setFromAxisAngle(X, pitch - Math.PI / 2));
-  const ringQ = (spin: number) =>
+  // リングのモデルは y 軸が輪の面の法線。パンケーキは「握る縁 → 中心」をクラブの柄と同じ向きにする(pitch = 0 で水平)
+  const pancakeBase = new THREE.Quaternion().setFromAxisAngle(X, Math.PI / 2);
+  const spinnerQ = (pitch: number, yaw: number) =>
+    propType === 'pancake' ? clubQ(pitch, yaw).multiply(pancakeBase) : clubQ(pitch, yaw);
+  // ふつうのリング: 法線を体の横(x)へ向け、x 軸まわりに面の中で回す
+  const ringBase = new THREE.Quaternion().setFromAxisAngle(Z, -Math.PI / 2);
+  const ringQ = (angle: number, yaw: number) =>
     new THREE.Quaternion()
-      .setFromAxisAngle(FORWARD, spin)
-      .multiply(new THREE.Quaternion().setFromAxisAngle(X, -Math.PI / 2));
+      .setFromAxisAngle(Y, yaw)
+      .multiply(new THREE.Quaternion().setFromAxisAngle(X, angle))
+      .multiply(ringBase);
 
-  const release = rad(CLUB_RELEASE_PITCH);
-  const low = rad(CLUB_LOW_PITCH);
+  const release = rad(spin.release);
+  const low = rad(spin.low);
+  const caught = rad(spin.catch);
   // 1 回のフライトで回る角度(リリース角からキャッチ角まで + 整数回転)
-  const clubTurn = (f: Flight) => Math.floor(f.value / 2) * 2 * Math.PI + rad(CLUB_CATCH_PITCH - CLUB_RELEASE_PITCH);
+  const turn = (f: Flight) => Math.floor(f.value / 2) * 2 * Math.PI + caught - release;
 
   const result: THREE.Quaternion[][] = [];
   for (let prop = 0; prop < numProps; prop++) {
@@ -769,7 +952,7 @@ function buildOrientations(
       const t = s * dt;
       if (own.length === 0) {
         const hand = siteswap.propOrbits[prop][0].hand;
-        track.push(propType === 'club' ? clubQ(release, yawOf(hand)) : ringQ(0));
+        track.push(propType === 'ring' ? ringQ(0, yawOf(hand)) : spinnerQ(release, yawOf(hand)));
         continue;
       }
       const flying = own.find((f) => {
@@ -778,32 +961,32 @@ function buildOrientations(
       });
       if (flying) {
         const k = Math.max(0, since(t, flying.release, period)) / flying.duration;
-        if (propType === 'club') {
-          const yaw = THREE.MathUtils.lerp(yawOf(flying.throwHand), yawOf(flying.catchHand), k);
-          track.push(clubQ(release + clubTurn(flying) * k, yaw));
-        } else {
-          track.push(ringQ(RING_SPIN_PER_FLIGHT * 2 * Math.PI * k));
-        }
+        const yaw = THREE.MathUtils.lerp(yawOf(flying.throwHand), yawOf(flying.catchHand), k);
+        track.push(
+          propType === 'ring'
+            ? ringQ(RING_SPIN_PER_FLIGHT * 2 * Math.PI * k, yaw)
+            : spinnerQ(release + turn(flying) * k, yaw)
+        );
         continue;
       }
-      // 手の中: キャッチ(リリース角 + 端数回転)→ 前へ倒す → リリース角
+      // 手の中: キャッチの角度 → 前へ倒す → リリース角
       const sinceCatch = (f: Flight) => since(t, f.release + f.duration, period);
       const untilRelease = (f: Flight) => since(f.release, t, period);
       const previous = own.reduce((best, f) => (sinceCatch(f) < sinceCatch(best) ? f : best));
       const next = own.reduce((best, f) => (untilRelease(f) < untilRelease(best) ? f : best));
+      const yaw = yawOf(previous.catchHand);
       if (propType === 'ring') {
-        track.push(ringQ(0));
+        // 輪は回しても形が変わらないので、手の中では回転を 0 に戻してよい
+        track.push(ringQ(0, yaw));
         continue;
       }
       const held = sinceCatch(previous) + untilRelease(next) || period;
       const k = THREE.MathUtils.clamp(sinceCatch(previous) / held, 0, 1);
-      const caught = rad(CLUB_CATCH_PITCH);
-      const smooth = (x: number) => x * x * (3 - 2 * x);
       const pitch =
-        k < CLUB_LOW_AT
-          ? THREE.MathUtils.lerp(caught, low, smooth(k / CLUB_LOW_AT))
-          : THREE.MathUtils.lerp(low, release, smooth((k - CLUB_LOW_AT) / (1 - CLUB_LOW_AT)));
-      track.push(clubQ(pitch, yawOf(previous.catchHand)));
+        k < spin.lowAt
+          ? THREE.MathUtils.lerp(caught, low, smooth(k / spin.lowAt))
+          : THREE.MathUtils.lerp(low, release, smooth((k - spin.lowAt) / (1 - spin.lowAt)));
+      track.push(spinnerQ(pitch, yaw));
     }
     result.push(track);
   }

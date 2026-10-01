@@ -40,6 +40,7 @@ const FINGER_CURL: { [propType: string]: number[] } = {
   ball: [0.35, 0.75, 0.55],
   club: [1.0, 1.3, 0.9],
   ring: [0.75, 1.1, 0.8],
+  pancake: [0.75, 1.1, 0.8],
 };
 const FINGER_CURL_OPEN = [0.1, 0.2, 0.1];
 

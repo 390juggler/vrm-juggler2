@@ -42,12 +42,12 @@ export interface JugglingFrame {
   eyeTarget: THREE.Vector3;
   /** 前のフレームからの間に行われた投げ */
   throws: ThrowEvent[];
-  /** 小道具の種類('ball' | 'club' | 'ring') */
+  /** 小道具の種類('ball' | 'club' | 'ring' | 'pancake') */
   propType: string;
 }
 
 // 手のひらと握る位置の距離(クラブのハンドル・リングの縁の太さ)
-const GRIP_RADIUS: { [type: string]: number } = { club: 0.018, ring: 0.01 };
+const GRIP_RADIUS: { [type: string]: number } = { club: 0.018, ring: 0.01, pancake: 0.01 };
 
 const RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
 
@@ -293,7 +293,8 @@ export default class Juggling {
       mesh.castShadow = handleMesh.castShadow = !transparent;
       return mesh;
     }
-    if (prop.type == 'ring') {
+    // パンケーキもリングと同じ形(投げ方だけが違う)
+    if (prop.type == 'ring' || prop.type == 'pancake') {
       const points = [
         [0.13, 0.003],
         [0.16, 0.003],
