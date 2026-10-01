@@ -1,4 +1,4 @@
-import { VRMSchema } from '@pixiv/three-vrm';
+import { VRM } from '@pixiv/three-vrm';
 
 // まばたき: 人の自然なまばたきに合わせて、間隔をランダムにし、ときどき 2 回続ける
 const INTERVAL_MIN = 2.0; // s
@@ -8,16 +8,15 @@ const DOUBLE_BLINK_GAP = 0.25; // s
 const CLOSE_TIME = 0.06; // s
 const HOLD_TIME = 0.03; // s
 const OPEN_TIME = 0.12; // s
-const BLINK_FLOOR = 1e-4;
 
 export default class Blink {
-  private vrm?: any;
+  private vrm?: VRM;
   private time = 0;
   private nextBlink = 1.5;
   private blinkStart = -Infinity;
   public enable: boolean = true;
 
-  init(vrm: object) {
+  init(vrm: VRM) {
     this.vrm = vrm;
   }
 
@@ -41,8 +40,6 @@ export default class Blink {
           ? this.time + DOUBLE_BLINK_GAP
           : this.time + INTERVAL_MIN + Math.random() * (INTERVAL_MAX - INTERVAL_MIN);
     }
-    // 0 にすると three.js r118 の描画キャッシュの不具合(モーフの付け外しで落ちる)を踏むので、ごく小さい値を残す
-    const value = this.enable ? this.blinkValue : 0;
-    this.vrm.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName.Blink, Math.max(value, BLINK_FLOOR));
+    this.vrm.expressionManager?.setValue('blink', this.enable ? this.blinkValue : 0);
   };
 }

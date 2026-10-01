@@ -239,7 +239,7 @@ export default class Juggling {
 
     if (prop.type == 'club') {
       const lathe = (points: [number, number][]) =>
-        new THREE.LatheBufferGeometry(
+        new THREE.LatheGeometry(
           points.map(([r, y]) => new THREE.Vector2(r, y)),
           20
         );
@@ -280,14 +280,14 @@ export default class Juggling {
         [0.13, 0.003],
       ].map(([r, y]) => new THREE.Vector2(r, y));
       const mesh = new THREE.Mesh(
-        new THREE.LatheBufferGeometry(points, 64),
+        new THREE.LatheGeometry(points, 64),
         material({ color, roughness: 0.45, side: THREE.DoubleSide })
       );
       mesh.castShadow = !transparent;
       return mesh;
     }
     const mesh = new THREE.Mesh(
-      new THREE.SphereBufferGeometry(Number(prop.radius) || 0.05, 32, 20),
+      new THREE.SphereGeometry(Number(prop.radius) || 0.05, 32, 20),
       material({ color, roughness: 0.85 })
     );
     mesh.castShadow = !transparent;

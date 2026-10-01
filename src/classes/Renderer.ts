@@ -36,7 +36,7 @@ export default class Renderer {
     this.renderer.setSize(this.width, this.height);
     this.renderer.setClearColor(0x000000, 0.0);
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.container.appendChild(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 1000);
@@ -53,11 +53,12 @@ export default class Renderer {
 
     this.scene = new THREE.Scene();
 
-    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x606070, 0.9);
+    // ライトの強さは物理単位(three.js r155 以降)。π 倍が以前の 1 に当たる
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x606070, 0.5 * Math.PI);
     this.scene.add(hemisphereLight);
 
     // 正面やや上から当てる主光源。床に影を落とす
-    this.keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    this.keyLight = new THREE.DirectionalLight(0xffffff, 0.5 * Math.PI);
     this.keyLight.position.set(-1.2, 3.5, -2.5);
     this.keyLight.target.position.set(0, 0.8, 0);
     this.keyLight.castShadow = true;

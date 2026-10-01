@@ -1,5 +1,4 @@
 import options from '../interface/options';
-import { VRMSchema } from '@pixiv/three-vrm';
 
 export default class Options {
   public backgroundColor!: string;
@@ -59,19 +58,9 @@ export default class Options {
     this.speed = 1.0;
     this.autoTempo = true;
     this.facial = {
-      emotion: {
-        [VRMSchema.BlendShapePresetName.Joy]: 0.0,
-        [VRMSchema.BlendShapePresetName.Angry]: 0.0,
-        [VRMSchema.BlendShapePresetName.Sorrow]: 0.0,
-        [VRMSchema.BlendShapePresetName.Fun]: 0.0,
-      },
-      mouth: {
-        [VRMSchema.BlendShapePresetName.A]: 0.0,
-        [VRMSchema.BlendShapePresetName.I]: 0.0,
-        [VRMSchema.BlendShapePresetName.U]: 0.0,
-        [VRMSchema.BlendShapePresetName.E]: 0.0,
-        [VRMSchema.BlendShapePresetName.O]: 0.0,
-      },
+      // VRM 1.0 の表情名(VRM 0.x のモデルでも three-vrm が読み替える)
+      emotion: { happy: 0.0, angry: 0.0, sad: 0.0, relaxed: 0.0 },
+      mouth: { aa: 0.0, ih: 0.0, ou: 0.0, ee: 0.0, oh: 0.0 },
     };
   }
 }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { VRMSchema } from '@pixiv/three-vrm';
+import { VRM, VRMHumanBoneName } from '@pixiv/three-vrm';
 
 import { JugglingFrame } from '../juggling';
 import { AvatarMetrics, LEFT, RIGHT } from '../juggling/tracks';
@@ -13,11 +13,14 @@ import { AvatarMetrics, LEFT, RIGHT } from '../juggling/tracks';
  * - 体: 投げるたびに、投げの速さに比例した勢いをばねに与える(膝の沈み込み・胸のひねり・肩・前傾)。
  *       ゆっくりした左右の重心移動と呼吸はいつも入れる。
  * - 頭: パターンの頂点付近を見る。目は次にキャッチするボールを追う。
+ *
+ * three-vrm の正規化ボーン(休止姿勢の回転がすべて 0)を動かす。回転はワールド(アバターが -Z を向く)の
+ * 向きで決め、モデルの座標系(VRM 1.0 は +Z 向きのモデルを 180° 回して置いている)へ直して設定する。
  */
 
-const Bone = VRMSchema.HumanoidBoneName;
+const Bone = VRMHumanBoneName;
 
-// 前方(VRM 0.x は -Z を向いている)
+// 前方(このライブラリではアバターは -Z を向く)
 const FORWARD = new THREE.Vector3(0, 0, -1);
 const UP = new THREE.Vector3(0, 1, 0);
 
@@ -116,7 +119,7 @@ interface ArmRig {
   palmOffset: THREE.Vector3; // 手首 → 手のひらの中心(休止姿勢のワールド座標)
   restWorld: { upper: THREE.Quaternion; lower: THREE.Quaternion; hand: THREE.Quaternion };
   fingers: { node: THREE.Object3D; joint: number }[];
-  thumbs: { node: THREE.Object3D; rest: THREE.Quaternion; euler: THREE.Euler }[];
+  thumbs: { node: THREE.Object3D; euler: THREE.Euler }[];
   grip: number;
   lastForearmDir: THREE.Vector3;
 }
@@ -150,7 +153,7 @@ function twistAngle(q: THREE.Quaternion, axis: THREE.Vector3) {
 }
 
 export default class Body {
-  private vrm: any;
+  private vrm: VRM;
   private arms: ArmRig[];
   private rest = new Map<THREE.Object3D, THREE.Quaternion>();
   private hips: THREE.Object3D | null;
@@ -166,6 +169,11 @@ export default class Body {
   private breathTime = 0;
   private lookTarget = new THREE.Object3D();
   private eyeY: number;
+  private weightShift = 0;
+  // ワールドの向きの回転 → モデルの座標系の回転(q → toModel * q * toWorld)
+  private toWorld: THREE.Quaternion;
+  private toModel: THREE.Quaternion;
+  private modelXSign: number;
 
   public armAngle = 0.3;
   /** 体の動きの大きさ(0 で止める、1 が標準、2 で大きく) */
@@ -176,9 +184,12 @@ export default class Body {
   }
   public enableNeck = true;
 
-  constructor(vrm: any, scene: THREE.Scene) {
+  constructor(vrm: VRM, scene: THREE.Scene) {
     this.vrm = vrm;
     this.vrm.scene.updateMatrixWorld(true);
+    this.toWorld = worldQuaternion(vrm.humanoid.normalizedHumanBonesRoot);
+    this.toModel = this.toWorld.clone().invert();
+    this.modelXSign = new THREE.Vector3(1, 0, 0).applyQuaternion(this.toModel).x < 0 ? -1 : 1;
 
     this.hips = this.node(Bone.Hips);
     if (this.hips) {
@@ -200,7 +211,7 @@ export default class Body {
 
     // 休止姿勢(T ポーズ)の回転を覚えておく
     Object.values(Bone).forEach((name) => {
-      const node = this.node(name as VRMSchema.HumanoidBoneName);
+      const node = this.node(name);
       if (node) this.rest.set(node, node.quaternion.clone());
     });
 
@@ -214,8 +225,13 @@ export default class Body {
     scene.remove(this.lookTarget);
   }
 
-  private node(name: VRMSchema.HumanoidBoneName): THREE.Object3D | null {
-    return this.vrm.humanoid.getBoneNode(name);
+  private node(name: VRMHumanBoneName): THREE.Object3D | null {
+    return this.vrm.humanoid.getNormalizedBoneNode(name);
+  }
+
+  /** ワールドの向きで表した回転を、モデルの座標系の回転にする */
+  private toLocal(q: THREE.Quaternion) {
+    return q.premultiply(this.toModel).multiply(this.toWorld);
   }
 
   get metrics(): AvatarMetrics {
@@ -232,7 +248,7 @@ export default class Body {
 
   private createArm(h: number): ArmRig {
     const isLeft = h === LEFT;
-    const pick = (left: VRMSchema.HumanoidBoneName, right: VRMSchema.HumanoidBoneName) =>
+    const pick = (left: VRMHumanBoneName, right: VRMHumanBoneName) =>
       this.node(isLeft ? left : right);
 
     const upper = pick(Bone.LeftUpperArm, Bone.RightUpperArm)!;
@@ -259,7 +275,7 @@ export default class Body {
     const jointNames = ['Proximal', 'Intermediate', 'Distal'];
     fingerNames.forEach((finger) =>
       jointNames.forEach((joint, j) => {
-        const name = `${isLeft ? 'left' : 'right'}${finger}${joint}` as VRMSchema.HumanoidBoneName;
+        const name = `${isLeft ? 'left' : 'right'}${finger}${joint}` as VRMHumanBoneName;
         const node = this.node(name);
         if (node) fingers.push({ node, joint: j });
       })
@@ -267,13 +283,14 @@ export default class Body {
 
     // 親指は元の実装の角度を使う(軽く曲げて手のひら側へ)
     const thumbs: ArmRig['thumbs'] = [];
+    // (VRM 0.x の Proximal は three-vrm では Metacarpal と呼ばれる)
     const thumbPose: [string, THREE.Euler][] = [
-      ['Proximal', new THREE.Euler(0, (-side * Math.PI) / 12, (-side * Math.PI) / 12)],
+      ['Metacarpal', new THREE.Euler(0, (-side * Math.PI) / 12, (-side * Math.PI) / 12)],
       ['Distal', new THREE.Euler(0, (-side * Math.PI) / 3, 0)],
     ];
     thumbPose.forEach(([joint, euler]) => {
-      const node = this.node(`${isLeft ? 'left' : 'right'}Thumb${joint}` as VRMSchema.HumanoidBoneName);
-      if (node) thumbs.push({ node, rest: node.quaternion.clone(), euler });
+      const node = this.node(`${isLeft ? 'left' : 'right'}Thumb${joint}` as VRMHumanBoneName);
+      if (node) thumbs.push({ node, euler });
     });
 
     return {
@@ -297,12 +314,16 @@ export default class Body {
     };
   }
 
-  /** 休止姿勢の回転に、ローカルのオイラー角を掛けて設定する */
-  private pose(name: VRMSchema.HumanoidBoneName, x: number, y: number, z: number) {
+  /** 休止姿勢の回転に、オイラー角(ワールドの向き: x 右、y 上、z 後ろ)の回転を掛けて設定する */
+  private pose(name: VRMHumanBoneName, x: number, y: number, z: number) {
     const node = this.node(name);
     if (!node) return;
+    this.setPose(node, new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z)));
+  }
+
+  private setPose(node: THREE.Object3D, q: THREE.Quaternion) {
     const rest = this.rest.get(node);
-    node.quaternion.setFromEuler(new THREE.Euler(x, y, z));
+    node.quaternion.copy(this.toLocal(q));
     if (rest) node.quaternion.premultiply(rest);
   }
 
@@ -354,7 +375,9 @@ export default class Body {
           (sum, w) => sum + w.amplitude * Math.sin((2 * Math.PI * this.breathTime) / w.period + w.phase),
           0
         ) * Math.min(this.motionAmount, 1.5);
-      this.hips.position.x = this.hipsRestX + shift;
+      this.weightShift = shift;
+      // ワールドの x 方向へずらす(モデルが 180° 回っていれば逆向き)
+      this.hips.position.x = this.hipsRestX + shift * this.modelXSign;
       // 重心を乗せた側へ腰が少し傾く
       this.pose(Bone.Hips, 0, 0, -shift * 2);
     }
@@ -367,7 +390,7 @@ export default class Body {
     const twist = this.twist.x;
 
     // 腰の傾きを背骨で打ち消して、上半身はまっすぐに保つ
-    const hipsRoll = this.hips ? -(this.hips.position.x - this.hipsRestX) * 2 : 0;
+    const hipsRoll = this.hips ? -this.weightShift * 2 : 0;
     this.pose(Bone.Spine, -SPINE_LEAN - this.lean.x, twist * 0.3, -hipsRoll * 0.7);
     this.pose(Bone.Chest, breath, twist * 0.4, -hipsRoll * 0.3);
     this.pose(Bone.UpperChest, breath * 0.5, twist * 0.3, 0);
@@ -484,12 +507,10 @@ export default class Body {
     // T ポーズ(手のひら下向き)で z 軸周りに回すと指が手のひら側に曲がる
     arm.fingers.forEach(({ node, joint }) => {
       const angle = FINGER_CURL_OPEN[joint] + (curl[joint] - FINGER_CURL_OPEN[joint]) * arm.grip;
-      const rest = this.rest.get(node);
-      node.quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), -arm.side * angle);
-      if (rest) node.quaternion.premultiply(rest);
+      this.setPose(node, new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -arm.side * angle));
     });
-    arm.thumbs.forEach(({ node, rest, euler }) => {
-      node.quaternion.setFromEuler(euler).premultiply(rest);
+    arm.thumbs.forEach(({ node, euler }) => {
+      this.setPose(node, new THREE.Quaternion().setFromEuler(euler));
     });
   }
 }

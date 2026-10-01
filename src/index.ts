@@ -1,12 +1,9 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { VRM, VRMSchema } from '@pixiv/three-vrm';
-import * as dat from 'dat.gui';
-
-import window from './interface/window';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { VRM, VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+import GUI from 'lil-gui';
 
 import Renderer from './classes/Renderer';
-import { setupAvatarShadows } from './classes/avatarShadow';
 import Juggling from './motion/juggling';
 import { SiteswapCheck } from './motion/juggling/validate';
 import Body from './motion/body';
@@ -16,32 +13,15 @@ import Facial from './motion/facial';
 import Options from './options/index';
 
 // モデルを指定しなかった時に読み込む VRM(ページからの相対パス)
-export const DEFAULT_MODEL_PATH = './models/default.vrm';
+const DEFAULT_MODEL_PATH = './models/default.vrm';
 
 // フレームが大きく飛んだ時(タブを裏にした時など)に動きが暴れないようにする上限(秒)
 const MAX_DELTA = 0.1;
 
-/**
- * three-vrm 0.3.x の MToon シェーダーは、影を受ける部分が three.js r118 より古い書き方
- * (directionalLight.shadow など)のため、影を有効にするとコンパイルに失敗してアバターが消える。
- * アバターは影を落とすだけにして、影を受ける計算を外す。
- */
-function disableMToonShadowReceive(material: THREE.Material) {
-  const shader = material as THREE.ShaderMaterial;
-  if (typeof shader.fragmentShader !== 'string') return;
-  const patched = shader.fragmentShader.replace(
-    /atten = all\( bvec2\( \w+Light\.shadow, directLight\.visible \) \) \? [^;]*;/g,
-    'atten = 1.0;'
-  );
-  if (patched === shader.fragmentShader) return;
-  shader.fragmentShader = patched;
-  shader.needsUpdate = true;
-}
-
 export default class VRMJuggler {
   private selector!: string;
   private renderer!: Renderer;
-  private clock = new THREE.Clock();
+  private timer = new THREE.Timer();
   private vrm?: VRM;
   private loadId = 0;
   private juggling!: Juggling;
@@ -50,7 +30,7 @@ export default class VRMJuggler {
   private facial!: Facial;
   private options!: Options;
   private showGui: boolean = false;
-  private gui?: any;
+  private gui?: GUI;
   private message?: HTMLElement;
   private messageKind: 'none' | 'loading' | 'error' = 'none';
   private loggedError = false;
@@ -93,28 +73,32 @@ export default class VRMJuggler {
         if (loadId !== this.loadId) return resolve(false);
         console.error(error);
         this.showMessage(
-          'VRM を読み込めませんでした。VRM 0.x 形式のファイルか確認してください。' +
+          'VRM を読み込めませんでした。VRM ファイル(VRM 0.x / 1.0)か確認してください。' +
             (this.vrm ? '(前のモデルのまま続けます)' : ''),
           true
         );
         resolve(false);
       };
 
-      new GLTFLoader().load(
+      const loader = new GLTFLoader();
+      loader.register((parser) => new VRMLoaderPlugin(parser));
+      loader.load(
         modelPath,
-        (gltf: any) => {
-          VRM.from(gltf)
-            .then((vrm) => {
-              // 読み込み中に別のモデルが指定された場合は捨てる
-              if (loadId !== this.loadId) {
-                vrm.dispose();
-                return resolve(false);
-              }
-              this.setVRM(vrm);
-              if (this.messageKind === 'loading') this.clearMessage();
-              resolve(true);
-            })
-            .catch(onError);
+        (gltf) => {
+          const vrm = gltf.userData.vrm as VRM | undefined;
+          if (!vrm) return onError(new Error('VRM ではない glTF ファイルです'));
+          // 読み込み中に別のモデルが指定された場合は捨てる
+          if (loadId !== this.loadId) {
+            VRMUtils.deepDispose(vrm.scene);
+            return resolve(false);
+          }
+          VRMUtils.removeUnnecessaryVertices(gltf.scene);
+          VRMUtils.combineSkeletons(gltf.scene);
+          // VRM 1.0 は +Z、VRM 0.x は -Z を向いている。このライブラリは -Z を正面として扱うので 1.0 は半回転させる
+          if (vrm.meta.metaVersion === '1') vrm.scene.rotation.y = Math.PI;
+          this.setVRM(vrm);
+          if (this.messageKind === 'loading') this.clearMessage();
+          resolve(true);
         },
         (progress: ProgressEvent) => {
           if (loadId !== this.loadId || !progress.total || this.messageKind === 'error') return;
@@ -131,7 +115,7 @@ export default class VRMJuggler {
     if (this.vrm) {
       scene.remove(this.vrm.scene);
       this.body?.dispose(scene);
-      this.vrm.dispose();
+      VRMUtils.deepDispose(this.vrm.scene);
     }
 
     this.vrm = vrm;
@@ -144,13 +128,13 @@ export default class VRMJuggler {
     this.juggling.setAvatarMetrics(this.body.metrics);
     this.juggling.visible = true;
     this.renderer.frameHeight(this.juggling.peakY);
-    // 床にアバターの影を落とす(テクスチャの透明な部分は抜く)
+    // 床にアバターの影を落とす(テクスチャの透明な部分は three.js が材質の alphaTest で抜く)
     vrm.scene.traverse((object) => {
       const mesh = object as THREE.Mesh;
       if (!mesh.isMesh) return;
-      (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach(disableMToonShadowReceive);
+      mesh.castShadow = true;
+      mesh.frustumCulled = false;
     });
-    setupAvatarShadows(vrm.scene);
 
     this.blink.init(vrm);
     this.facial.init(vrm);
@@ -172,13 +156,13 @@ export default class VRMJuggler {
     } else {
       this.showSiteswapError(result);
     }
-    this.gui?.updateDisplay();
+    this.gui?.controllersRecursive().forEach((c) => c.updateDisplay());
     return result;
   }
 
-  private animate = () => {
+  private animate = (timestamp?: number) => {
     requestAnimationFrame(this.animate);
-    const delta = Math.min(this.clock.getDelta(), MAX_DELTA);
+    const delta = Math.min(this.timer.update(timestamp).getDelta(), MAX_DELTA);
 
     try {
       if (this.vrm && this.body) {
@@ -294,7 +278,7 @@ export default class VRMJuggler {
   private createGUI() {
     const options = this.options;
     const siteswapOptions = options.siteswap as any;
-    this.gui = new dat.GUI({});
+    this.gui = new GUI({ title: '詳細設定(Esc で閉じる)' });
 
     const siteswap = this.gui.addFolder('ジャグリング');
     siteswap
@@ -425,21 +409,22 @@ export default class VRMJuggler {
       .onChange(() => this.setOptions());
 
     const emotions = this.gui.addFolder('表情');
-    const emotionNames: [VRMSchema.BlendShapePresetName, string][] = [
-      [VRMSchema.BlendShapePresetName.Joy, '喜'],
-      [VRMSchema.BlendShapePresetName.Angry, '怒'],
-      [VRMSchema.BlendShapePresetName.Sorrow, '哀'],
-      [VRMSchema.BlendShapePresetName.Fun, '楽'],
+    // VRM 1.0 の表情名(VRM 0.x の joy / sorrow / fun は three-vrm が happy / sad / relaxed に読み替える)
+    const emotionNames: [string, string][] = [
+      ['happy', '喜'],
+      ['angry', '怒'],
+      ['sad', '哀'],
+      ['relaxed', '楽'],
     ];
     emotionNames.forEach(([key, name]) => emotions.add(options.facial.emotion, key, 0.0, 1.0).name(name));
 
     const mouth = this.gui.addFolder('口の形');
-    const mouthNames: [VRMSchema.BlendShapePresetName, string][] = [
-      [VRMSchema.BlendShapePresetName.A, 'あ'],
-      [VRMSchema.BlendShapePresetName.I, 'い'],
-      [VRMSchema.BlendShapePresetName.U, 'う'],
-      [VRMSchema.BlendShapePresetName.E, 'え'],
-      [VRMSchema.BlendShapePresetName.O, 'お'],
+    const mouthNames: [string, string][] = [
+      ['aa', 'あ'],
+      ['ih', 'い'],
+      ['ou', 'う'],
+      ['ee', 'え'],
+      ['oh', 'お'],
     ];
     mouthNames.forEach(([key, name]) => mouth.add(options.facial.mouth, key, 0.0, 1.0).name(name));
 
@@ -464,6 +449,8 @@ export default class VRMJuggler {
         if (this.body) this.body.motionAmount = Number(value);
       });
 
+    // よく使う項目以外は閉じておく
+    [advanced, surfaces, emotions, mouth].forEach((folder) => folder.close());
     if (!this.showGui) this.gui.hide();
   }
 
@@ -473,11 +460,17 @@ export default class VRMJuggler {
     this.showGui = !this.showGui;
 
     if (this.showGui) {
-      this.gui.show();
+      this.gui?.show();
     } else {
-      this.gui.hide();
+      this.gui?.hide();
     }
   };
+}
+
+declare global {
+  interface Window {
+    VRMJuggler: typeof VRMJuggler;
+  }
 }
 
 window.VRMJuggler = window.VRMJuggler || VRMJuggler;
