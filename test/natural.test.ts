@@ -5,6 +5,7 @@ import { CreateSiteswap } from '../src/motion/juggling/Siteswap';
 import { buildNaturalTracks, isNaturalSupported } from '../src/motion/juggling/natural';
 import { autoBeatDuration } from '../src/motion/juggling/tempo';
 import { LEFT, RIGHT, Tracks, makeTransform } from '../src/motion/juggling/tracks';
+import { PATTERN_PRESETS } from '../src/presets';
 
 /**
  * 動きの品質のテスト。見た目で気づいた不自然さ(手が止まったままボールが飛ぶ、ボールの瞬間移動、
@@ -32,7 +33,13 @@ function build(siteswap: string, prop = 'ball'): { tracks: Tracks; source: any }
   return { tracks, source };
 }
 
-const PATTERNS = ['3', '1', '31', '51', '441', '531', '5', '423', '42', '(4,4)', '(6x,4)*', '(4,2x)*', '501', '2', 'b'];
+// 動きの調整で崩れやすいパターンと、デモのパターン一覧
+const PATTERNS = [
+  ...new Set([
+    ...['3', '1', '31', '51', '441', '531', '5', '423', '42', '(4,4)', '(6x,4)*', '(4,2x)*', '501', '2', 'b'],
+    ...PATTERN_PRESETS.map((p) => p.siteswap),
+  ]),
+];
 const PROPS = ['ball', 'club', 'ring'];
 
 describe.each(PROPS)('%s', (prop) => {
