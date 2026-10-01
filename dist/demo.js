@@ -2,7 +2,7 @@
 //
 // URL のパラメータ
 //   ss=531            サイトスワップ
-//   prop=club         小道具(ball / club / ring)
+//   prop=club         小道具(ball / club / ring / pancake。pancake はリングを水平に回して投げる)
 //   speed=0.5         再生速度
 //   body=1.5          体の動きの大きさ(0 〜 2)
 //   cam=side          カメラ(front / diagonal / side / close)
@@ -13,7 +13,7 @@
   const STORAGE_KEY = 'vrm-juggler:settings';
   const DEFAULTS = { ss: '3', prop: 'ball', speed: 1, body: 1, cam: 'front', collapsed: false };
   const BACKGROUND = ['#fbfbfd', '#dfe2ea'];
-  const PROPS = ['ball', 'club', 'ring'];
+  const PROPS = ['ball', 'club', 'ring', 'pancake'];
   const VIEWS = ['front', 'diagonal', 'side', 'close'];
 
   const $ = (id) => document.getElementById(id);

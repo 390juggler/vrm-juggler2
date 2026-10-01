@@ -21,7 +21,7 @@ const MAX_DELTA = 0.1;
 // コマ送り 1 回で進める時間(秒)
 const STEP_TIME = 1 / 30;
 
-const PROP_TYPES = ['ball', 'club', 'ring'];
+const PROP_TYPES = ['ball', 'club', 'ring', 'pancake'];
 const CAMERA_VIEWS: CameraView[] = ['front', 'diagonal', 'side', 'close'];
 
 /** getState() と statechange イベントで渡す、いまの状態 */
@@ -184,7 +184,7 @@ export default class VRMJuggler {
     return result;
   }
 
-  /** 小道具を変える('ball' | 'club' | 'ring') */
+  /** 小道具を変える('ball' | 'club' | 'ring' | 'pancake'。pancake はリングを水平に回して投げる) */
   setProp(type: string) {
     if (!PROP_TYPES.includes(type)) return;
     this.options.siteswap.props!.forEach((prop) => (prop.type = type));
@@ -470,7 +470,7 @@ export default class VRMJuggler {
       .onChange((value: number) => this.setSpeed(Number(value)));
 
     siteswap
-      .add(siteswapOptions.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring' })
+      .add(siteswapOptions.props[0], 'type', { Ball: 'ball', Club: 'club', Ring: 'ring', 'Ring (pancake)': 'pancake' })
       .name('小道具')
       .listen()
       .onFinishChange((value: string) => this.setProp(value));

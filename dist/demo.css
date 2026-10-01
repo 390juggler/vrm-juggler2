@@ -152,6 +152,9 @@ button.icon {
 
 .segmented button {
   flex: 1;
+  min-width: 0;
+  padding-left: 4px;
+  padding-right: 4px;
   border-radius: 0;
   margin-left: -1px;
 }
