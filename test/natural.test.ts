@@ -37,6 +37,8 @@ function build(siteswap: string, prop = 'ball'): { tracks: Tracks; source: any }
 const PATTERNS = [
   ...new Set([
     ...['3', '1', '31', '51', '441', '531', '5', '423', '42', '(4,4)', '(6x,4)*', '(4,2x)*', '501', '2', 'b'],
+    // 床で跳ねる投げ
+    ...['3B', '4B', '5B3', '53B', '(4B,4B)'],
     ...PATTERN_PRESETS.map((p) => p.siteswap),
   ]),
 ];
@@ -77,6 +79,19 @@ describe.each(PROPS)('%s', (prop) => {
       // 手の中心(ボールの中心)同士。手の幅は 8cm ほど
       expect(tracks.hands[LEFT].positions[k].distanceTo(tracks.hands[RIGHT].positions[k])).toBeGreaterThan(0.11);
     }
+  });
+});
+
+describe('ボール同士', () => {
+  it.each(PATTERN_PRESETS.map((p) => p.siteswap))('%s: 空中ですれ違うボールがぶつからない', (siteswap) => {
+    const { tracks } = build(siteswap);
+    let closest = Infinity;
+    for (let k = 0; k < tracks.numSteps; k++)
+      for (let a = 0; a < tracks.props.length; a++)
+        for (let b = a + 1; b < tracks.props.length; b++)
+          closest = Math.min(closest, tracks.props[a][k].distanceTo(tracks.props[b][k]));
+    // ボールの直径は 10cm
+    expect(closest).toBeGreaterThan(0.11);
   });
 });
 

@@ -15,6 +15,7 @@ import {
   summarize,
   transformPoint,
 } from './tracks';
+import { BounceSegment, bounceHeightAt, solveBounce } from './bounce';
 
 /**
  * ジャグラーの手の動きを「投げ」と「キャッチ」の出来事から組み立てる。
@@ -28,8 +29,10 @@ import {
  * - 手の中の動きは「運ぶ」区間と、短く速い「投げる」区間に分ける(実際のジャグラーの手の動き)。
  * - 投げる/受ける横位置は投げの高さで変える(Juggling Lab の表を元にした)。'1' は中央近くで手渡す。
  * - クラブはハンドル、リングは縁を握る。手の軌道はその握る位置で計算する。
+ * - 空中でボール同士がぶつかるパターンでは、投げの形(柱のように上げる・少し外で受ける…)を選び直す。
+ * - 床で跳ねる投げ(バウンド)は、水平な面なら跳ねる軌道を解いて同じように手を動かす(bounce.ts)。
  *
- * バウンド・複数人のパターンは対象外(null を返し、gunswap の軌道を使う)。
+ * 複数人のパターンと、傾いた面で跳ねるパターンは対象外(gunswap の軌道を使う)。
  */
 
 // 横位置(cm)の表: Juggling Lab (notation/MhnPattern.kt)。3 の値を基準にした比率で使う
@@ -91,6 +94,22 @@ const CLUB_LOW_AT = 0.65; // 手に持っている時間のうち、一番倒れ
 const CLUB_INWARD_YAW = 12; // 体の内側へ向ける角度
 const RING_SPIN_PER_FLIGHT = 0.5; // リングが 1 回のフライトで回る量(回転)
 
+// 投げの形。ふだんは normal(内側で投げて外側で受ける)。空中で小道具同士がぶつかるパターンでは、投げの高さごとに
+// 形を選び直す(実際のジャグラーも 423 や 534 の 4 は柱のようにまっすぐ上げ、53 の 3 は少し外で受ける)
+// - 同じ手に戻る偶数の投げ: column(投げる位置と受ける位置を揃えてまっすぐ上下)
+// - 反対の手へ渡る投げ: wideCatch(少し外で受ける)、innerThrow(少し内側で投げる)、その両方
+type ThrowStyle = 'normal' | 'columnMid' | 'columnOut' | 'wideCatch' | 'innerThrow' | 'innerWide';
+const SAME_HAND_STYLES: ThrowStyle[] = ['normal', 'columnMid', 'columnOut'];
+const CROSSING_STYLES: ThrowStyle[] = ['normal', 'wideCatch', 'innerThrow', 'innerWide'];
+const WIDE_CATCH_SCALE = 1.2;
+const INNER_THROW_SCALE = 0.65;
+const INNER_THROW_MIN_X = 0.07; // m
+// 空中の小道具同士の中心の距離がこれより近いパターンは、投げの形を選び直す
+const SAFE_DISTANCE = 0.14; // m(ボールの直径 + 4cm)
+const COLLISION_SAMPLES = 360;
+const REACH_MARGIN = 0.95; // 腕の届く範囲のうち、投げる位置に使ってよい割合
+const MAX_STYLE_KEYS = 4; // 形を選び直す投げの種類の上限(組み合わせは多くて 4^4 = 256 通り)
+
 type EventKind = 'catch' | 'throw' | 'stroke' | 'follow' | 'hold' | 'rest';
 
 interface HandEvent {
@@ -110,8 +129,11 @@ interface Flight {
   catchHand: number;
   value: number;
   start: THREE.Vector3; // 重心
-  velocity: THREE.Vector3;
+  velocity: THREE.Vector3; // リリースの速度
   end: THREE.Vector3;
+  /** 床で跳ねる投げ: 跳ねる面の高さ(重心)と、上へ投げる(リフト)か下へ投げる(フォース)か */
+  bounce?: { floors: number[]; restitution: number; tossUp: boolean; catchUp: boolean; strict: boolean };
+  segments: BounceSegment[];
 }
 
 const UP = new THREE.Vector3(0, 1, 0);
@@ -155,9 +177,17 @@ function tiltToward(from: THREE.Vector3, toward: THREE.Vector3, share: number) {
   return from.clone().lerp(target, share).normalize();
 }
 
+const isHorizontal = (surface: any) => surface && Math.abs(surface.normal.y) > 0.999;
+
 export function isNaturalSupported(siteswap: any): boolean {
   if (siteswap.numJugglers !== 1) return false;
-  return siteswap.propOrbits.every((orbit: any[]) => orbit.every((toss) => !toss.numBounces));
+  // 跳ねる投げは水平な面で跳ねる場合だけ
+  return siteswap.propOrbits.every((orbit: any[]) =>
+    orbit.every(
+      (toss) =>
+        !toss.numBounces || (toss.bounceOrder || []).every((ix: number) => isHorizontal(siteswap.surfaces[ix]))
+    )
+  );
 }
 
 export function buildNaturalTracks(
@@ -241,31 +271,117 @@ export function buildNaturalTracks(
     new THREE.Vector3(0, 0, propType === 'ring' ? (prop - (numProps - 1) / 2) * ringGap : 0);
 
   // ---- 出来事を集める ----
-  const flights: Flight[] = [];
-  const holdTosses: { hand: number; toss: any; next: any }[] = [];
-  siteswap.propOrbits.forEach((orbit: any[], prop: number) => {
-    orbit.forEach((toss, k) => {
-      const next = orbit[(k + 1) % orbit.length];
-      if (toss.hold) {
-        holdTosses.push({ hand: toss.hand, toss, next });
-        return;
-      }
-      const release = mod(toss.beat * beat + toss.dwellDuration, period);
-      let duration = mod(next.beat * beat - release, period);
-      if (duration < 1e-6) duration += period;
-      flights.push({
-        prop,
-        release,
-        duration,
-        throwHand: toss.hand,
-        catchHand: next.hand,
-        value: toss.numBeats,
-        start: clampToReach(toss.hand, throwPoint(toss, next.hand !== toss.hand).add(layer(prop)), transform),
-        velocity: new THREE.Vector3(),
-        end: clampToReach(next.hand, catchPoint(next, toss.numBeats).add(layer(prop)), transform),
+  // 形を選べる投げの種類('4'、'5'、'6x' …)。内側で投げて外側で受けるパターン(カスケード系)の 3 以上の投げだけ
+  const styleKey = (toss: any, next: any): string | undefined =>
+    toss.numBeats >= 3 && !toss.numBounces && cascadeLike(toss.dwellPathIx) && cascadeLike(next.dwellPathIx)
+      ? `${toss.numBeats}${next.hand === toss.hand ? '' : 'x'}`
+      : undefined;
+
+  const makeFlights = (styles: Map<string, ThrowStyle>) => {
+    const result: Flight[] = [];
+    const holds: { hand: number; toss: any; next: any }[] = [];
+    // 腕が届かずに位置を詰めた投げの数(詰めると投げる瞬間の手が遅くなる)
+    let outOfReach = 0;
+    siteswap.propOrbits.forEach((orbit: any[], prop: number) => {
+      orbit.forEach((toss, k) => {
+        const next = orbit[(k + 1) % orbit.length];
+        if (toss.hold) {
+          holds.push({ hand: toss.hand, toss, next });
+          return;
+        }
+        const release = mod(toss.beat * beat + toss.dwellDuration, period);
+        let duration = mod(next.beat * beat - release, period);
+        if (duration < 1e-6) duration += period;
+        const start = throwPoint(toss, next.hand !== toss.hand);
+        const end = catchPoint(next, toss.numBeats);
+        const key = styleKey(toss, next);
+        const style = (key && styles.get(key)) || 'normal';
+        if (style === 'columnOut') start.x = end.x;
+        if (style === 'columnMid') start.x = end.x = (start.x + end.x) / 2;
+        if (style === 'wideCatch' || style === 'innerWide') end.x *= WIDE_CATCH_SCALE;
+        if (style === 'innerThrow' || style === 'innerWide')
+          start.x = Math.sign(start.x) * Math.max(Math.abs(start.x) * INNER_THROW_SCALE, INNER_THROW_MIN_X);
+        const flight: Flight = {
+          prop,
+          release,
+          duration,
+          throwHand: toss.hand,
+          catchHand: next.hand,
+          value: toss.numBeats,
+          start: clampToReach(toss.hand, start.add(layer(prop)), transform),
+          velocity: new THREE.Vector3(),
+          end: clampToReach(next.hand, end.add(layer(prop)), transform),
+          segments: [],
+        };
+        if (toss.numBounces > 0) {
+          flight.bounce = {
+            floors: (toss.bounceOrder as number[]).map(
+              (ix) => transformPoint(siteswap.surfaces[ix].position, transform, new THREE.Vector3()).y + propRadius
+            ),
+            restitution: Number(siteswap.props[prop]?.C) || 0.9,
+            // gunswap と同じ決まり: L / HL は上へ投げ、L / HF は上がってくるところを受ける
+            tossUp: toss.bounceType === 'L' || toss.bounceType === 'HL',
+            catchUp: toss.bounceType === 'L' || toss.bounceType === 'HF',
+            strict: !toss.bounceTypeAuto,
+          };
+        }
+        solveFlight(flight);
+        result.push(flight);
+        if (start.distanceTo(transform.shoulders[toss.hand]) > transform.reach * REACH_MARGIN) outOfReach++;
       });
     });
-  });
+    return { flights: result, holds, outOfReach };
+  };
+
+  // 空中の小道具同士がいちばん近づく距離(重心の軌道で見積もる)
+  const closestApproach = (candidates: Flight[]) => {
+    let closest = Infinity;
+    for (let i = 0; i < COLLISION_SAMPLES; i++) {
+      const t = (i / COLLISION_SAMPLES) * period;
+      const positions: THREE.Vector3[] = [];
+      candidates.forEach((f) => {
+        const tau = since(t, f.release, period);
+        if (tau < 0 || tau >= f.duration) return;
+        const p = flightAt(f, tau);
+        positions.forEach((q) => (closest = Math.min(closest, q.distanceTo(p))));
+        positions.push(p);
+      });
+    }
+    return closest;
+  };
+
+  // いつもの形でぶつかりそうなら、投げの種類ごとに形を変えて、いちばん離れる組み合わせを選ぶ
+  let styles = new Map<string, ThrowStyle>();
+  const keys = [
+    ...new Set(
+      siteswap.propOrbits.flatMap((orbit: any[]) =>
+        orbit.map((toss, k) => (toss.hold ? undefined : styleKey(toss, orbit[(k + 1) % orbit.length])))
+      )
+    ),
+  ].filter((key): key is string => key !== undefined);
+  const normal = makeFlights(styles);
+  let best = closestApproach(normal.flights);
+  if (best < SAFE_DISTANCE && keys.length > 0 && keys.length <= MAX_STYLE_KEYS) {
+    const combos = keys.reduce<Map<string, ThrowStyle>[]>(
+      (list, key) =>
+        list.flatMap((m) =>
+          (key.endsWith('x') ? CROSSING_STYLES : SAME_HAND_STYLES).map((style) => new Map(m).set(key, style))
+        ),
+      [new Map()]
+    );
+    combos.forEach((combo) => {
+      const candidate = makeFlights(combo);
+      // いつもより腕を伸ばさないと届かない形は選ばない
+      if (candidate.outOfReach > normal.outOfReach) return;
+      const distance = closestApproach(candidate.flights);
+      // 少しよくなるだけなら、いつもの形のまま
+      if (distance > best + 0.01) {
+        best = distance;
+        styles = combo;
+      }
+    });
+  }
+  const { flights, holds: holdTosses } = makeFlights(styles);
 
   if (propType === 'club' || propType === 'ring') {
     orientations = buildOrientations(propType, flights, numProps, numSteps, period, siteswap);
@@ -291,7 +407,7 @@ export function buildNaturalTracks(
     (f, o) => catchOffset.set(f, o)
   );
 
-  // 重心の放物線(握る位置のずれは、その時刻の小道具の向きから求める)
+  // 重心の軌道(握る位置のずれは、その時刻の小道具の向きから求める)
   flights.forEach((f) => {
     const releaseStep = stepOf(f.release);
     const catchStep = stepOf(f.release + f.duration);
@@ -300,20 +416,8 @@ export function buildNaturalTracks(
     f.end.x += catchOffset.get(f)!;
     f.start.sub(gripOffset(f.prop, releaseStep));
     f.end.sub(gripOffset(f.prop, catchStep));
-    const T = f.duration;
-    f.velocity
-      .copy(f.end)
-      .sub(f.start)
-      .multiplyScalar(1 / T);
-    f.velocity.y += 0.5 * GRAVITY * T;
+    solveFlight(f);
   });
-
-  const flightAt = (f: Flight, tau: number, out = new THREE.Vector3()) =>
-    out
-      .copy(f.start)
-      .addScaledVector(f.velocity, tau)
-      .add(new THREE.Vector3(0, -0.5 * GRAVITY * tau * tau, 0));
-  const flightVelocityAt = (f: Flight, tau: number) => f.velocity.clone().add(new THREE.Vector3(0, -GRAVITY * tau, 0));
 
   // ---- 手ごとの出来事 ----
   const handEvents: HandEvent[][] = [[], []];
@@ -593,6 +697,34 @@ export function buildNaturalTracks(
     throws,
     ...summarize(props, transform),
   };
+}
+
+/** start から end へ duration 秒で届く速度と縦の動きを決める(跳ねる投げは床で跳ねる動きを解く) */
+function solveFlight(f: Flight) {
+  const T = f.duration;
+  f.velocity
+    .copy(f.end)
+    .sub(f.start)
+    .multiplyScalar(1 / T);
+  if (f.bounce) {
+    const { floors, restitution, tossUp, catchUp, strict } = f.bounce;
+    const segments = solveBounce(f.start.y, f.end.y, T, floors, restitution, tossUp, catchUp, strict, GRAVITY);
+    // 解けない跳ね方は、gunswap の軌道で表示する(呼び出し側で切り替える)
+    if (!segments) throw new Error('バウンドの軌道を解けませんでした');
+    f.segments = segments;
+    f.velocity.y = segments[0].vy;
+    return;
+  }
+  f.velocity.y += 0.5 * GRAVITY * T;
+  f.segments = [{ t0: 0, y0: f.start.y, vy: f.velocity.y }];
+}
+
+function flightAt(f: Flight, tau: number, out = new THREE.Vector3()) {
+  return out.copy(f.start).addScaledVector(f.velocity, tau).setY(bounceHeightAt(f.segments, tau, GRAVITY).y);
+}
+
+function flightVelocityAt(f: Flight, tau: number) {
+  return f.velocity.clone().setY(bounceHeightAt(f.segments, tau, GRAVITY).vy);
 }
 
 /**

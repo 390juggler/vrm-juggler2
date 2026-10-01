@@ -54,6 +54,11 @@ const RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
 // 視線はパターンの頂点より少し下を見る
 const GAZE_BELOW_PEAK = 0.05;
 
+// 床で跳ねる時間が足りない時に、テンポをどこまで遅くして試すか(1.25 倍ずつ 6 回で約 3.8 倍)
+const BOUNCE_ERROR = 'Unable to calculate bounce path';
+const BOUNCE_TEMPO_STEP = 1.25;
+const BOUNCE_TEMPO_TRIES = 6;
+
 export default class Juggling {
   private scene: THREE.Scene;
   private siteswapStr: string;
@@ -134,14 +139,21 @@ export default class Juggling {
     if (!check.ok) return check;
 
     // gunswap は options.props をボールの数に合わせて増減させるので、再生中のパターンに影響しないようコピーを渡す
-    const beatDuration = this.autoTempo
+    const create = (beatDuration: number) =>
+      CreateSiteswap(check.siteswap, {
+        ...options,
+        beatDuration,
+        props: (options.props || []).map((prop) => ({ ...prop })),
+      });
+    let beatDuration = this.autoTempo
       ? autoBeatDuration(check.siteswap, Number(options.dwellRatio))
       : Number(options.beatDuration);
-    const siteswap = CreateSiteswap(check.siteswap, {
-      ...options,
-      beatDuration,
-      props: (options.props || []).map((prop) => ({ ...prop })),
-    });
+    let siteswap = create(beatDuration);
+    // 自動テンポで床で跳ねる時間が足りない時(2 回跳ねる、上へ投げて跳ねさせる…)は、ゆっくりにして試す
+    for (let i = 0; this.autoTempo && siteswap.errorMessage === BOUNCE_ERROR && i < BOUNCE_TEMPO_TRIES; i++) {
+      beatDuration *= BOUNCE_TEMPO_STEP;
+      siteswap = create(beatDuration);
+    }
     if (siteswap.errorMessage || !siteswap.validPattern || !siteswap.propPositions) {
       const result: SiteswapCheck = {
         ok: false,
@@ -177,9 +189,16 @@ export default class Juggling {
     this.transform = makeTransform(this.metrics);
     const prop = this.siteswap.props[0];
     const radius = Number(prop.radius) || 0.05;
-    this.tracks = isNaturalSupported(this.siteswap)
-      ? buildNaturalTracks(this.siteswap, this.transform, prop.type, prop.type === 'ball' ? radius : 0.03)
-      : buildTracks(this.siteswap, this.transform);
+    let tracks: Tracks | undefined;
+    if (isNaturalSupported(this.siteswap)) {
+      try {
+        tracks = buildNaturalTracks(this.siteswap, this.transform, prop.type, prop.type === 'ball' ? radius : 0.03);
+      } catch (e) {
+        // 自前で解けない軌道(跳ね方が合わないバウンドなど)は gunswap の軌道で表示する
+        console.warn(e);
+      }
+    }
+    this.tracks = tracks || buildTracks(this.siteswap, this.transform);
     this.drawProps();
     this.drawSurfaces();
   }
@@ -201,7 +220,6 @@ export default class Juggling {
       const axis1 = new THREE.Vector3(a.axis1.x, a.axis1.y, a.axis1.z);
       const axis2 = new THREE.Vector3(a.axis2.x, a.axis2.y, a.axis2.z);
 
-      // three.js r118 は旧形式の Geometry を内部で変換する経路に不具合があるので BufferGeometry で作る
       const corners = [
         position.clone().add(axis1).add(axis2),
         position.clone().sub(axis1).add(axis2),
@@ -209,7 +227,10 @@ export default class Juggling {
         position.clone().add(axis1).sub(axis2),
       ];
       const geometry = new THREE.BufferGeometry().setFromPoints(corners);
-      geometry.setIndex([0, 1, 2, 2, 0, 3]);
+      // 2 つの三角形の向きを揃え、表を跳ねる側(法線の向き)へ向ける(向きがばらばらだと法線が打ち消し合って暗く写る)
+      const normal = new THREE.Vector3(a.normal.x, a.normal.y, a.normal.z);
+      const face = new THREE.Vector3().crossVectors(corners[1].clone().sub(corners[0]), corners[2].clone().sub(corners[0]));
+      geometry.setIndex(face.dot(normal) >= 0 ? [0, 1, 2, 0, 2, 3] : [0, 2, 1, 0, 3, 2]);
       geometry.computeVertexNormals();
 
       const mesh = new THREE.Mesh(
@@ -219,7 +240,8 @@ export default class Juggling {
           side: THREE.DoubleSide,
           roughness: 0.9,
           transparent: true,
-          opacity: 0.6,
+          opacity: 0.35,
+          depthWrite: false,
         })
       );
       mesh.receiveShadow = true;
