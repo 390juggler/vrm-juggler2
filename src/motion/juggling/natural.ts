@@ -9,6 +9,7 @@ import {
   ThrowEvent,
   Tracks,
   boxSmooth,
+  clampToReach,
   computeGazeTrack,
   propBaseQuaternion,
   summarize,
@@ -48,6 +49,7 @@ const FOLLOW_HORIZONTAL = 0.3;
 // キャッチ: 落ちてくる速さの何割で受けるか(siteswap-performer の catchAbsorptionRatio 0.42)と上限
 const CATCH_ABSORB = 0.35;
 const CATCH_HAND_SPEED_MAX = 1.5; // m/s
+const CATCH_HORIZONTAL = 0.3; // 受けた後の横への流れ(縦は沈み込み、横はあまり流れない)
 
 // 投げる区間: 一定の加速度で加速すると考えて長さを決める
 const THROW_ACCEL = 40; // m/s^2(約 4G)
@@ -74,6 +76,7 @@ const PALM_SNAP_TIME = 0.06; // s
 const PROP_WIDTH: { [type: string]: number } = { ball: 1, club: 1.15, ring: 1.3 };
 // リングは同じ面を飛ぶと輪同士が交差するので、1 本ずつ奥行きをずらして平行な面を飛ばす
 const RING_LAYER_GAP = 0.03; // m
+const RING_LAYER_SPREAD_MAX = 0.12; // m
 
 // 小道具の握る位置
 const CLUB_GRIP_LOCAL = new THREE.Vector3(0, -0.13, 0); // クラブのモデル座標(ノブ側)
@@ -219,7 +222,7 @@ export function buildNaturalTracks(
         p.x *= THREE.MathUtils.clamp(1 + (table[v] / 7 - 1) * WIDTH_BLEND_THROW, 0.5, 2);
       }
     }
-    return toWorld(toss.hand, p);
+    return clampToReach(toss.hand, toWorld(toss.hand, p), transform);
   };
   const catchPoint = (toss: any, incomingValue: number) => {
     const pts = dwellPoints(toss.dwellPathIx);
@@ -229,8 +232,13 @@ export function buildNaturalTracks(
       // '1' は横へ押し出す手渡しなので、投げた高さのまま受ける(手のひらが受け手の方へ横を向く)
       if (incomingValue === 1) p.y = pts[pts.length - 1].y;
     }
-    return toWorld(toss.hand, p);
+    return clampToReach(toss.hand, toWorld(toss.hand, p), transform);
   };
+
+  // リングは 1 本ずつ奥行きをずらす(本数が多くても全体で RING_LAYER_SPREAD_MAX に収める)
+  const ringGap = numProps > 1 ? Math.min(RING_LAYER_GAP, RING_LAYER_SPREAD_MAX / (numProps - 1)) : 0;
+  const layer = (prop: number) =>
+    new THREE.Vector3(0, 0, propType === 'ring' ? (prop - (numProps - 1) / 2) * ringGap : 0);
 
   // ---- 出来事を集める ----
   const flights: Flight[] = [];
@@ -252,9 +260,9 @@ export function buildNaturalTracks(
         throwHand: toss.hand,
         catchHand: next.hand,
         value: toss.numBeats,
-        start: throwPoint(toss, next.hand !== toss.hand),
+        start: clampToReach(toss.hand, throwPoint(toss, next.hand !== toss.hand).add(layer(prop)), transform),
         velocity: new THREE.Vector3(),
-        end: catchPoint(next, toss.numBeats),
+        end: clampToReach(next.hand, catchPoint(next, toss.numBeats).add(layer(prop)), transform),
       });
     });
   });
@@ -284,10 +292,7 @@ export function buildNaturalTracks(
   );
 
   // 重心の放物線(握る位置のずれは、その時刻の小道具の向きから求める)
-  const layer = (prop: number) => (propType === 'ring' ? (prop - (numProps - 1) / 2) * RING_LAYER_GAP : 0);
   flights.forEach((f) => {
-    f.start.z += layer(f.prop);
-    f.end.z += layer(f.prop);
     const releaseStep = stepOf(f.release);
     const catchStep = stepOf(f.release + f.duration);
     // throwPoint / catchPoint は手(握る位置)。重心はそこから握る位置のずれを引く
@@ -342,7 +347,10 @@ export function buildNaturalTracks(
 
     const catchTime = mod(f.release + f.duration, period);
     const vIncoming = flightVelocityAt(f, f.duration);
-    const handVelocity = vIncoming.clone().multiplyScalar(CATCH_ABSORB);
+    const handVelocity = vIncoming
+      .clone()
+      .multiplyScalar(CATCH_ABSORB)
+      .multiply(new THREE.Vector3(CATCH_HORIZONTAL, 1, CATCH_HORIZONTAL));
     if (handVelocity.length() > CATCH_HAND_SPEED_MAX) handVelocity.setLength(CATCH_HAND_SPEED_MAX);
     const handAtCatch = f.end
       .clone()
@@ -408,7 +416,11 @@ export function buildNaturalTracks(
       strokes.push({
         time: mod(e.time + followTime, period),
         kind: 'follow',
-        position: e.position.clone().addScaledVector(followVelocity, followTime * ((1 + FOLLOW_END_SPEED) / 2)),
+        position: clampToReach(
+          hand,
+          e.position.clone().addScaledVector(followVelocity, followTime * ((1 + FOLLOW_END_SPEED) / 2)),
+          transform
+        ),
         velocityIn: followVelocity.clone().multiplyScalar(FOLLOW_END_SPEED),
         velocityOut: followVelocity.clone().multiplyScalar(FOLLOW_END_SPEED),
         palm: e.palm.clone(),
@@ -426,7 +438,7 @@ export function buildNaturalTracks(
       const dir = e.velocityIn.clone().normalize();
       // 投げる区間の始まりは手の軌道の一番下。縦の速度は 0 にして、横は内側へすくう動きを続ける
       // (上向きの速度で到着させると、その手前で一度下へ潜ってしまう)
-      const start = e.position.clone().addScaledVector(dir, -stroke);
+      const start = clampToReach(hand, e.position.clone().addScaledVector(dir, -stroke), transform);
       const scoop = start.clone().sub(prev.position).multiplyScalar(1 / Math.max(available - duration, 1e-3));
       scoop.y = 0;
       const startVelocity = dir.clone().multiplyScalar(startSpeed).setY(0).add(scoop).multiplyScalar(0.5);
@@ -462,7 +474,7 @@ export function buildNaturalTracks(
       const b = events[bIndex];
       const T = mod(b.time - a.time, period) || period;
       const u = mod(t - a.time, period) / T;
-      positions.push(hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u));
+      positions.push(clampToReach(hand, hermite(a.position, a.velocityOut, b.position, b.velocityIn, T, u), transform));
 
       // 手のひら: 区間の両端の向きをなめらかに補間。投げた直後は手首のスナップを足す
       const eased = u * u * (3 - 2 * u);
@@ -566,7 +578,7 @@ export function buildNaturalTracks(
 
   // 体の動き用: 投げの一覧
   const throws: ThrowEvent[] = flights
-    .map((f) => ({ time: f.release, hand: f.throwHand, value: f.value, velocity: f.velocity.clone() }))
+    .map((f) => ({ time: f.release, hand: f.throwHand, prop: f.prop, value: f.value, velocity: f.velocity.clone() }))
     .sort((a, b) => a.time - b.time);
 
   const gaze = computeGazeTrack(inAir, props, numSteps);

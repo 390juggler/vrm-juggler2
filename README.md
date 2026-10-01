@@ -13,7 +13,7 @@ https://390juggler.github.io/vrm-juggler2/ (GitHub Pages。master ブランチ�
 
 ## パッケージのインストール
 
-事前に node.js (18 以上) をインストールしてください。
+事前に node.js (20.19 以上。22 推奨) をインストールしてください。
 
 ```cmd
 npm i
@@ -37,12 +37,20 @@ or
 yarn run build
 ```
 
-ビルドが完了すると dist フォルダに vrm-juggler.min.js が生成されます。
+ビルドが完了すると dist フォルダに vrm-juggler.min.js が生成されます(Vite でビルドしています)。
+
+### 開発用のコマンド
+
+| コマンド            | 内容                                                       |
+| :------------------ | :--------------------------------------------------------- |
+| `npm run watch`     | ソースの変更を監視してビルドし直す(圧縮なし・ソースマップ付き) |
+| `npm test`          | 動きのテスト(瞬間移動・手の届く範囲・投げる瞬間の速さなど)を実行 |
+| `npm run typecheck` | TypeScript の型チェック                                    |
 
 ## 利用方法
 
 dist フォルダ内の index.html を参考にしてください。
-ローカルで試す場合は `npx http-server dist` などでサーバーを立てて開いてください(ファイルを直接開くと VRM を読み込めません)。
+ローカルで試す場合は `npm run serve` (http://localhost:8080) などでサーバーを立てて開いてください(ファイルを直接開くと VRM を読み込めません)。
 
 生成された js ファイルを html ファイルに読み込む。
 
@@ -147,4 +155,5 @@ Esc キー押下でパラメータ調整用の UI を開くことができます
 
 ## 対応している VRM
 
-VRM 0.x 形式(VRoid Studio の「VRM0.0」で書き出したもの)に対応しています。
+VRM 0.x 形式・VRM 1.0 形式の両方に対応しています(VRoid Studio の「VRM0.0」「VRM1.0」どちらの書き出しでも動きます)。
+読み込みには [three-vrm](https://github.com/pixiv/three-vrm) 3 系と three.js r186 を使っています。
