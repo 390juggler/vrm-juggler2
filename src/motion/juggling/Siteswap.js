@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import './util';
 import { interpolateBezierSpline } from './Bezier';
 import BounceGA from './BounceGA';
+import { solveBounce, bounceHeightAt } from './bounce';
 
 /* calculates the sum of all throws in the siteswap. used to determine the number of props */
 export function sumThrows(str) {
@@ -577,6 +578,8 @@ export const CreateSiteswap = function (siteswapStr, options) {
       }
 
       var bounceType = undefined;
+      // 跳ね方を書かずに投げの時間から決めた時は true(床で跳ねる軌道を解く時、逆向きの投げ方も試してよい)
+      var bounceTypeAuto = false;
       if (numBounces > 0) {
         if (siteswapStr.match('HF')) {
           bounceType = 'HF';
@@ -589,6 +592,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
         } else {
           // determine appropriate bounce type according to some hardcoded timing constraints
           // these were determined via trial and error with the default bounce params
+          bounceTypeAuto = true;
           var bounceTime = siteswap.beatDuration * numBeats - dwellDuration;
           if (bounceTime < 0.68) {
             bounceType = 'HF';
@@ -682,6 +686,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
         numBounces: numBounces,
         bounceOrder: bounceOrder,
         bounceType: bounceType,
+        bounceTypeAuto: bounceTypeAuto,
         numSpins: numSpins,
         dwellPathIx: dwellPathIx,
         dwellDuration: dwellDuration,
@@ -908,6 +913,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
             hand: tossHand,
             numBounces: toss.numBounces,
             bounceType: toss.bounceType,
+            bounceTypeAuto: toss.bounceTypeAuto,
             bounceOrder: toss.bounceOrder,
             numSpins: toss.numSpins,
             dwellPathIx: toss.dwellPathIx,
@@ -1137,6 +1143,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
                           {
                             numBounces: multiplexCurToss.numBounces,
                             bounceType: multiplexCurToss.bounceType,
+                            bounceTypeAuto: multiplexCurToss.bounceTypeAuto,
                             bounceOrder: multiplexCurToss.bounceOrder,
                             R: siteswap.props[i].radius,
                             C: siteswap.props[i].C,
@@ -1163,6 +1170,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
                           {
                             numBounces: multiplexPrevToss.numBounces,
                             bounceType: multiplexPrevToss.bounceType,
+                            bounceTypeAuto: multiplexPrevToss.bounceTypeAuto,
                             bounceOrder: multiplexPrevToss.bounceOrder,
                             R: siteswap.props[i].radius,
                             C: siteswap.props[i].C,
@@ -1194,6 +1202,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
                 {
                   numBounces: curToss.numBounces,
                   bounceType: curToss.bounceType,
+                  bounceTypeAuto: curToss.bounceTypeAuto,
                   bounceOrder: curToss.bounceOrder,
                   R: siteswap.props[prop].radius,
                   C: siteswap.props[prop].C,
@@ -1220,6 +1229,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
                 {
                   numBounces: prevToss.numBounces,
                   bounceType: prevToss.bounceType,
+                  bounceTypeAuto: prevToss.bounceTypeAuto,
                   bounceOrder: prevToss.bounceOrder,
                   R: siteswap.props[prop].radius,
                   C: siteswap.props[prop].C,
@@ -1465,6 +1475,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
               {
                 numBounces: curToss.numBounces,
                 bounceType: curToss.bounceType,
+                bounceTypeAuto: curToss.bounceTypeAuto,
                 bounceOrder: curToss.bounceOrder,
                 R: siteswap.props[prop].radius,
                 C: siteswap.props[prop].C,
@@ -1634,6 +1645,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
                   {
                     numBounces: lastToss.numBounces,
                     bounceType: lastToss.bounceType,
+                    bounceTypeAuto: lastToss.bounceTypeAuto,
                     bounceOrder: lastToss.bounceOrder,
                     R: siteswap.props[lastTossProp].radius,
                     C: siteswap.props[lastTossProp].C,
@@ -1657,6 +1669,7 @@ export const CreateSiteswap = function (siteswapStr, options) {
                   {
                     numBounces: propLastToss.numBounces,
                     bounceType: propLastToss.bounceType,
+                    bounceTypeAuto: propLastToss.bounceTypeAuto,
                     bounceOrder: propLastToss.bounceOrder,
                     R: siteswap.props[nextTossProp].radius,
                     C: siteswap.props[nextTossProp].C,
@@ -1817,6 +1830,18 @@ export const CreateSiteswap = function (siteswapStr, options) {
         dz: (p1.z - p0.z) / T,
       };
     } else if (flightPathCache[inputKey] == undefined) {
+      // 水平な面だけで跳ねる場合は解析的に解く(遺伝的アルゴリズムより速く、解があれば必ず見つかる)
+      var analytic = analyticBouncePath(p0, p1, T, options);
+      if (analytic === null) {
+        throw {
+          message: 'Unable to calculate bounce path',
+        };
+      }
+      if (analytic) {
+        flightPathCache[inputKey] = analytic;
+      }
+    }
+    if (flightPathCache[inputKey] == undefined) {
       var fitnessConfig = {
         p0: p0,
         pT: p1,
@@ -1870,6 +1895,31 @@ export const CreateSiteswap = function (siteswapStr, options) {
       dy: flightPath.velocities[Math.floor(((flightPath.velocities.length - 1) * t) / T)].y,
       dz: flightPath.velocities[Math.floor(((flightPath.velocities.length - 1) * t) / T)].z,
     };
+  }
+
+  // 水平な面だけで跳ねる投げの軌道を解析的に求める(bounce.ts)。傾いた面がある場合は undefined、解けない場合は null
+  function analyticBouncePath(p0, p1, T, options) {
+    var floors = [];
+    for (var i = 0; i < options.numBounces; i++) {
+      var surface = siteswap.surfaces[options.bounceOrder[i] || 0];
+      if (!surface || Math.abs(surface.normal.y) < 0.999) return undefined;
+      floors.push(surface.position.y + options.R);
+    }
+    var tossUp = options.bounceType == 'L' || options.bounceType == 'HL';
+    var catchUp = options.bounceType == 'L' || options.bounceType == 'HF';
+    var gravity = -options.G;
+    var segments = solveBounce(p0.y, p1.y, T, floors, options.C, tossUp, catchUp, !options.bounceTypeAuto, gravity);
+    if (!segments) return null;
+    var n = Math.max(2, Math.ceil(T / options.dt) + 1);
+    var path = [];
+    var velocities = [];
+    for (var k = 0; k < n; k++) {
+      var t = (T * k) / (n - 1);
+      var h = bounceHeightAt(segments, t, gravity);
+      path.push({ x: p0.x + ((p1.x - p0.x) * t) / T, y: h.y, z: p0.z + ((p1.z - p0.z) * t) / T });
+      velocities.push({ x: (p1.x - p0.x) / T, y: h.vy, z: (p1.z - p0.z) / T });
+    }
+    return { path: path, velocities: velocities };
   }
 
   function removeEmptyPositions(dwellPath) {
