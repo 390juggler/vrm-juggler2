@@ -122,8 +122,11 @@ const RING_THROW_LIFT = 0.28; // m(ボールの投げる高さから)
 const RING_STROKE_MAX = 0.1; // m
 const RING_CLOSER = 0.12; // m(手を体へ近づけ、肩の前で前腕を立てる)
 const RING_MIN_X = 0.15; // m(顔の高さで持つので、輪が頭に近づきすぎないよう肩の前で扱う)
-// 握り方: 親指を輪の内側、ほかの指を外側にかけ、人差し指の付け根(手のひら側)に縁を乗せる。手のひらは内側斜め上を向く
-const RING_PALM_INWARD = 0.8;
+// 握り方: 輪の手前側(体に近い側)の縁を握る(下の縁は持たない)。輪は手から前へ伸びる。
+// 手は輪の外側から、手のひらを体の内側へ向け、指は上、親指は前(輪の内側)へ。縁は人差し指の付け根(手のひら側)に当たる
+const RING_GRIP_BELOW = THREE.MathUtils.degToRad(20); // 手前の縁のうち、中心の高さからどれだけ下を握るか
+const RING_PALM_UP = 0.25; // 手のひらを少し上へ向ける
+const RING_FINGER_FORWARD = 0.25; // 指先を少し前へ向ける
 
 // 投げの形。ふだんは normal(内側で投げて外側で受ける)。空中で小道具同士がぶつかるパターンでは、投げの高さごとに
 // 形を選び直す(実際のジャグラーも 423 や 534 の 4 は柱のようにまっすぐ上げ、53 の 3 は少し外で受ける)
@@ -245,11 +248,16 @@ export function buildNaturalTracks(
     if (propType === 'club') return out.copy(CLUB_GRIP_LOCAL).applyQuaternion(q);
     if (propType === 'pancake') return out.copy(PANCAKE_GRIP_LOCAL).applyQuaternion(q);
     if (propType === 'ring') {
-      // 輪の一番下を握る
+      // 輪の手前側(+z)の縁を、中心の高さより少し下で握る
       const axis = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
-      const down = new THREE.Vector3(0, -1, 0);
-      out.copy(down).addScaledVector(axis, -axis.dot(down));
-      if (out.lengthSq() < 0.01) out.set(1, 0, 0).applyQuaternion(q);
+      const inPlane = (v: THREE.Vector3) => v.addScaledVector(axis, -axis.dot(v));
+      const back = inPlane(new THREE.Vector3(0, 0, 1));
+      const down = inPlane(new THREE.Vector3(0, -1, 0));
+      if (back.lengthSq() < 0.01 || down.lengthSq() < 0.01) return out.set(0, -RING_GRIP_RADIUS, 0);
+      out
+        .copy(back.normalize())
+        .multiplyScalar(Math.cos(RING_GRIP_BELOW))
+        .addScaledVector(down.normalize(), Math.sin(RING_GRIP_BELOW));
       return out.normalize().multiplyScalar(RING_GRIP_RADIUS);
     }
     return out.set(0, 0, 0);
@@ -703,8 +711,18 @@ export function buildNaturalTracks(
   }
 
   // クラブは握ったハンドルに垂直な向きへ手のひらを向け、指はハンドルに巻き付く向きにする。
-  // リングは手のひらを輪の中心側へ向け、指は握った縁に巻き付く向きにする
-  if (propType !== 'ball') {
+  // パンケーキは手のひらを輪の中心側へ向け、指は握った縁に巻き付く向きにする
+  if (propType === 'ring') {
+    // ふつうのリングは、持っている間も空の間も同じ手の向き(手のひらは体の内側、指は上)にしておく
+    [LEFT, RIGHT].forEach((hand) => {
+      const side = hand === RIGHT ? 1 : -1;
+      const palm = new THREE.Vector3(-side, RING_PALM_UP, 0).normalize();
+      const finger = new THREE.Vector3(0, 1, -RING_FINGER_FORWARD);
+      finger.addScaledVector(palm, -finger.dot(palm)).normalize();
+      hands[hand].palmNormals.forEach((n) => n.copy(palm));
+      hands[hand].fingerDirs = hands[hand].palmNormals.map(() => finger.clone());
+    });
+  } else if (propType !== 'ball') {
     [LEFT, RIGHT].forEach((hand) => {
       const side = hand === RIGHT ? 1 : -1;
       const defaultFinger = new THREE.Vector3(-side * 0.35, 0, -1).normalize();
@@ -728,7 +746,6 @@ export function buildNaturalTracks(
           const ringNormal = new THREE.Vector3(0, 1, 0).applyQuaternion(meshQ(prop, s));
           const edge = new THREE.Vector3().crossVectors(ringNormal, toCenter).normalize();
           n.lerp(toCenter, 0.6);
-          if (propType === 'ring') n.add(new THREE.Vector3(-side * RING_PALM_INWARD, 0, 0)).normalize();
           const orth = n.clone().addScaledVector(edge, -n.dot(edge));
           n.copy(orth.lengthSq() > 0.05 ? orth : n).normalize();
           const wrap = new THREE.Vector3().crossVectors(n, edge).normalize();
