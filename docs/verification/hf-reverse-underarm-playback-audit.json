@@ -1,0 +1,240 @@
+{
+  "source": "https://drive.google.com/file/d/1viIYM9NSUUqLlPbPTsRVapxttrZZE3mb/view",
+  "duration": 6.989205,
+  "frames": [
+    {
+      "requestedMilliseconds": 400,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.4,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-400.png"
+    },
+    {
+      "requestedMilliseconds": 600,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.6,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-600.png"
+    },
+    {
+      "requestedMilliseconds": 800,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.8,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-800.png"
+    },
+    {
+      "requestedMilliseconds": 1000,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1000.png"
+    },
+    {
+      "requestedMilliseconds": 1200,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.2,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1200.png"
+    },
+    {
+      "requestedMilliseconds": 1400,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.4,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1400.png"
+    },
+    {
+      "requestedMilliseconds": 650,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.65,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-650.png"
+    },
+    {
+      "requestedMilliseconds": 750,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.75,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-750.png"
+    },
+    {
+      "requestedMilliseconds": 850,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.85,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-850.png"
+    },
+    {
+      "requestedMilliseconds": 950,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 0.95,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-950.png"
+    },
+    {
+      "requestedMilliseconds": 1050,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.05,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1050.png"
+    },
+    {
+      "requestedMilliseconds": 1150,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.15,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1150.png"
+    },
+    {
+      "requestedMilliseconds": 1250,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.25,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1250.png"
+    },
+    {
+      "requestedMilliseconds": 1350,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.35,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1350.png"
+    },
+    {
+      "requestedMilliseconds": 1450,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.45,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1450.png"
+    },
+    {
+      "requestedMilliseconds": 1550,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.55,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1550.png"
+    },
+    {
+      "requestedMilliseconds": 1650,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.65,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1650.png"
+    },
+    {
+      "requestedMilliseconds": 1750,
+      "state": [
+        {
+          "height": 1080,
+          "paused": true,
+          "ready": 4,
+          "time": 1.75,
+          "width": 1920
+        }
+      ],
+      "path": "hf-reverse-underarm-1750.png"
+    }
+  ]
+}

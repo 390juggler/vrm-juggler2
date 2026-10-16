@@ -19,6 +19,8 @@ import {
 import { SiteswapCheck, isVanilla, precheckSiteswap, translateGunswapError } from './validate';
 import { autoBeatDuration } from './tempo';
 import { buildNaturalTracks, isNaturalSupported } from './natural';
+import { buildSyncBoxTracks, inspectSyncBox, SyncBoxTracks, SyncMovementAdjustment, SyncFlightAdjustment, syncBeat, syncDwell } from './sync-box';
+import {captureSyncTracks,SyncReplay} from './sync-replay';
 
 export interface HandState {
   /** ボールを持っている時はボールの中心、持っていない時は手の基準位置(ワールド座標) */
@@ -28,9 +30,19 @@ export interface HandState {
   holding: boolean;
   /** 指先の向きの指定(長さ 0 なら体の側で決める) */
   fingerDir: THREE.Vector3;
+  elbowPole?: THREE.Vector3;
 }
 
 export interface JugglingFrame {
+  contactFallback?:boolean;
+  /** Previously checked elbow positions, used only by immutable segment replay. */
+  fixedElbows?: THREE.Vector3[];
+  /** 同期版の肘の経路を、実際の球の位置に合わせて解く。 */
+  ballPositions?: THREE.Vector3[];
+  phase?: number;
+  armOrder?: number | null;
+  underarm?: {hand:number;position:THREE.Vector3}[];
+  constraintPhases?: number[];
   hands: HandState[]; // [LEFT, RIGHT]
   /** 経過拍数(整数部分が拍、小数部分が拍の中の位置) */
   beat: number;
@@ -70,6 +82,10 @@ export default class Juggling {
 
   private siteswap: any;
   private tracks!: Tracks;
+  private syncTracks?: SyncBoxTracks;
+  private syncReplay?:SyncReplay;
+  private pathGroup = new THREE.Group();
+  private showPaths = false;
   private metrics: AvatarMetrics = DEFAULT_METRICS;
   private transform: SpaceTransform = makeTransform(DEFAULT_METRICS);
 
@@ -93,6 +109,7 @@ export default class Juggling {
 
     this.group = new THREE.Group();
     this.scene.add(this.group);
+    this.group.add(this.pathGroup);
 
     this.frame = {
       hands: [LEFT, RIGHT].map(() => ({
@@ -122,7 +139,7 @@ export default class Juggling {
 
   /** パターンの一番高い位置(ワールド座標の y) */
   get peakY(): number {
-    return this.tracks.peakY;
+    return this.syncReplay?.peakY??this.tracks.peakY;
   }
 
   get currentSiteswap() {
@@ -146,14 +163,17 @@ export default class Juggling {
       CreateSiteswap(check.siteswap, {
         ...options,
         beatDuration,
+        dwellRatio:options.syncBox ? syncDwell(options.syncBox) : options.dwellRatio,
         props: (options.props || []).map((prop) => ({ ...prop })),
       });
     // リングは大きいので、ボールより高く(ゆっくり)投げる
     const propType = options.props?.[0]?.type;
     const tempoScale = propType === 'ring' || propType === 'pancake' ? RING_TEMPO_SCALE : 1;
-    let beatDuration = this.autoTempo
+    let beatDuration: number;
+    try { beatDuration = options.syncBox ? syncBeat(options.syncBox) : this.autoTempo
       ? autoBeatDuration(check.siteswap, Number(options.dwellRatio)) * tempoScale
       : Number(options.beatDuration);
+    } catch (error) { return {ok:false,siteswap:check.siteswap,message:(error as Error).message}; }
     let siteswap = create(beatDuration);
     // 自動テンポで床で跳ねる時間が足りない時(2 回跳ねる、上へ投げて跳ねさせる…)は、ゆっくりにして試す
     for (let i = 0; this.autoTempo && siteswap.errorMessage === BOUNCE_ERROR && i < BOUNCE_TEMPO_TRIES; i++) {
@@ -176,11 +196,18 @@ export default class Juggling {
       return result;
     }
 
+    let syncTracks: SyncBoxTracks | undefined;
+    if (options.syncBox) {
+      try { syncTracks = buildSyncBoxTracks(siteswap, makeTransform(this.metrics), options.syncBox); }
+      catch (error) {
+        return { ok: false, siteswap: check.siteswap, message: error instanceof Error ? error.message : '同期動作を作成できません。' };
+      }
+    }
     const changed = check.siteswap !== this.siteswapStr || !this.siteswap;
     this.siteswapStr = check.siteswap;
     this.options = options;
     this.siteswap = siteswap;
-    this.rebuild();
+    this.rebuild(syncTracks);
     if (changed) this.time = 0;
     return { ok: true, siteswap: check.siteswap };
   }
@@ -191,12 +218,15 @@ export default class Juggling {
     this.rebuild();
   }
 
-  private rebuild() {
+  private rebuild(prebuiltSync?: SyncBoxTracks) {
+    this.syncReplay=undefined;
     this.transform = makeTransform(this.metrics);
     const prop = this.siteswap.props[0];
     const radius = Number(prop.radius) || 0.05;
     let tracks: Tracks | undefined;
-    if (isNaturalSupported(this.siteswap)) {
+    this.syncTracks = this.options.syncBox ? prebuiltSync || buildSyncBoxTracks(this.siteswap, this.transform, this.options.syncBox) : undefined;
+    if (this.syncTracks) tracks = this.syncTracks;
+    else if (isNaturalSupported(this.siteswap)) {
       try {
         tracks = buildNaturalTracks(this.siteswap, this.transform, prop.type, prop.type === 'ball' ? radius : 0.03);
       } catch (e) {
@@ -207,6 +237,97 @@ export default class Juggling {
     this.tracks = tracks || buildTracks(this.siteswap, this.transform);
     this.drawProps();
     this.drawSurfaces();
+    this.drawPaths();
+  }
+
+  setPathsVisible(visible: boolean) {
+    this.showPaths = visible;
+    this.pathGroup.visible = visible&&!this.syncReplay;
+  }
+
+  private drawPaths() {
+    this.pathGroup.children.slice().forEach(object => {
+      const line = object as THREE.Line;
+      line.geometry.dispose();
+      (line.material as THREE.Material).dispose();
+      this.pathGroup.remove(line);
+    });
+    // Plot flight segments only; connecting held segments disguises the column/2 distinction.
+    this.syncTracks?.flights.forEach(f => {
+      const points = Array.from({ length: 65 }, (_, k) => {
+        const t = f.duration * k / 64;
+        const p = f.start.clone().addScaledVector(f.velocity, t);
+        p.y -= 9.8 * t * t / 2;
+        return p;
+      });
+      this.pathGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({
+        color: f.value === 4 ? '#536ac5' : '#e77728', transparent: true, opacity: 0.42,
+      })));
+    });
+    this.pathGroup.visible = this.showPaths;
+  }
+
+  seek(fraction: number) {
+    if (Number.isFinite(fraction)) this.time = ((fraction % 1) + 1) % 1 * (this.syncReplay?.period??this.tracks.period);
+  }
+
+  captureSyncMotion(){
+    if(!this.syncTracks||this.syncReplay)throw new Error('通常のセット列を検査してから接続部品に登録してください。');
+    return captureSyncTracks(this.syncTracks,this.siteswap.beatDuration,this.frame.propRadius);
+  }
+
+  setSyncReplay(replay:SyncReplay){
+    if(replay.balls!==this.propMeshes.length)throw new Error('再生中の球数と接続部品の球数が異なります。');
+    this.syncReplay=replay;this.time=0;this.pathGroup.visible=false;
+  }
+  get activeSyncReplay(){return this.syncReplay;}
+
+  /** Restore a preview after checking candidate sources; retain its exact tracks. */
+  capturePlaybackRestore(){
+    const saved={siteswapStr:this.siteswapStr,options:structuredClone(this.options),siteswap:this.siteswap,
+      tracks:this.tracks,syncTracks:this.syncTracks,syncReplay:this.syncReplay,time:this.time};
+    return ()=>{
+      Object.assign(this,saved);this.drawProps();this.drawSurfaces();this.drawPaths();
+      this.pathGroup.visible=this.showPaths&&!this.syncReplay;this.update(0);
+    };
+  }
+
+  getSyncBoxReport() {
+    return this.syncTracks && !this.syncReplay ? inspectSyncBox(this.syncTracks, this.transform, this.frame.propRadius) : null;
+  }
+
+  /** Search the held/empty movements without replacing the user's throw definition. */
+  replanSyncMovement(movement:SyncMovementAdjustment[],placement:[number,number]=[0,0],timing:[number,number]=[1,1],columnHeight=0,flightAdjustments:SyncFlightAdjustment[]=[]){
+    if(!this.options.syncBox)throw new Error('同期動作がありません。');
+    const tracks=buildSyncBoxTracks(this.siteswap,this.transform,this.options.syncBox,movement,placement,timing,columnHeight,flightAdjustments);
+    this.syncTracks=tracks;this.tracks=tracks;this.syncReplay=undefined;
+    return tracks;
+  }
+  getSyncMovement(){return this.syncTracks;}
+  commitSyncPlan(){this.drawPaths();}
+  getSyncTransform(){return makeTransform(this.metrics);}
+
+  getSyncProgram() {
+    if(this.syncReplay)return null;
+    const t=this.syncTracks;
+    if(!t) return null;
+    const elapsed=(a:number,b:number)=>((a-b)%t.period+t.period)%t.period;
+    return {period:t.period,flights:t.flights.map(f=>{
+      const catchTime=(f.release+f.duration)%t.period;
+      const next=t.flights.filter(n=>n.prop===f.prop && n.throwHand===f.catchHand).sort((a,b)=>elapsed(a.release,catchTime)-elapsed(b.release,catchTime))[0];
+      return {prop:f.prop,hand:f.throwHand,catchHand:f.catchHand,value:f.value,style:f.style,
+      release:{time:f.release,position:f.start.toArray(),relation:f.motion.release.relation||'free',grip:f.releaseGrip},
+      passage:{time:f.passage.time,position:f.passage.position.toArray()},
+      catch:{time:catchTime,position:f.end.toArray(),relation:f.motion.catch.relation||'free',grip:f.catchGrip},
+      carry:next?{from:catchTime,duration:elapsed(next.release,catchTime),end:next.start.toArray(),route:f.motion.carry}:undefined
+    };}).sort((a,b)=>a.release.time-b.release.time),transitions:t.transitions};
+  }
+
+  getMotionSnapshot() {
+    const period=this.syncReplay?.period??this.tracks.period;
+    return { phase: this.time / period, period,reusingSegments:!!this.syncReplay,
+      balls: this.propMeshes.map(m => m[0].position.toArray()),
+      hands: this.frame.hands.map(h => ({ position: h.position.toArray(), holding: h.holding })) };
   }
 
   private drawSurfaces() {
@@ -358,6 +479,13 @@ export default class Juggling {
 
   /** 毎フレーム呼ぶ。delta は秒 */
   update(delta: number): JugglingFrame {
+    if(this.syncReplay){
+      this.time=((this.time+delta*this.speed)%this.syncReplay.period+this.syncReplay.period)%this.syncReplay.period;
+      this.frame=this.syncReplay.sample(this.time);
+      this.propMeshes.forEach((meshes,i)=>meshes.forEach(mesh=>{mesh.position.copy(this.frame.ballPositions![i]);}));
+      return this.frame;
+    }
+    this.frame.fixedElbows=undefined;
     const tracks = this.tracks;
     const previousTime = this.time;
     const advance = delta * this.speed;
@@ -372,6 +500,17 @@ export default class Juggling {
     const step = Math.floor(stepFloat) % tracks.numSteps;
 
     this.updateProps(stepFloat);
+    this.frame.ballPositions = this.syncTracks ? this.propMeshes.map(meshes => meshes[0].position.clone()) : undefined;
+    this.frame.phase = this.time / tracks.period;
+    const orderEvents=this.syncTracks?.armOrderEvents||[];
+    this.frame.armOrder = orderEvents.find(e=>Math.min(Math.abs(e.time-this.time),tracks.period-Math.abs(e.time-this.time))<1e-7)?.upperHand??this.syncTracks?.armOrders[step]??null;
+    // These constraints apply at the event, not before the hand reaches it.
+    // The body planner adds each exact event time to its pose keys.
+    this.frame.constraintPhases=this.syncTracks?[...this.syncTracks.underarmEvents,...orderEvents].map(e=>e.time/tracks.period):undefined;
+    this.frame.underarm=this.syncTracks?.underarmEvents.filter(e=>{
+      const elapsed=Math.abs(e.time-this.time);
+      return Math.min(elapsed,tracks.period-elapsed)<1e-7;
+    });
 
     [LEFT, RIGHT].forEach((h) => {
       const hand = this.frame.hands[h];
@@ -379,8 +518,14 @@ export default class Juggling {
       sampleTrack(track.positions, stepFloat, hand.position);
       sampleTrack(track.palmNormals, stepFloat, hand.palmNormal).normalize();
       hand.holding = track.holding[step];
-      if (track.fingerDirs) sampleTrack(track.fingerDirs, stepFloat, hand.fingerDir).normalize();
+      if (track.fingerDirs) {
+        sampleTrack(track.fingerDirs, stepFloat, hand.fingerDir);
+        // Independently interpolated axes can lose orthogonality during a fast
+        // claw turn. Keep the requested hand frame consistent with the rig.
+        hand.fingerDir.addScaledVector(hand.palmNormal,-hand.fingerDir.dot(hand.palmNormal)).normalize();
+      }
       else hand.fingerDir.set(0, 0, 0);
+      hand.elbowPole = track.elbowPoles ? sampleTrack(track.elbowPoles, stepFloat, hand.elbowPole || new THREE.Vector3()).normalize() : undefined;
     });
 
     this.frame.beat = this.time / this.siteswap.beatDuration;
@@ -417,6 +562,11 @@ export default class Juggling {
   }
 
   dispose() {
+    this.pathGroup.children.forEach(object => {
+      const line = object as THREE.Line;
+      line.geometry.dispose();
+      (line.material as THREE.Material).dispose();
+    });
     this.propMeshes.forEach((meshes) => meshes.forEach((m) => m.geometry.dispose()));
     this.surfaceMeshes.forEach((m) => m.geometry.dispose());
     this.scene.remove(this.group);

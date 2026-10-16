@@ -1,0 +1,333 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "6E64D369D6014147661F6227DBDEF5F083C42486A24F02CE14B2153BD9C61B05",
+  "sourceFiles": {
+    "dist/vrm-juggler.min.js": "6E64D369D6014147661F6227DBDEF5F083C42486A24F02CE14B2153BD9C61B05",
+    "dist/models/default.vrm": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+    "dist/sync-compose.js": "13EC16B1F4B482BE49C2D39BB687EB5CB2D5249F191A83E55C52CAA69618A782",
+    "dist/sync-compose.html": "C2DC3EA120D5CE982097551A859B8D61D33A2F968162EA51202CD22768FC4E75",
+    "src/index.ts": "7809B9ECA2E2ABF14FE7DB69FB049D76B9D61286BCF9A2894BBC3F4147D2CFFC",
+    "src/motion/juggling/sync-replay.ts": "191971D01F4E2209D9B5C188C165A272A4B5E132C728BEAA3C34A0BD3FFA7CAD",
+    "test/sync-entry-reuse.test.ts": "A751897AA34F3537D715F7BE5D1E61629BDB8ED935C89A4BBAA7AA03F404329F",
+    "test/sync-component-graph.test.ts": "6A4CE605028DEC5964C5B9241A05B647AEE54F72588CDA6543637F03EC0F50ED",
+    "test/sync-replay.test.ts": "49B36B93510EA0F6495EADE0C203A4295AD33A7A692D56C9DBFC907E87796D05",
+    "test/sync-replay-document.test.ts": "B4EC392A8A9A7B5118697F41EB5F11886D2EDCB2F2E6C7A8C0DA48273421A93C"
+  },
+  "scope": "Read-only reachability for every start set of a registered cycle and immutable cycle rotation when appending it.",
+  "targetedTests": {
+    "passed": 42,
+    "failed": 0,
+    "files": 4,
+    "reports": [
+      "entry-reuse-tests.json",
+      "entry-reuse-component-tests.json",
+      "entry-reuse-replay-tests.json"
+    ]
+  },
+  "typecheck": "passed",
+  "build": "passed",
+  "javascriptSyntax": "passed",
+  "uniqueHtmlIds": 132,
+  "measurements": [
+    {
+      "mirror": false,
+      "phases": [
+        {
+          "source": "ボックス",
+          "startSet": 0,
+          "endSet": 1,
+          "forwardSets": 0,
+          "returnSets": 0,
+          "sets": 4,
+          "identitySets": 4
+        },
+        {
+          "source": "ボックス",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 1,
+          "returnSets": 1,
+          "sets": 6,
+          "identitySets": 6
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 0,
+          "endSet": 11,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 2,
+          "endSet": 1,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 3,
+          "endSet": 2,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 4,
+          "endSet": 3,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 5,
+          "endSet": 4,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 6,
+          "endSet": 5,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 7,
+          "endSet": 6,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 8,
+          "endSet": 7,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 9,
+          "endSet": 8,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 10,
+          "endSet": 9,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 11,
+          "endSet": 10,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        }
+      ],
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "savedCycleSets": 38,
+      "savedIdentitySets": 114,
+      "restoredPoseSamplesUnchanged": 240
+    },
+    {
+      "mirror": true,
+      "phases": [
+        {
+          "source": "ボックス",
+          "startSet": 0,
+          "endSet": 1,
+          "forwardSets": 0,
+          "returnSets": 0,
+          "sets": 4,
+          "identitySets": 4
+        },
+        {
+          "source": "ボックス",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 1,
+          "returnSets": 1,
+          "sets": 6,
+          "identitySets": 6
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 0,
+          "endSet": 11,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 2,
+          "endSet": 1,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 3,
+          "endSet": 2,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 4,
+          "endSet": 3,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 5,
+          "endSet": 4,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 6,
+          "endSet": 5,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 7,
+          "endSet": 6,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 8,
+          "endSet": 7,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 9,
+          "endSet": 8,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 10,
+          "endSet": 9,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 11,
+          "endSet": 10,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        }
+      ],
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "savedCycleSets": 38,
+      "savedIdentitySets": 114,
+      "restoredPoseSamplesUnchanged": 240
+    }
+  ],
+  "regression": {
+    "baseNetworkMirrors": 2,
+    "intermediaryAndABCReuseTests": 4,
+    "recordedABCMeasurements": 2,
+    "replayMeasurements": 18
+  },
+  "invariants": [
+    "Entry and exit both follow the chosen cyclic start.",
+    "Default starts at zero; invalid starts preserve the registry.",
+    "Lookup and append reuse original ball, hand and elbow paths without new arm planning.",
+    "Save and restore retain the selected cyclic order and ball identity.",
+    "Counts refer to start positions, not unique physical states; whole-route length and ball period are checked separately."
+  ],
+  "previousUnderarmNetwork": {
+    "report": "sync-underarm-expanded-audit.json",
+    "passed": 572,
+    "bundleSha256": "06E2C4C885DC1CE6AA44009CDDF1FA20041B782D7ED7BB97686B685DBA96CC73"
+  },
+  "previousFullSuite": {
+    "report": "test-results.json",
+    "passed": 1599,
+    "bundleSha256": "F943457CF2DA536E44169F4DEFB0551C2D0EF0129C4829ADF956A7488FA8C3E0"
+  },
+  "uiAcceptance": "Not verified: prior browser auto-review rejection remains in force.",
+  "limitations": [
+    "The 90-motion and 11-motion preparation batches were not rerun for this entry-selection change.",
+    "Source-fidelity gaps and missing primitive connections remain open."
+  ]
+}

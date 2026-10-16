@@ -1,0 +1,615 @@
+{
+  "date": "2026-10-15",
+  "bundleSha256": "B84BF274F64F439CCE7531DCD69C9DADEED4DFA063B3E92C4E1D3758053602B8",
+  "editorJsSha256": "03E4BFACFFBACC5CCCD972CDCECE8215132D7AA8DBD554D5DDDA148D47358B0E",
+  "editorHtmlSha256": "9E767EA38E0204B11E883B03904AB09FD107B23E118C0CFF6625D01C6DD3CED0",
+  "editorCssSha256": "C3B275A80AB4BA0D0DC4FDAA6D9F4434810DA69DC108B663394DF5AA8AE4240A",
+  "catalogSha256": "0FDCDAC9DF7ED32894543290D940DADD76540DEB08FE4935ED17E0C86DDA4887",
+  "defaultVrmSha256": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+  "sources": [
+    {
+      "sourceKey": "box_reverse-shuffle*",
+      "template": "example:55",
+      "sourceUrl": "https://drive.google.com/file/d/1FGl6jnR9n4MwWr8gnz4P_nSVo8asFeLi/preview",
+      "playbackAudit": "hf-double-box-reverse-playback-audit.json",
+      "validSourceFrames": 24,
+      "excludedSeeks": 0,
+      "parts": {
+        "crossSet": "normal",
+        "selfSet": "reverse"
+      },
+      "gripPolicy": "automatic"
+    },
+    {
+      "sourceKey": "reverse-shuffle_reverse-shuffle*",
+      "template": "example:56",
+      "sourceUrl": "https://drive.google.com/file/d/1E872nmikyPEpUJZEqiPVUZ4L-x9SY1Cg/preview",
+      "playbackAudit": "hf-double-reverse-reverse-playback-audit.json",
+      "validSourceFrames": 23,
+      "excludedSeeks": 1,
+      "parts": {
+        "crossSet": "reverse",
+        "selfSet": "reverse"
+      },
+      "gripPolicy": "automatic"
+    }
+  ],
+  "notation": "(4x,2x)(4,2x)(2x,4x)(2x,4)",
+  "notationInferredFromVideos": true,
+  "balls": 3,
+  "movementSets": 4,
+  "identitySets": 4,
+  "secondsPerSet": 0.41,
+  "connection": {
+    "exampleIndex": 57,
+    "fromExample": 55,
+    "toExample": 56,
+    "movementSets": 8,
+    "identitySets": 8,
+    "cycleSeconds": 3.28,
+    "extraBridgeSets": 0,
+    "sourceDefinitionsPreserved": true
+  },
+  "motionContracts": [
+    "Both sources use the same high hand for 4x then self 4, then reflect the two sets.",
+    "Box+Reverse uses low-to-low 2x with 4x and low-to-high 2x with self 4. Reverse+Reverse uses low-to-high 2x in both phases.",
+    "The eight-set connection preserves every source row and its automatic grip setting, including the cyclic seam.",
+    "Optional catch grips are independent of release grips and apply to the receiving hand of the corresponding 2x flight."
+  ],
+  "realRigCases": [
+    {
+      "id": "sequence-55",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.843874359417885e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07478576263805929,
+      "speed": 6.000089219904049,
+      "angularSpeed": [
+        21.530401569882848,
+        30.9412979561877,
+        27.816805969966303
+      ],
+      "elbowOut": 0.38210489739591946,
+      "elbowRaise": -0.036802827067065724,
+      "armPhase": 0,
+      "ballPhase": 0.012195121951219513,
+      "speedPhase": 0.9634146341463414,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0610041254049614,
+        "behind": 0.014276659377203543,
+        "side": 0.1847010205131262,
+        "height": 0.11971125263503835,
+        "wristBend": 1.344427602802345,
+        "elbowFlex": 2.318719508407861,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-55",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 5.585701844806365e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07478576263805922,
+      "speed": 6.000089219904082,
+      "angularSpeed": [
+        21.530401569882848,
+        30.941297956186805,
+        27.8168059699683
+      ],
+      "elbowOut": 0.38210489739591946,
+      "elbowRaise": -0.036802827067065724,
+      "armPhase": 0,
+      "ballPhase": 0.012195121951219513,
+      "speedPhase": 0.4634146341463415,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0610041254049616,
+        "behind": 0.014276659377203516,
+        "side": 0.18470102051312617,
+        "height": 0.11971125263503835,
+        "wristBend": 1.3444276028023445,
+        "elbowFlex": 2.3187195084078605,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-56",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.804363002006077e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.0747246131673043,
+      "speed": 6.918198378798129,
+      "angularSpeed": [
+        30.476946265141905,
+        37.87226402641622,
+        27.816805969965305
+      ],
+      "elbowOut": 0.3806014601241076,
+      "elbowRaise": -0.03714167328729667,
+      "armPhase": 0,
+      "ballPhase": 0.5121951219512195,
+      "speedPhase": 0.2146341463414634,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615103931178569,
+        "behind": 0.013874165561473598,
+        "side": 0.18470122281312149,
+        "height": 0.10783001951457138,
+        "wristBend": 1.3438233084003657,
+        "elbowFlex": 2.4266208834849015,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-56",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.843874359417885e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07472461316730435,
+      "speed": 6.91819837879811,
+      "angularSpeed": [
+        30.476946265140086,
+        37.87226402641622,
+        27.816805969966303
+      ],
+      "elbowOut": 0.38060146012410756,
+      "elbowRaise": -0.03714167328729667,
+      "armPhase": 0,
+      "ballPhase": 0.5121951219512195,
+      "speedPhase": 0.2146341463414634,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615103931178564,
+        "behind": 0.01387416556147364,
+        "side": 0.1847012228131216,
+        "height": 0.1078300195145716,
+        "wristBend": 1.3438233084003666,
+        "elbowFlex": 2.4266208834849023,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-57",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.1724266378954993
+      },
+      "grip": 6.988675367311055e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07457248091512969,
+      "speed": 5.58860334608093,
+      "angularSpeed": [
+        32.42163203647494,
+        39.59015301955172,
+        27.8168059699683
+      ],
+      "elbowOut": 0.3907084684061094,
+      "elbowRaise": -0.022987239675032134,
+      "armPhase": 0,
+      "ballPhase": 0.2621951219512195,
+      "speedPhase": 0.4841463414634146,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0599395012299018,
+        "behind": 0.014214412004510138,
+        "side": 0.18587748250800384,
+        "height": 0.05726005017673552,
+        "wristBend": 1.1779148822955683,
+        "elbowFlex": 2.426620883484902,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-57",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.1724266378954993
+      },
+      "grip": 7.514536976383426e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07457248091512979,
+      "speed": 5.588603346080892,
+      "angularSpeed": [
+        32.42163203647494,
+        39.590153019551025,
+        27.8168059699683
+      ],
+      "elbowOut": 0.3907084684061096,
+      "elbowRaise": -0.022987239675031912,
+      "armPhase": 0,
+      "ballPhase": 0.2621951219512195,
+      "speedPhase": 0.4841463414634146,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.059939501229902,
+        "behind": 0.014214412004510166,
+        "side": 0.1858774825080039,
+        "height": 0.0572600501767353,
+        "wristBend": 1.1779148822955676,
+        "elbowFlex": 2.4266208834849015,
+        "phase": 0
+      }
+    }
+  ],
+  "catchGripVariantRigCases": [
+    {
+      "id": "double-catch-underhand-underhand",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.07003526149788561
+      },
+      "grip": 6.944442800358888e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.09517077545374684,
+      "speed": 5.141205953395153,
+      "angularSpeed": [
+        22.390521613169444,
+        27.770357781629375,
+        8.257420913149302
+      ],
+      "elbowOut": 0.34319270433569776,
+      "elbowRaise": -0.1532315743340813,
+      "armPhase": 0,
+      "ballPhase": 0.13414634146341464,
+      "speedPhase": 0.7170731707317073,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.061552512635909,
+        "behind": 0.014086231980542527,
+        "side": 0.18265940255362806,
+        "height": 0.13773644843053856,
+        "wristBend": 1.494149411441508,
+        "elbowFlex": 2.5698995816785715,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-underhand-underhand",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.07003526149788562
+      },
+      "grip": 5.396300654998293e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.09517077545374696,
+      "speed": 5.141205953395159,
+      "angularSpeed": [
+        22.390521613170687,
+        27.770357781631372,
+        8.257420913149302
+      ],
+      "elbowOut": 0.34319270433569776,
+      "elbowRaise": -0.1532315743340813,
+      "armPhase": 0,
+      "ballPhase": 0.13414634146341464,
+      "speedPhase": 0.7170731707317073,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615525126359087,
+        "behind": 0.014086231980542582,
+        "side": 0.1826594025536281,
+        "height": 0.13773644843053856,
+        "wristBend": 1.4941494114415081,
+        "elbowFlex": 2.569899581678572,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-underhand-overhand",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.77599954797753e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.0747228581744828,
+      "speed": 6.000482277694514,
+      "angularSpeed": [
+        22.39052161371382,
+        30.97545930874549,
+        27.816805969967305
+      ],
+      "elbowOut": 0.3806014601241076,
+      "elbowRaise": -0.0371468352530151,
+      "armPhase": 0,
+      "ballPhase": 0.5121951219512195,
+      "speedPhase": 0.4634146341463415,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615525114910125,
+        "behind": 0.013873348862609783,
+        "side": 0.18470125128240092,
+        "height": 0.11974272961885912,
+        "wristBend": 1.494149411441508,
+        "elbowFlex": 2.5698995816785715,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-underhand-overhand",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.736090074350496e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.0747228581744828,
+      "speed": 6.000482277694517,
+      "angularSpeed": [
+        22.39052161371382,
+        30.97545930874549,
+        27.816805969966303
+      ],
+      "elbowOut": 0.38060146012410756,
+      "elbowRaise": -0.0371468352530151,
+      "armPhase": 0,
+      "ballPhase": 0.5121951219512195,
+      "speedPhase": 0.4634146341463415,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615525114910125,
+        "behind": 0.013873348862609769,
+        "side": 0.18470125128240092,
+        "height": 0.11974272961885912,
+        "wristBend": 1.4941494114415081,
+        "elbowFlex": 2.569899581678572,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-overhand-underhand",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08896352747455795
+      },
+      "grip": 7.027150473277823e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07477096273696199,
+      "speed": 6.918198379484124,
+      "angularSpeed": [
+        30.476946264260707,
+        37.87226402231921,
+        26.989967988384695
+      ],
+      "elbowOut": 0.37839750199057176,
+      "elbowRaise": -0.03738894983750174,
+      "armPhase": 0,
+      "ballPhase": 0.7609756097560976,
+      "speedPhase": 0.2146341463414634,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.061510394262415,
+        "behind": 0.014087407503849167,
+        "side": 0.18264540109163638,
+        "height": 0.10783001951494597,
+        "wristBend": 1.4936924875333073,
+        "elbowFlex": 2.5154189919128904,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-overhand-underhand",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08896352747455795
+      },
+      "grip": 6.77599954797753e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07477096273696206,
+      "speed": 6.918198379484121,
+      "angularSpeed": [
+        30.476946264260707,
+        37.87226402231921,
+        26.989967988386756
+      ],
+      "elbowOut": 0.37839750199057176,
+      "elbowRaise": -0.03738894983750152,
+      "armPhase": 0,
+      "ballPhase": 0.7609756097560976,
+      "speedPhase": 0.2146341463414634,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615103942624153,
+        "behind": 0.014087407503849167,
+        "side": 0.18264540109163638,
+        "height": 0.10783001951494597,
+        "wristBend": 1.4936924875333055,
+        "elbowFlex": 2.515418991912891,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-overhand-overhand",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.804363002006077e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.0747246131673043,
+      "speed": 6.918198378798129,
+      "angularSpeed": [
+        30.476946265141905,
+        37.87226402641622,
+        27.816805969965305
+      ],
+      "elbowOut": 0.3806014601241076,
+      "elbowRaise": -0.03714167328729667,
+      "armPhase": 0,
+      "ballPhase": 0.5121951219512195,
+      "speedPhase": 0.2146341463414634,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615103931178569,
+        "behind": 0.013874165561473598,
+        "side": 0.18470122281312149,
+        "height": 0.10783001951457138,
+        "wristBend": 1.3438233084003657,
+        "elbowFlex": 2.4266208834849015,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-catch-overhand-overhand",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.08997808645223038
+      },
+      "grip": 6.843874359417885e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.07472461316730435,
+      "speed": 6.91819837879811,
+      "angularSpeed": [
+        30.476946265140086,
+        37.87226402641622,
+        27.816805969966303
+      ],
+      "elbowOut": 0.38060146012410756,
+      "elbowRaise": -0.03714167328729667,
+      "armPhase": 0,
+      "ballPhase": 0.5121951219512195,
+      "speedPhase": 0.2146341463414634,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0615103931178564,
+        "behind": 0.01387416556147364,
+        "side": 0.1847012228131216,
+        "height": 0.1078300195145716,
+        "wristBend": 1.3438233084003666,
+        "elbowFlex": 2.4266208834849023,
+        "phase": 0
+      }
+    }
+  ],
+  "automated": {
+    "fullSuitePassed": 1449,
+    "fullSuiteFailed": 0,
+    "rigCases": 316,
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed"
+  },
+  "browser": {
+    "verified": false,
+    "status": "pending",
+    "reason": "Prior local-composer access was rejected by browser URL safety policy; no workaround or new local access was attempted."
+  },
+  "limitations": [
+    "Source videos establish the rising 2x and high catch, but frontal frames do not resolve exact palm pitch. Automatic overhand catches are model policy, not a claim of verified source palm orientation.",
+    "Four explicit catch-grip combinations pass both mirrored rig checks; they are configurable variants, not additional source-verified performances.",
+    "Source set timing is approximately 0.45 to 0.50 seconds; model set time remains 0.41 seconds.",
+    "Exact source coordinates, depth, elbow angles and current live rendered appearance are not reconstructed or verified.",
+    "Bone clearance does not establish mesh or clothing clearance. Other HF combinations remain separate coverage items."
+  ]
+}

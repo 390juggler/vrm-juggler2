@@ -1,0 +1,83 @@
+{
+  "kind": "sync-base-route",
+  "version": 1,
+  "beatDuration": 0.205,
+  "mirror": false,
+  "blocks": [
+    {
+      "parts": {
+        "base": "box",
+        "columns": "normal",
+        "passes": [
+          "normal",
+          "normal"
+        ],
+        "highHand": 0,
+        "alternateHigh": true,
+        "swap": "alternate",
+        "highPath": "vertical"
+      },
+      "repeats": 1
+    },
+    {
+      "parts": {
+        "base": "box",
+        "columns": "crossed",
+        "passes": [
+          "normal",
+          "normal"
+        ],
+        "highHand": 0,
+        "alternateHigh": true,
+        "swap": "alternate",
+        "highPath": "vertical"
+      },
+      "repeats": 1
+    },
+    {
+      "parts": {
+        "base": "high-low",
+        "columns": "normal",
+        "passes": [
+          "normal"
+        ],
+        "highHand": 0,
+        "alternateHigh": false,
+        "swap": "right-over",
+        "highPath": "vertical"
+      },
+      "repeats": 1
+    },
+    {
+      "parts": {
+        "base": "shower",
+        "columns": "normal",
+        "passes": [
+          "lateral-normal"
+        ],
+        "highHand": 0,
+        "alternateHigh": true,
+        "swap": "alternate",
+        "highPath": "vertical"
+      },
+      "repeats": 1
+    },
+    {
+      "parts": {
+        "base": "double",
+        "columns": "normal",
+        "passes": [
+          "normal",
+          "shuffle",
+          "reverse",
+          "inverted"
+        ],
+        "highHand": 0,
+        "alternateHigh": true,
+        "swap": "alternate",
+        "highPath": "vertical"
+      },
+      "repeats": 1
+    }
+  ]
+}

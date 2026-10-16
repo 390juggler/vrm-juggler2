@@ -1,0 +1,181 @@
+{
+  "date": "2026-10-15",
+  "bundleSha256": "2B0E679F075D12DA32056BC59DF2478BF60096C2FC30D92F72962435B223CA3C",
+  "exampleIndex": 43,
+  "name": "HF / Double Under-Arm-Claw-Box",
+  "sourceUrl": "https://drive.google.com/file/d/11N0s9rDO9RxqP-hzdHYDswdOpptV-Y-D/preview",
+  "sourceKey": "under-arm-claw-box_under-arm-claw-box*",
+  "sourcePlaybackAudit": "hf-double-underarm-claw-playback-audit.json",
+  "validSourceFrames": 16,
+  "notation": "(2x,4x)(2x,4)(4x,2x)(4,2x)",
+  "notationInferredFromVideo": true,
+  "balls": 3,
+  "movementSets": 4,
+  "identitySets": 4,
+  "secondsPerSet": 0.5,
+  "cycleSeconds": 2,
+  "construction": "Clone alternating-claw single sets with high hands right/right/left/left; change the first and third high throws to 4x. Keep the low catch near centre, distinct from the standalone fixed-role source. Each set remains independently importable.",
+  "motionContracts": [
+    "Every 2x releases under the opposite forearm and is caught by that hand with a claw grip.",
+    "The high sequence is right-to-left 4x, right-self 4, left-to-right 4x, left-self 4.",
+    "All high catches are underhand; low catch x is -0.04 in the throwing-hand frame.",
+    "A full four-set rebuild through extractSequenceSet preserves canonical structure, cycle and source definitions."
+  ],
+  "realRigCases": [
+    {
+      "id": "sequence-43",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 124,
+        "wristStep": 0.07785029938274585
+      },
+      "grip": 7.205766531097152e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.13970356060936437,
+      "ball": 0.07319301163059702,
+      "speed": 3.9100296000948918,
+      "angularSpeed": [
+        15.363698320066673,
+        33.086501770791244,
+        24.97364531062742
+      ],
+      "elbowOut": 0.36420417587924714,
+      "elbowRaise": 0.03472654517464124,
+      "armPhase": 0.376,
+      "ballPhase": 0.188,
+      "speedPhase": 0.542,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.011030249927726207,
+          "verticalGap": 0.08545894716338931
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.02308044883546893,
+          "verticalGap": 0.09893277573426351
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.011030249927726011,
+          "verticalGap": 0.08545894716338909
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.02308044883546893,
+          "verticalGap": 0.09893277573426351
+        }
+      ],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0211063008536798,
+        "behind": 0.08379777953803884,
+        "side": 0.15217173860011562,
+        "height": 0.027661797960448542,
+        "wristBend": 1.4620481231481381,
+        "elbowFlex": 2.0835815059759475,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-43",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 124,
+        "wristStep": 0.07785029938274599
+      },
+      "grip": 6.736090074350496e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.1397035606093644,
+      "ball": 0.07319301163059695,
+      "speed": 3.9100296000949424,
+      "angularSpeed": [
+        15.363698320064866,
+        33.08650177078957,
+        24.973645310628527
+      ],
+      "elbowOut": 0.36420417587924714,
+      "elbowRaise": 0.034726545174641466,
+      "armPhase": 0.376,
+      "ballPhase": 0.188,
+      "speedPhase": 0.542,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.011030249927726263,
+          "verticalGap": 0.08545894716338931
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.02308044883546893,
+          "verticalGap": 0.09893277573426351
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.011030249927726011,
+          "verticalGap": 0.08545894716338909
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.02308044883546893,
+          "verticalGap": 0.09893277573426351
+        }
+      ],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0211063008536798,
+        "behind": 0.08379777953803884,
+        "side": 0.15217173860011557,
+        "height": 0.027661797960448542,
+        "wristBend": 1.4620481231481384,
+        "elbowFlex": 2.083581505975947,
+        "phase": 0
+      }
+    }
+  ],
+  "automatedTestsPassed": 1218,
+  "automatedTestsFailed": 0,
+  "fullSuiteRigCases": 248,
+  "testReport": "test-results.json",
+  "rigReport": "sync-rig-audit.json",
+  "candidateInspection": {
+    "source": "../../tmp/box-reference/hf-double-underarm-claw-fits.json",
+    "tried": 4,
+    "plannerPassed": 2,
+    "selected": "Coordinates from alternating Under-Arm-Claw-Box, column release x -0.16 / catch x -0.04, short x -0.14."
+  },
+  "typecheck": "passed",
+  "build": "passed",
+  "editorSyntax": "passed",
+  "browserVerification": {
+    "status": "pending",
+    "reason": "Earlier local composer access was rejected by the browser URL safety policy; no alternate surface or workaround was attempted.",
+    "scenarios": [
+      "Load example:43, play, mirror and inspect the high-hand right/right/left/left sequence.",
+      "Expand its HF Double catalog entry and compare the four rows.",
+      "Rebuild by importing its four individual sets, play and restore after reload."
+    ]
+  },
+  "limitations": [
+    "Source depth, exact event timing, elbows and finger poses are not reconstructed.",
+    "Skeleton and torso clearance do not prove mesh or clothing clearance.",
+    "Current simulator UI and rendered motion have not been verified.",
+    "This source-specific four-set combination does not certify arbitrary joins with fixed-role example:42."
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "2CAA7947C688DFFE3E1D914D6EB15A40F7E5E3F85E6D19485603A6E039D67B5D",
+  "sourceFiles": {
+    "dist/vrm-juggler.min.js": "2CAA7947C688DFFE3E1D914D6EB15A40F7E5E3F85E6D19485603A6E039D67B5D",
+    "dist/models/default.vrm": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+    "dist/sync-compose.js": "6E80FFACCF6FC689159D71975A1BB02607C1273EAB686D219572209979D14BEC",
+    "dist/sync-compose.html": "3CA9CF5C9680B382F6F551C91B10889E196D3F3595429A91E684BD2E1C8DBD7E",
+    "src/index.ts": "9116C85AFBDAB02C1F943AC453FE01CCD0DEA17C9C8E8E3CADCCDBC255679645",
+    "src/motion/juggling/sync-replay-document.ts": "D0826967A4F4DFEB39030F65C150CDFC01BC2A1F0EBF0619196079E235D50713",
+    "test/sync-replay-document.test.ts": "DA10307C28490C247DA84A4FBD41CE42E43A0C09F68F403A44DD0A1678B9359B",
+    "test/sync-entry-reuse.test.ts": "71D885564CD03BCD2ED9E78B50D215B73FE23D66038128D53E91DB73BD0FEDCB"
+  },
+  "scope": "Stable construction names for replay routes, independent of display labels and backed by full canonical definitions.",
+  "targetedTests": {
+    "passed": 29,
+    "failed": 0,
+    "files": 2,
+    "reports": [
+      "route-naming-document-tests.json",
+      "route-naming-api-tests.json"
+    ]
+  },
+  "typecheck": "passed",
+  "build": "passed",
+  "javascriptSyntax": "passed",
+  "uniqueHtmlIds": 134,
+  "naming": {
+    "format": "<balls>B-R<selected sets>-C<identity sets or pending>-<short content ID>",
+    "canonicalPrefix": "SYNC-ROUTE1:",
+    "excludes": [
+      "Document/source/sequence display names",
+      "Per-row sourceName",
+      "UI-only transition purpose"
+    ],
+    "retains": [
+      "All source definitions in registration order, including unused anchors",
+      "Mirror flags",
+      "Original repeats and cyclic starts",
+      "Route set references in order",
+      "Tempo, positions, grips and routes"
+    ],
+    "keyOrderIndependent": true,
+    "shortHashIsNotProofOfIdentity": true,
+    "cyclePeriodFromRegisteredGraph": true,
+    "serializationVersionUnchanged": 1
+  },
+  "measurements": [
+    {
+      "mirror": false,
+      "phases": [
+        {
+          "source": "ボックス",
+          "startSet": 0,
+          "endSet": 1,
+          "forwardSets": 0,
+          "returnSets": 0,
+          "sets": 4,
+          "identitySets": 4
+        },
+        {
+          "source": "ボックス",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 1,
+          "returnSets": 1,
+          "sets": 6,
+          "identitySets": 6
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 0,
+          "endSet": 11,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 2,
+          "endSet": 1,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 3,
+          "endSet": 2,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 4,
+          "endSet": 3,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 5,
+          "endSet": 4,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 6,
+          "endSet": 5,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 7,
+          "endSet": 6,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 8,
+          "endSet": 7,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 9,
+          "endSet": 8,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 10,
+          "endSet": 9,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 11,
+          "endSet": 10,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        }
+      ],
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "savedCycleSets": 38,
+      "savedIdentitySets": 114,
+      "restoredPoseSamplesUnchanged": 240,
+      "constructionCode": "3B-R38-C114-14c621c6",
+      "constructionRestored": true
+    },
+    {
+      "mirror": true,
+      "phases": [
+        {
+          "source": "ボックス",
+          "startSet": 0,
+          "endSet": 1,
+          "forwardSets": 0,
+          "returnSets": 0,
+          "sets": 4,
+          "identitySets": 4
+        },
+        {
+          "source": "ボックス",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 1,
+          "returnSets": 1,
+          "sets": 6,
+          "identitySets": 6
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 0,
+          "endSet": 11,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 1,
+          "endSet": 0,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 2,
+          "endSet": 1,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 3,
+          "endSet": 2,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 4,
+          "endSet": 3,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 5,
+          "endSet": 4,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 6,
+          "endSet": 5,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 7,
+          "endSet": 6,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 8,
+          "endSet": 7,
+          "forwardSets": 6,
+          "returnSets": 6,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 9,
+          "endSet": 8,
+          "forwardSets": 7,
+          "returnSets": 5,
+          "sets": 26,
+          "identitySets": 78
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 10,
+          "endSet": 9,
+          "forwardSets": 4,
+          "returnSets": 4,
+          "sets": 22,
+          "identitySets": 66
+        },
+        {
+          "source": "コラムと2の保持 / Box Roll",
+          "startSet": 11,
+          "endSet": 10,
+          "forwardSets": 5,
+          "returnSets": 3,
+          "sets": 22,
+          "identitySets": 66
+        }
+      ],
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "savedCycleSets": 38,
+      "savedIdentitySets": 114,
+      "restoredPoseSamplesUnchanged": 240,
+      "constructionCode": "3B-R38-C114-f03162d3",
+      "constructionRestored": true
+    }
+  ],
+  "ui": {
+    "constructionCode": true,
+    "canonicalText": true,
+    "filenameIncludesCode": true,
+    "liveVerified": false
+  },
+  "previousRigValidation": {
+    "report": "sync-arm-constraints-audit.json",
+    "bundleSha256": "214BDB403B5842C5D2C612DF5415ED33CFA48FBCED949C32E65B0EAA69F9A403",
+    "rigCases": 334
+  },
+  "limitations": [
+    "The content code identifies a construction, not a motion-validity certificate or avatar-independent pose.",
+    "Unfitted cross configurations, source-fidelity gaps and missing connections remain unresolved.",
+    "Browser validation awaits explicit approval after the prior auto-review rejection."
+  ]
+}

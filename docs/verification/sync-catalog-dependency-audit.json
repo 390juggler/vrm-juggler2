@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "6CFA4D0E84B9380D988838249E4582A1A7025A1D1F3182CDA246AC83CB05A541",
+  "editorJsSha256": "0E666AB410A2F001CA2D3EB41F2BC0AA9DE3326E5743199864DCFDA01F06BF37",
+  "editorHtmlSha256": "645F3B30BDFC657CF2167E42E8485CFA5DF3BBE7F5EA1CDD968972D9AF3E60CD",
+  "catalogSha256": "4DE146E26BF983F1BDA0C09D3942B0B14FAF70596F60A1DB6B19B88F5BDA81ED",
+  "scope": "Link the 81 Double table entries to their 18 basic source terms and expose existing basic Double construction recipes.",
+  "dependencies": {
+    "basic_count": 18,
+    "unresolved_components": [
+      "hf:under-arm-box",
+      "hf:reverse-under-arm-box",
+      "hf:under-arm-inverted-box",
+      "hf:under-arm-inverted-box*"
+    ],
+    "combination_count": 81,
+    "combinations_with_unresolved_components": 33,
+    "editable_basic_combinations": 16
+  },
+  "statusCounts": {
+    "playable": 42,
+    "reference": 97,
+    "components": 18
+  },
+  "candidateOnlyRows": [
+    "hf-double:reverse-shuffle_box*",
+    "hf-double:inverted-box_box*",
+    "hf-double:shuffle_shuffle*",
+    "hf-double:reverse-shuffle_shuffle*",
+    "hf-double:inverted-box_shuffle*",
+    "hf-double:shuffle_reverse-shuffle*",
+    "hf-double:inverted-box_reverse-shuffle*",
+    "hf-double:shuffle_inverted-box*",
+    "hf-double:reverse-shuffle_inverted-box*",
+    "hf-double:inverted-box_inverted-box*"
+  ],
+  "tests": {
+    "passed": 3,
+    "report": "sync-catalog-dependency-tests.json",
+    "typecheck": "passed",
+    "javascriptSyntax": "passed",
+    "uniqueHtmlIds": 119
+  },
+  "unchangedMotionBundle": true,
+  "sourceEvidence": {
+    "throwsTable": "https://henfish.github.io/juggling-database/throws.html",
+    "throwsTableRead": "ax markdown extraction confirmed the fixed-role and alternating-role lists.",
+    "storedCatalog": "docs/sync-box-catalog.json",
+    "liveDataRefresh": "data.json could not be fetched with ax or the web tool; GitHub connector returned 404. Existing source records were preserved."
+  },
+  "browser": {
+    "verified": false,
+    "rejection": "Automatic approval review rejected cua.getState as a retry after the earlier browser-access rejection.",
+    "pendingApproval": "Permission requested for opening only the UA-Box source video in the in-app browser.",
+    "sourceVideo": "https://drive.google.com/file/d/1S2Nknk3AA6tvbkPLOeuC1cAGGiKgNuUY/preview"
+  },
+  "limits": [
+    "Dependency availability does not certify a combined trajectory or exact source-performance fidelity.",
+    "The ten newly linked editor candidates retain components status and do not replace reviewed templates.",
+    "Video phase observation and current UI operation/rendering remain unverified."
+  ]
+}

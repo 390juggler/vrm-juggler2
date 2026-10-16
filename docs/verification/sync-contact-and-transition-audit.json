@@ -1,0 +1,167 @@
+{
+  "verifiedAt": "2026-10-16T14:02:59.742106+00:00",
+  "policy": {
+    "ballBall": "permitted only when allowBallContact is true",
+    "passageOrder": "hard constraint; first and second ball along the 2x travel direction",
+    "arms": "reach, torso, arm-arm, ball-arm, crossing order and continuous bone rotation remain hard constraints",
+    "sourceStates": "registered A/B sources are immutable; candidate preparation movements are searched, then complete boundary states must match both sources",
+    "method": "common event, timing and held/empty hand variables; unlabelled numerical initial guesses; every result is revalidated"
+  },
+  "validation": {
+    "regressionPassed": 1152,
+    "existingCrossConnectionsPassed": 4,
+    "generatedConnectionPassed": 1,
+    "failed": 0,
+    "crosses": {
+      "tested": 64,
+      "passed": 64,
+      "leftOver": 32,
+      "rightOver": 32,
+      "includesMirroring": true
+    },
+    "generatedConnection": {
+      "automaticRegistration": true,
+      "sourceDefinitionsPreserved": true,
+      "saveRestore": true,
+      "reuseWithoutArmSearch": true,
+      "report": "sync-generated-cross-transition.json",
+      "document": "sync-generated-cross-transition-route.json"
+    },
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "browser": {
+    "url": "http://127.0.0.1:8080/sync-compose.html",
+    "case": "Cross・左腕が上｜左 2x Inverted／右 2x Shuffle",
+    "geometry": {
+      "balls": 3,
+      "minBallDistance": 0.00986684585006333,
+      "minHandDistance": 0.2116340877384678,
+      "maxReachRatio": 0.9999748251540901,
+      "maxHandSpeed": 3.943827516092916,
+      "ownershipConflicts": 0,
+      "ballContactAllowed": true,
+      "ballContact": true,
+      "ballOrderOK": true,
+      "ballOrderClearance": -0.055000000000000104,
+      "ballOrderPhase": 0.3584867253766761,
+      "ballOrderChecks": 4,
+      "ballClearance": -0.060133154149936675,
+      "period": 0.82,
+      "ballPhase": 0.9939024390243902,
+      "handPhase": 0.9512195121951219,
+      "reachPhase": 0.9512195121951219,
+      "peakY": 1.64400772352873,
+      "geometryOK": true
+    },
+    "skeleton": {
+      "pattern": "sequence",
+      "mirror": false,
+      "short": [
+        "shuffle"
+      ],
+      "samples": 240,
+      "maxGripError": 8.238311188599651e-16,
+      "minArmDistance": 0.079290221907032,
+      "minBallArmDistance": 0.07983423005254328,
+      "gripPhase": 0.2125,
+      "armPhase": 0.32916666666666666,
+      "ballArmPhase": 0.32916666666666666,
+      "closestBallArm": {
+        "hand": 1,
+        "ball": 1,
+        "position": [
+          -0.0944851087915763,
+          1.218572086359986,
+          -0.3580032308617911
+        ],
+        "shoulder": [
+          0.13622673792622111,
+          1.400353420808476,
+          -0.004285298133465612
+        ],
+        "elbow": [
+          0.059530547373666434,
+          1.1697751964719245,
+          -0.14092620084191346
+        ],
+        "wrist": [
+          -0.11462452620472287,
+          1.2398236743571336,
+          -0.314602634306655
+        ],
+        "handTarget": [
+          -0.0973996807421912,
+          1.1876770360651143,
+          -0.3647960000625094
+        ],
+        "heldHere": false
+      },
+      "maxElbowJump": 0.01900535160243023,
+      "maxElbowSpeed": 5.562541932418605,
+      "maxJointAngularSpeed": 77.98095575940829,
+      "largestJump": {
+        "hand": 0,
+        "phase": 0.20416666666666666,
+        "distance": 0.01900535160243023,
+        "from": [
+          0.029497908312530075,
+          1.3198632384629636,
+          -0.2135125230624342
+        ],
+        "to": [
+          0.027405840005681747,
+          1.301980514267499,
+          -0.20742689942303447
+        ]
+      },
+      "plannedCycle": true,
+      "planInfo": {
+        "keyCount": 120,
+        "wristStep": 0.04646438774682263
+      },
+      "postureOK": true,
+      "minTorsoClearance": 1.0357745131451055,
+      "maxWristBend": 1.3763401484570823,
+      "maxElbowFlex": 1.6898210252309702,
+      "posturePhase": 0,
+      "skeletonOK": true
+    },
+    "screenshot": "sync-cross-inverted-shuffle.png",
+    "consoleErrors": [],
+    "originalDraftRestored": true
+  },
+  "connectedPlaybackInBrowser": {
+    "url": "http://127.0.0.1:8080/sync-compose.html",
+    "title": "Cross左上（Normal／Shuffle）とNormal Boxの往復",
+    "validity": "くり返し再生できます\nつなぎの内訳\n\n動きの周期 48セット / 同じ球まで 48セット。先頭につながっています。",
+    "position": "接続セット 39 / 48 · 80%",
+    "audit": "48セットの周期。腕と動作間の接続を確認済み（骨格による近似）。球同士の接触あり（許可して再生中）。",
+    "consoleErrors": [],
+    "screenshots": [
+      "sync-generated-cross-transition-20.png",
+      "sync-generated-cross-transition-80.png"
+    ]
+  },
+  "performance": {
+    "coldGenerationAndRoundTripScenarioSeconds": 935.434,
+    "candidateSearchMilliseconds": [
+      445715,
+      368038
+    ],
+    "savedBridgeRevalidationMilliseconds": 13593,
+    "reuseRequiresNewArmSearch": false
+  },
+  "closedIssues": [
+    "All 12 previously failing fixed-left Cross combinations now pass, including right-over and both mirrors.",
+    "Solved events and held/empty hand routes survive save/restore.",
+    "Generated Cross and Box connect in both directions through common intermediate-state search.",
+    "Registered connections are reusable without a new arm search."
+  ],
+  "knownFailuresInVerifiedCases": [],
+  "coverage": "The stated finite regression cases and actual default VRM. This report does not claim exhaustive proof over infinitely many custom definitions.",
+  "hashes": {
+    "model": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+    "bundle": "8A7D6D392D2DED453113665EFCCF70BF86C254EEF988D02A408BD5653BB6FFB3"
+  }
+}

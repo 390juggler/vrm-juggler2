@@ -1,0 +1,23 @@
+{
+  "tests": {
+    "numTotalTests": 831,
+    "numPassedTests": 831,
+    "numFailedTests": 0,
+    "success": true
+  },
+  "checked": [
+    "typecheck",
+    "production build",
+    "Box/High-Low/Shower/Double with all 14 named passes",
+    "Box to Cross/Underarm/Switched including mirroring and returned plan",
+    "browser: five blocks, 13 sets, zero extra sets, 39 sets for ball identity",
+    "browser: auto restore and JSON export",
+    "browser: normal ring and pancake"
+  ],
+  "browserPlayback": {
+    "gripError": 7.781467564125338e-16,
+    "playbackOK": true,
+    "addedSets": 0
+  },
+  "limits": "Constructive playback allows contact and posture approximations; this is not a proof for all inputs."
+}

@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "FC4D26B27C6DC983D2AB1CDCBCDC2CA55C760AA54797FCB8BD7CD9D94E54E927",
+  "editorJsSha256": "DBE3DA25ACC17D8167E22F0B37141D307589B7E86059C59B37153ECE9B3E9663",
+  "editorHtmlSha256": "ACA3AB8B8D7F3B91F94C6F171D7ACE749A4A42F2A659F16F2F264A1C9490C656",
+  "editorCssSha256": "93133204BD2D04C6E4F18059C286BCE52C0B799167442C3A71750101814C06AE",
+  "defaultVrmSha256": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+  "scope": "Inspect registered motion reachability in both directions using full boundary states, then select missing transitions in the editor.",
+  "testsPassed": 38,
+  "testReports": [
+    "connection-coverage-replay-all-tests.json",
+    "connection-coverage-network-tests.json"
+  ],
+  "networkReport": "connection-coverage-network-audit.json",
+  "motionDefinitionsUnchangedFrom": "sync-underarm-shuffle-network-audit.json",
+  "sourceFiles": {
+    "src/motion/juggling/sync-replay.ts": "191971D01F4E2209D9B5C188C165A272A4B5E132C728BEAA3C34A0BD3FFA7CAD",
+    "src/index.ts": "F7C4353D3B4DE2B922C21941C19E3F9DF5F02D0DC7155D03F7EC858953C2C885",
+    "test/sync-replay.test.ts": "49B36B93510EA0F6495EADE0C203A4295AD33A7A692D56C9DBFC907E87796D05",
+    "test/sync-component-graph.test.ts": "DAC4E47361748691FCF7862CC69713C494C71C85FEF56B69633560FA21B5F18E"
+  },
+  "checks": [
+    "Same motion names do not make distinct boundary states connect.",
+    "Forward and return distances agree with production connect() at zero, one and 128 intervening sets.",
+    "Before transition registration, the six-family registry reports missing connections; after registration, all six connect in both mirrors.",
+    "Both mirrored 88-motion registries report all motions reachable in both directions, matching all 174 production bridge distances.",
+    "Reachability does not invoke arm planning, register sources or alter the accepted trajectories."
+  ],
+  "uiImplementation": {
+    "implemented": "Reference selector, bidirectional bridge lengths, missing-only filter and pair selection for existing transition preparation.",
+    "liveVerified": false
+  },
+  "networks": [
+    {
+      "mirror": false,
+      "motions": 88,
+      "connected": 88,
+      "calculationMilliseconds": 41.17550000001211,
+      "directions": 174,
+      "closedWalks": 30,
+      "armSearches": 0
+    },
+    {
+      "mirror": true,
+      "motions": 88,
+      "connected": 88,
+      "calculationMilliseconds": 58.66029999998864,
+      "directions": 174,
+      "closedWalks": 30,
+      "armSearches": 0
+    }
+  ],
+  "crossInvestigation": {
+    "adopted": 0,
+    "originalPresetsChanged": false,
+    "heightDifference": 0.18,
+    "modes": [
+      {
+        "mode": "bands",
+        "candidates": 32,
+        "geometryPassed": 0,
+        "planned36": 0,
+        "planned72": 0,
+        "validated": 0
+      },
+      {
+        "mode": "bands-separated",
+        "candidates": 32,
+        "geometryPassed": 25,
+        "planned36": 0,
+        "planned72": 0,
+        "validated": 0
+      },
+      {
+        "mode": "bands-clearance",
+        "candidates": 32,
+        "geometryPassed": 16,
+        "planned36": 0,
+        "planned72": 0,
+        "validated": 0
+      }
+    ],
+    "conclusion": "Moving the entire upper-hand band and separating ball planes does not by itself produce a full feasible arm cycle. Candidate failure is not proof of human impossibility.",
+    "status": "superseded-diagnostic-fixture",
+    "correction": "The probe omitted stance initialization. Corrected controls, reruns and production-API verification are recorded in sync-fixed-cross-routes-audit.json. The connection-coverage tests in this report used the production initialization and remain valid."
+  },
+  "staticChecks": {
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed",
+    "htmlIds": 127,
+    "diffWhitespace": "passed"
+  },
+  "limitations": [
+    "Reachability is between the registered starting phases, with at most 128 intervening sets in each direction.",
+    "Final composed route length and ball-identity period are checked separately by the existing append/close APIs.",
+    "The fixed-cross candidates remain unregistered; the supported initial height definitions remain 54 of 96.",
+    "Current UI interactions and rendered appearance remain unverified after the prior browser auto-review rejection."
+  ]
+}

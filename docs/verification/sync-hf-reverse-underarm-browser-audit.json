@@ -1,0 +1,336 @@
+{
+  "normal": {
+    "canonical": "SYNC1:{\"beatDuration\":0.25,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}},{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"}],\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"},{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}}],\"short\":[\"reverse\"]},\"throws\":[\"2x\",\"4\"]}]}",
+    "report": {
+      "analysis": {
+        "balls": 3,
+        "canonical": "SYNC1:{\"beatDuration\":0.25,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}},{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"}],\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"},{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}}],\"short\":[\"reverse\"]},\"throws\":[\"2x\",\"4\"]}]}",
+        "code": "3B-S2-C2-0b2367cf",
+        "documentOK": true,
+        "expandedSets": 2,
+        "identitySets": 2,
+        "inputSets": 2,
+        "issues": [],
+        "movementSets": 2,
+        "name": "HF / Reverse-Under-Arm-Box*",
+        "notation": "(4,2x)(2x,4)",
+        "ok": true,
+        "siteswap": "(4,2x)(2x,4)"
+      },
+      "geometry": {
+        "ballClearance": 0.03237038987647535,
+        "ballPhase": 0.395,
+        "balls": 3,
+        "geometryOK": true,
+        "handPhase": 0.425,
+        "maxHandSpeed": 3.6119239565287375,
+        "maxReachRatio": 0.8930537392224641,
+        "minBallDistance": 0.10237038987647536,
+        "minHandDistance": 0.1957748619773404,
+        "ownershipConflicts": 0,
+        "peakY": 1.7962470462480904,
+        "period": 1,
+        "reachPhase": 0.025
+      },
+      "name": "HF / Reverse-Under-Arm-Box*",
+      "skeleton": {
+        "armPhase": 0.46,
+        "ballArmPhase": 0.936,
+        "closestBallArm": {
+          "ball": 0,
+          "elbow": [
+            0.23686658331439625,
+            1.205529057068129,
+            -0.17643188767233348
+          ],
+          "hand": 1,
+          "handTarget": [
+            0.10585799931001363,
+            1.419992763386637,
+            -0.23846131701559556
+          ],
+          "heldHere": false,
+          "position": [
+            0.1259515739132857,
+            1.390708651100436,
+            -0.26725835514007384
+          ],
+          "shoulder": [
+            0.13622673792622111,
+            1.400353420808476,
+            -0.004285298133465612
+          ],
+          "wrist": [
+            0.17569802922498948,
+            1.4455997808092569,
+            -0.2398727108162994
+          ]
+        },
+        "gripPhase": 0.328,
+        "largestJump": {
+          "distance": 0.02166030915986894,
+          "from": [
+            -0.2319633321783769,
+            1.1908284451739044,
+            -0.16129850962466644
+          ],
+          "hand": 0,
+          "phase": 0.432,
+          "to": [
+            -0.2368665833143963,
+            1.205529057068129,
+            -0.17643188767233345
+          ]
+        },
+        "maxElbowFlex": 2.209967946396987,
+        "maxElbowJump": 0.02166030915986894,
+        "maxElbowSpeed": 5.415077289967235,
+        "maxGripError": 6.758924343478425e-16,
+        "maxJointAngularSpeed": 23.49647978134796,
+        "maxWristBend": 1.1025985847428648,
+        "minArmDistance": 0.16812424677134188,
+        "minBallArmDistance": 0.0741265409928597,
+        "minTorsoClearance": 1.047520470443768,
+        "mirror": false,
+        "pattern": "sequence",
+        "planInfo": {
+          "keyCount": 120,
+          "wristStep": 0.038015288770963246
+        },
+        "plannedCycle": true,
+        "postureOK": true,
+        "posturePhase": 0,
+        "samples": 250,
+        "short": [
+          "reverse"
+        ],
+        "skeletonOK": true
+      }
+    },
+    "status": "この列を再生中"
+  },
+  "mirrored": {
+    "canonical": "SYNC1:{\"beatDuration\":0.25,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}},{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"}],\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"},{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}}],\"short\":[\"reverse\"]},\"throws\":[\"2x\",\"4\"]}]}",
+    "report": {
+      "analysis": {
+        "balls": 3,
+        "canonical": "SYNC1:{\"beatDuration\":0.25,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}},{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"}],\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"},{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}}],\"short\":[\"reverse\"]},\"throws\":[\"2x\",\"4\"]}]}",
+        "code": "3B-S2-C2-0b2367cf",
+        "documentOK": true,
+        "expandedSets": 2,
+        "identitySets": 2,
+        "inputSets": 2,
+        "issues": [],
+        "movementSets": 2,
+        "name": "HF / Reverse-Under-Arm-Box*",
+        "notation": "(4,2x)(2x,4)",
+        "ok": true,
+        "siteswap": "(4,2x)(2x,4)"
+      },
+      "geometry": {
+        "ballClearance": 0.03237038987647535,
+        "ballPhase": 0.395,
+        "balls": 3,
+        "geometryOK": true,
+        "handPhase": 0.425,
+        "maxHandSpeed": 3.6119239565287375,
+        "maxReachRatio": 0.8930537392224641,
+        "minBallDistance": 0.10237038987647536,
+        "minHandDistance": 0.1957748619773404,
+        "ownershipConflicts": 0,
+        "peakY": 1.7962470462480904,
+        "period": 1,
+        "reachPhase": 0.025
+      },
+      "name": "HF / Reverse-Under-Arm-Box*",
+      "skeleton": {
+        "armPhase": 0.46,
+        "ballArmPhase": 0.936,
+        "closestBallArm": {
+          "ball": 0,
+          "elbow": [
+            -0.23686658331439625,
+            1.205529057068129,
+            -0.17643188767233353
+          ],
+          "hand": 0,
+          "handTarget": [
+            -0.10585799931001363,
+            1.419992763386637,
+            -0.23846131701559556
+          ],
+          "heldHere": false,
+          "position": [
+            -0.1259515739132857,
+            1.390708651100436,
+            -0.26725835514007384
+          ],
+          "shoulder": [
+            -0.13622673792622111,
+            1.400353420808476,
+            -0.0042852981334656134
+          ],
+          "wrist": [
+            -0.17569802922498945,
+            1.445599780809257,
+            -0.23987271081629935
+          ]
+        },
+        "gripPhase": 0.788,
+        "largestJump": {
+          "distance": 0.02166030915986893,
+          "from": [
+            0.23196333217837695,
+            1.1908284451739044,
+            -0.16129850962466644
+          ],
+          "hand": 1,
+          "phase": 0.432,
+          "to": [
+            0.2368665833143963,
+            1.205529057068129,
+            -0.17643188767233345
+          ]
+        },
+        "maxElbowFlex": 2.2099679463969877,
+        "maxElbowJump": 0.02166030915986893,
+        "maxElbowSpeed": 5.415077289967232,
+        "maxGripError": 7.131886835281874e-16,
+        "maxJointAngularSpeed": 23.49647978134796,
+        "maxWristBend": 1.1025985847428648,
+        "minArmDistance": 0.1681242467713421,
+        "minBallArmDistance": 0.07412654099285972,
+        "minTorsoClearance": 1.047520470443768,
+        "mirror": true,
+        "pattern": "sequence",
+        "planInfo": {
+          "keyCount": 120,
+          "wristStep": 0.038015288770963246
+        },
+        "plannedCycle": true,
+        "postureOK": true,
+        "posturePhase": 0,
+        "samples": 250,
+        "short": [
+          "reverse"
+        ],
+        "skeletonOK": true
+      }
+    },
+    "status": "この列を再生中"
+  },
+  "restored": {
+    "canonical": "SYNC1:{\"beatDuration\":0.25,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}},{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"}],\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"},{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}}],\"short\":[\"reverse\"]},\"throws\":[\"2x\",\"4\"]}]}",
+    "report": {
+      "analysis": {
+        "balls": 3,
+        "canonical": "SYNC1:{\"beatDuration\":0.25,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}},{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"}],\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"hands\":[{\"definition\":{\"carry\":{\"amount\":0.04,\"route\":\"outside\"},\"catch\":{\"x\":-0.04,\"y\":0.34,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"front\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.22,\"y\":-0.1,\"z\":-0.3}},\"style\":\"reverse\"},{\"definition\":{\"carry\":{\"amount\":0.06,\"route\":\"outside\"},\"catch\":{\"relation\":\"underarm\",\"x\":-0.16,\"y\":-0.045,\"z\":-0.3},\"emptyReturn\":{\"amount\":0.04,\"route\":\"back\",\"via\":[{\"at\":0.5,\"offset\":[0,-0.1,0]}]},\"passage\":{\"at\":0.5},\"release\":{\"x\":0.04,\"y\":0.015,\"z\":-0.3}}}],\"short\":[\"reverse\"]},\"throws\":[\"2x\",\"4\"]}]}",
+        "code": "3B-S2-C2-0b2367cf",
+        "documentOK": true,
+        "expandedSets": 2,
+        "identitySets": 2,
+        "inputSets": 2,
+        "issues": [],
+        "movementSets": 2,
+        "name": "HF / Reverse-Under-Arm-Box*",
+        "notation": "(4,2x)(2x,4)",
+        "ok": true,
+        "siteswap": "(4,2x)(2x,4)"
+      },
+      "geometry": {
+        "ballClearance": 0.03237038987647535,
+        "ballPhase": 0.395,
+        "balls": 3,
+        "geometryOK": true,
+        "handPhase": 0.425,
+        "maxHandSpeed": 3.6119239565287375,
+        "maxReachRatio": 0.8930537392224641,
+        "minBallDistance": 0.10237038987647536,
+        "minHandDistance": 0.1957748619773404,
+        "ownershipConflicts": 0,
+        "peakY": 1.7962470462480904,
+        "period": 1,
+        "reachPhase": 0.025
+      },
+      "name": "HF / Reverse-Under-Arm-Box*",
+      "skeleton": {
+        "armPhase": 0.46,
+        "ballArmPhase": 0.936,
+        "closestBallArm": {
+          "ball": 0,
+          "elbow": [
+            0.23686658331439625,
+            1.205529057068129,
+            -0.17643188767233348
+          ],
+          "hand": 1,
+          "handTarget": [
+            0.10585799931001363,
+            1.419992763386637,
+            -0.23846131701559556
+          ],
+          "heldHere": false,
+          "position": [
+            0.1259515739132857,
+            1.390708651100436,
+            -0.26725835514007384
+          ],
+          "shoulder": [
+            0.13622673792622111,
+            1.400353420808476,
+            -0.004285298133465612
+          ],
+          "wrist": [
+            0.17569802922498948,
+            1.4455997808092569,
+            -0.2398727108162994
+          ]
+        },
+        "gripPhase": 0.328,
+        "largestJump": {
+          "distance": 0.02166030915986894,
+          "from": [
+            -0.2319633321783769,
+            1.1908284451739044,
+            -0.16129850962466644
+          ],
+          "hand": 0,
+          "phase": 0.432,
+          "to": [
+            -0.2368665833143963,
+            1.205529057068129,
+            -0.17643188767233345
+          ]
+        },
+        "maxElbowFlex": 2.209967946396987,
+        "maxElbowJump": 0.02166030915986894,
+        "maxElbowSpeed": 5.415077289967235,
+        "maxGripError": 6.758924343478425e-16,
+        "maxJointAngularSpeed": 23.49647978134796,
+        "maxWristBend": 1.1025985847428648,
+        "minArmDistance": 0.16812424677134188,
+        "minBallArmDistance": 0.0741265409928597,
+        "minTorsoClearance": 1.047520470443768,
+        "mirror": false,
+        "pattern": "sequence",
+        "planInfo": {
+          "keyCount": 120,
+          "wristStep": 0.038015288770963246
+        },
+        "plannedCycle": true,
+        "postureOK": true,
+        "posturePhase": 0,
+        "samples": 250,
+        "short": [
+          "reverse"
+        ],
+        "skeletonOK": true
+      }
+    },
+    "status": "この列を再生中"
+  },
+  "catalogText": "資料の技と対応状況\n\n1件を表示 / 出典別157項目。再生できる見本、対応部品、原動作の照合待ちを分けています。\n\n名前を探す\n表示する項目\n再生できる見本\n対応する部品あり\n原動作の照合待ち\n全項目\nHF / Reverse-UA-Box*\nHFの18分類\n\n下から高い位置へ2xを渡すとき、反対の手が自己投げ4を腕下で捕る。投げ側が腕下のUA-Box*とは区別。2セットで同じ球まで戻る。実演の局面を照合し、細かな時間・奥行きの一致は未検証。\n\n参照資料 ↗セットに展開",
+  "catalogCanonicalMatches": true,
+  "restoredMatches": true,
+  "bundleSha256": "0B64D90915CE3948FF40EC084BB9D8182AE2B2B4F5F2DEC93420A9B1408CEE24"
+}

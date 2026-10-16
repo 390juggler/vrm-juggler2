@@ -1,0 +1,187 @@
+{
+  "sourceKey": "under-arm-claw-box",
+  "url": "https://drive.google.com/file/d/1MZ-iXCCSqVAP8dz4ZiHwP5a8wTLuqb5y/preview",
+  "frames": [
+    {
+      "requestedMs": 100,
+      "file": "hf-fixed-underarm-claw-100.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.1,
+      "width": 1920
+    },
+    {
+      "requestedMs": 300,
+      "file": "hf-fixed-underarm-claw-300.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.3,
+      "width": 1920
+    },
+    {
+      "requestedMs": 360,
+      "file": "hf-fixed-underarm-claw-360.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.36,
+      "width": 1920
+    },
+    {
+      "requestedMs": 400,
+      "file": "hf-fixed-underarm-claw-400.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.4,
+      "width": 1920
+    },
+    {
+      "requestedMs": 440,
+      "file": "hf-fixed-underarm-claw-440.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.44,
+      "width": 1920
+    },
+    {
+      "requestedMs": 480,
+      "file": "hf-fixed-underarm-claw-480.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.48,
+      "width": 1920
+    },
+    {
+      "requestedMs": 500,
+      "file": "hf-fixed-underarm-claw-500.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.5,
+      "width": 1920
+    },
+    {
+      "requestedMs": 520,
+      "file": "hf-fixed-underarm-claw-520.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.52,
+      "width": 1920
+    },
+    {
+      "requestedMs": 560,
+      "file": "hf-fixed-underarm-claw-560.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.56,
+      "width": 1920
+    },
+    {
+      "requestedMs": 600,
+      "file": "hf-fixed-underarm-claw-600.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.6,
+      "width": 1920
+    },
+    {
+      "requestedMs": 640,
+      "file": "hf-fixed-underarm-claw-640.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.64,
+      "width": 1920
+    },
+    {
+      "requestedMs": 680,
+      "file": "hf-fixed-underarm-claw-680.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.68,
+      "width": 1920
+    },
+    {
+      "requestedMs": 700,
+      "file": "hf-fixed-underarm-claw-700.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.7,
+      "width": 1920
+    },
+    {
+      "requestedMs": 720,
+      "file": "hf-fixed-underarm-claw-720.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.72,
+      "width": 1920
+    },
+    {
+      "requestedMs": 760,
+      "file": "hf-fixed-underarm-claw-760.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.76,
+      "width": 1920
+    },
+    {
+      "requestedMs": 800,
+      "file": "hf-fixed-underarm-claw-800.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.8,
+      "width": 1920
+    },
+    {
+      "requestedMs": 900,
+      "file": "hf-fixed-underarm-claw-900.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.9,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1100,
+      "file": "hf-fixed-underarm-claw-1100.png",
+      "duration": 4.643989,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1.1,
+      "width": 1920
+    }
+  ],
+  "scope": "Eighteen paused HD frames reviewed. Performer right hand throws the high 4x and catches the rising 2x with a claw; performer left hand catches the 4x lower across the body and throws the 2x from below the opposite forearm. Roles stay fixed. Exact timing, depth, elbow angles and finger poses are not reconstructed."
+}

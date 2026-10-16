@@ -1,0 +1,202 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "BD0A1E086157472DF02A2204E5AECB78D98F611D36A493D6AF2C08DD2144CC12",
+  "editorJsSha256": "0E666AB410A2F001CA2D3EB41F2BC0AA9DE3326E5743199864DCFDA01F06BF37",
+  "editorHtmlSha256": "56CCFAD81AEC5D06BF0E8056B61788BC7051BBB811BF841AA92CD239C257168C",
+  "editorCssSha256": "D72456CC075ABAF00B552509E848C0587FA9382E0E69F347C0BED42EE3679C3F",
+  "defaultVrmSha256": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+  "scope": "Reuse an existing Box/High-Low connection to reach High-Low-Around at its native tempo; preserve source motions and close longer routes with ball identities inside the unchanged 128-set limit.",
+  "sourceFiles": {
+    "src/index.ts": "793708FEA70976F24753B83B6A93ADD5B6E8E6A9A3719E4CF4041178BE52280E",
+    "src/motion/juggling/sync-replay.ts": "BF84CE23C2F6A45239C0E691E5E40121DE5788298C811CEEC66D15299FBD10C8",
+    "test/sync-component-graph.test.ts": "F8D5C66058091F6C9167F81879E5556454375F26CA63276B98B4EFBA7698B23B",
+    "test/sync-replay.test.ts": "3D8308A35E3A55BF26272412250EE5F231B248BEC40FD3F74D191429730F356B"
+  },
+  "fullSuite": {
+    "bundleSha256": "BD0A1E086157472DF02A2204E5AECB78D98F611D36A493D6AF2C08DD2144CC12",
+    "passed": 1569,
+    "failed": 0,
+    "testReport": "test-results.json",
+    "rigCases": 316,
+    "rigReport": "sync-rig-audit.json"
+  },
+  "targetedTests": {
+    "uniquePassed": 9,
+    "reports": [
+      "high-low-around-connection-tests.json",
+      "high-low-around-order-tests.json",
+      "identity-return-tests.json"
+    ]
+  },
+  "networks": [
+    {
+      "name": "high-low-around",
+      "mirror": false,
+      "beat": 0.15,
+      "sources": [
+        "ボックス",
+        "High-Low Box / Swap Box",
+        "High-Low-Around Inverted Box"
+      ],
+      "registrationOrder": [
+        0,
+        1,
+        2
+      ],
+      "registeredTransitions": 2,
+      "pairs": [
+        {
+          "from": "ボックス",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "ボックス",
+          "bridgeSets": 10
+        },
+        {
+          "from": "High-Low Box / Swap Box",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "High-Low Box / Swap Box",
+          "bridgeSets": 8
+        }
+      ],
+      "cycleSets": 52,
+      "identitySets": 52,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-around",
+      "mirror": true,
+      "beat": 0.15,
+      "sources": [
+        "ボックス",
+        "High-Low Box / Swap Box",
+        "High-Low-Around Inverted Box"
+      ],
+      "registrationOrder": [
+        2,
+        1,
+        0
+      ],
+      "registeredTransitions": 2,
+      "pairs": [
+        {
+          "from": "ボックス",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "ボックス",
+          "bridgeSets": 10
+        },
+        {
+          "from": "High-Low Box / Swap Box",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "High-Low Box / Swap Box",
+          "bridgeSets": 8
+        }
+      ],
+      "cycleSets": 52,
+      "identitySets": 52,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "ordinaryHighLowFamilies": [
+    {
+      "name": "high-low",
+      "mirror": false,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low",
+      "mirror": true,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-inverted",
+      "mirror": false,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-inverted",
+      "mirror": true,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "intermediaryRules": [
+    "A registered intermediate must already have a checked round trip to one endpoint.",
+    "Its expanded throw schedule must match the other endpoint to propose a generic bridge.",
+    "Direct and specialized candidates retain priority; generic intermediate candidates are lazy fallbacks.",
+    "Every new candidate undergoes full-cycle and physical port validation before atomic registration.",
+    "Generated transition sources are not recursively used to generate generic bridge candidates."
+  ],
+  "returnSearch": {
+    "state": [
+      "segment",
+      "ball permutation"
+    ],
+    "maxSets": 128,
+    "maxIdentitySets": 128,
+    "shortestAcceptableReturn": true,
+    "existingPrefixPreserved": true,
+    "newArmPlanning": false,
+    "regression": {
+      "fixedRolePrefixSets": 43,
+      "unextendedIdentitySets": 129,
+      "closedSets": 45,
+      "closedIdentitySets": 45,
+      "prefix127Rejected": true,
+      "prefix129Rejected": true
+    }
+  },
+  "staticChecks": {
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed",
+    "htmlIds": 119,
+    "diffWhitespace": "passed"
+  },
+  "browser": {
+    "verified": false,
+    "reason": "Previously rejected browser access remains pending authorization. No retry or workaround was attempted."
+  },
+  "limitations": [
+    "The Around network uses 0.15 seconds per beat; ordinary and inverted High-Low family checks use 0.18.",
+    "These checks use the bundled VRM and sampled skeleton constraints; continuous mesh/clothing clearance remains unverified.",
+    "The current UI recipe has been exercised through its production APIs, not through live browser operation.",
+    "Failure to generate a bridge does not prove that a human transition is impossible."
+  ]
+}

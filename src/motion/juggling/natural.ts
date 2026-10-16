@@ -114,11 +114,10 @@ const RING_DEPTH_ROUNDS = 3;
 // 前の縁を少し内側へ向ける。空中では輪の面の中で少し回る
 const RING_INWARD_YAW = 10;
 const RING_SPIN_PER_FLIGHT = 0.5; // 回転
-// ふつうのリングは手を高く上げて扱う。前腕がほぼ縦になる高さで受け、肩の高さまで持ち上げてから腕全体で投げる
-// (ボールのように胸より下で持つと、輪が体の前で低く小さく見えてしまう)
+// 通常リングは胸の前で扱う。前腕を立てる分は残し、肩を持ち上げすぎない。
 // 下げすぎると肘より手が下がって前腕が寝てしまうので、投げる区間の沈み込みは浅くする
-const RING_CATCH_LIFT = 0.3; // m(ボールの受ける高さから)
-const RING_THROW_LIFT = 0.28; // m(ボールの投げる高さから)
+const RING_CATCH_LIFT = 0.22; // m(ボールの受ける高さから)
+const RING_THROW_LIFT = 0.20; // m(ボールの投げる高さから)
 const RING_STROKE_MAX = 0.1; // m
 const RING_CLOSER = 0.12; // m(手を体へ近づけ、肩の前で前腕を立てる)
 const RING_MIN_X = 0.15; // m(顔の高さで持つので、輪が頭に近づきすぎないよう肩の前で扱う)

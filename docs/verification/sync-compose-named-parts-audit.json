@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-16",
+  "scope": "Named column and 2x composition UI, with automatic transition preparation",
+  "entry": "http://127.0.0.1:8080/sync-compose.html",
+  "automated": {
+    "testsPassed": 44,
+    "testsFailed": 0,
+    "report": "../../tmp/box-reference/compose-named-parts-tests.json",
+    "typecheck": true,
+    "javascriptSyntax": true,
+    "htmlUniqueIds": 178,
+    "htmlBalancedAndSelectorsPresent": true,
+    "namedChoicesPerHand": 14,
+    "scheduleCombinationsChecked": 1176,
+    "scheduleChecksDoNotEstablishGeometricOrArmFeasibility": true,
+    "fittedSpatialPresetsPreservedByExactCanonicalComparison": true
+  },
+  "browser": {
+    "viewport": "1280x720",
+    "invertedLateralSelectionAndPlayback": true,
+    "outsideColumnUpSelectionAndPlayback": true,
+    "boxThenReverseShuffleAutomaticTransition": true,
+    "automaticReturnAndTwelveSetPlayback": true,
+    "savedRouteRestoredAndPlayed": true,
+    "originalDraftRestoredViaFileChooser": true,
+    "originalAndRestoredExportJsonEqual": true,
+    "failedMotionDistinguishedFromValidThrowSchedule": true,
+    "failurePreservesLastPlayablePreview": true,
+    "modeSwitchPreservesDraftAndRoute": true,
+    "consoleErrorsAtFinalCheck": [],
+    "screenshots": [
+      "sync-compose-named-basic.jpg",
+      "sync-compose-named-connect.jpg",
+      "sync-compose-named-failure.jpg"
+    ]
+  },
+  "motionBundleUnchanged": true,
+  "motionBundleSha256": "2CAA7947C688DFFE3E1D914D6EB15A40F7E5E3F85E6D19485603A6E039D67B5D",
+  "limitations": [
+    "Arbitrary named combinations may still fail current ball/arm generation; they are not labeled impossible tricks.",
+    "Automatic transitions reuse the existing finite search and 128-set route limit.",
+    "A successful simulator check does not prove all human poses or clothing surfaces are collision-free."
+  ]
+}

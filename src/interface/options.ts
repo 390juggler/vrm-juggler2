@@ -1,4 +1,7 @@
+import type { SyncBoxConfig } from '../motion/juggling/sync-box';
+
 export default interface options {
+  syncBox?: SyncBoxConfig;
   beatDuration?: number;
   beatDurationAltitude?: string;
   dwellRatio?: number;

@@ -1,0 +1,518 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "44C93E5B08AAF0230E18C9A72972FAD0F5B57BAB065A78B48326540666DB41C5",
+  "editorJsSha256": "9974B1C1FAF3C85D7393A4051F415FCC94A5A0045A4273C336138EDC2227EC85",
+  "editorHtmlSha256": "50F862D0DAF9979B8DB3F8D050F51A2AE207B282A2186153B68AE5C4FBEE8D43",
+  "editorCssSha256": "D72456CC075ABAF00B552509E848C0587FA9382E0E69F347C0BED42EE3679C3F",
+  "scope": "Append registered motions with repeat counts through existing transitions; preview closure and preserve display metadata.",
+  "sourceFiles": {
+    "src/index.ts": "A3101B996097A8DBDF54A1D28DBC701BD38E3445E12281D4328A269A60940C03",
+    "src/motion/juggling/sync-replay-document.ts": "8A3DE2196859180F8ED12058256C6A7BAD867CA8900F038321845DA5A7518933",
+    "test/sync-component-graph.test.ts": "58AF788B490FF71405777641C6357A58BAE8629B2D22C182CC171536E720B161",
+    "test/sync-replay-document.test.ts": "C9DEA8FF5206E9FF4EDBD0C81C858B85E231BEA6659E709BC979E20EE13B7ADC"
+  },
+  "baselineFullSuite": {
+    "passed": 1550,
+    "bundleSha256": "B8D21E15CEB038FC53A45EE90805CE3DC69E0B7E112D7590AA07B8F3DD89FF4A",
+    "report": "test-results.json"
+  },
+  "focusedRun": {
+    "command": "npx vitest run test/sync-replay-document.test.ts test/sync-component-graph.test.ts -t '基本動作A/B/C|文書|テンポ|定義・左右' --reporter=dot",
+    "passed": 56,
+    "skipped": 14,
+    "exitCode": 0,
+    "durationSeconds": 177.09,
+    "evidence": "Terminal session 51670 completed successfully."
+  },
+  "networkTests": {
+    "passed": 2,
+    "report": "source-append-network-tests.json"
+  },
+  "replayTests": {
+    "passed": 16,
+    "report": "source-append-replay-tests.json"
+  },
+  "network": [
+    {
+      "mirror": false,
+      "sources": 64,
+      "closedWalks": 22,
+      "armSearchesDuringReuse": 0,
+      "maxAppendMilliseconds": 31.00239999999758,
+      "cycles": [
+        {
+          "sources": [
+            0,
+            17,
+            34
+          ],
+          "sets": 26,
+          "identitySets": 26,
+          "appendMilliseconds": 12.751900000002934
+        },
+        {
+          "sources": [
+            51,
+            4,
+            21
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 18.550400000007357
+        },
+        {
+          "sources": [
+            38,
+            55,
+            8
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 17.60020000001532
+        },
+        {
+          "sources": [
+            25,
+            42,
+            59
+          ],
+          "sets": 64,
+          "identitySets": 64,
+          "appendMilliseconds": 27.42949999999837
+        },
+        {
+          "sources": [
+            12,
+            29,
+            46
+          ],
+          "sets": 52,
+          "identitySets": 52,
+          "appendMilliseconds": 20.295799999992596
+        },
+        {
+          "sources": [
+            63,
+            16,
+            33
+          ],
+          "sets": 66,
+          "identitySets": 66,
+          "appendMilliseconds": 24.53859999999986
+        },
+        {
+          "sources": [
+            50,
+            3,
+            20
+          ],
+          "sets": 32,
+          "identitySets": 32,
+          "appendMilliseconds": 13.619500000000698
+        },
+        {
+          "sources": [
+            37,
+            54,
+            7
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 16.825400000001537
+        },
+        {
+          "sources": [
+            24,
+            41,
+            58
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 23.68630000000121
+        },
+        {
+          "sources": [
+            11,
+            28,
+            45
+          ],
+          "sets": 72,
+          "identitySets": 72,
+          "appendMilliseconds": 25.885200000018813
+        },
+        {
+          "sources": [
+            62,
+            15,
+            32
+          ],
+          "sets": 58,
+          "identitySets": 58,
+          "appendMilliseconds": 22.560900000011316
+        },
+        {
+          "sources": [
+            49,
+            2,
+            19
+          ],
+          "sets": 30,
+          "identitySets": 30,
+          "appendMilliseconds": 12.778300000005402
+        },
+        {
+          "sources": [
+            36,
+            53,
+            6
+          ],
+          "sets": 36,
+          "identitySets": 36,
+          "appendMilliseconds": 15.826100000005681
+        },
+        {
+          "sources": [
+            23,
+            40,
+            57
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 23.704500000021653
+        },
+        {
+          "sources": [
+            10,
+            27,
+            44
+          ],
+          "sets": 72,
+          "identitySets": 72,
+          "appendMilliseconds": 31.00239999999758
+        },
+        {
+          "sources": [
+            61,
+            14,
+            31
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 23.578000000008615
+        },
+        {
+          "sources": [
+            48,
+            1,
+            18
+          ],
+          "sets": 32,
+          "identitySets": 32,
+          "appendMilliseconds": 14.260700000013458
+        },
+        {
+          "sources": [
+            35,
+            52,
+            5
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 25.315999999991618
+        },
+        {
+          "sources": [
+            22,
+            39,
+            56
+          ],
+          "sets": 60,
+          "identitySets": 60,
+          "appendMilliseconds": 28.766199999983655
+        },
+        {
+          "sources": [
+            9,
+            26,
+            43
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 19.74760000000242
+        },
+        {
+          "sources": [
+            60,
+            13,
+            30
+          ],
+          "sets": 66,
+          "identitySets": 66,
+          "appendMilliseconds": 23.426000000006752
+        },
+        {
+          "sources": [
+            47
+          ],
+          "sets": 2,
+          "identitySets": 2,
+          "appendMilliseconds": 0.10289999999804422
+        }
+      ]
+    },
+    {
+      "mirror": true,
+      "sources": 64,
+      "closedWalks": 22,
+      "armSearchesDuringReuse": 0,
+      "maxAppendMilliseconds": 38.20429999998305,
+      "cycles": [
+        {
+          "sources": [
+            0,
+            17,
+            34
+          ],
+          "sets": 26,
+          "identitySets": 26,
+          "appendMilliseconds": 12.32620000001043
+        },
+        {
+          "sources": [
+            51,
+            4,
+            21
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 20.986700000008568
+        },
+        {
+          "sources": [
+            38,
+            55,
+            8
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 18.99839999998221
+        },
+        {
+          "sources": [
+            25,
+            42,
+            59
+          ],
+          "sets": 64,
+          "identitySets": 64,
+          "appendMilliseconds": 25.65450000000419
+        },
+        {
+          "sources": [
+            12,
+            29,
+            46
+          ],
+          "sets": 52,
+          "identitySets": 52,
+          "appendMilliseconds": 24.699199999973644
+        },
+        {
+          "sources": [
+            63,
+            16,
+            33
+          ],
+          "sets": 66,
+          "identitySets": 66,
+          "appendMilliseconds": 26.06089999998221
+        },
+        {
+          "sources": [
+            50,
+            3,
+            20
+          ],
+          "sets": 32,
+          "identitySets": 32,
+          "appendMilliseconds": 15.42269999999553
+        },
+        {
+          "sources": [
+            37,
+            54,
+            7
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 20.897399999957997
+        },
+        {
+          "sources": [
+            24,
+            41,
+            58
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 26.956999999994878
+        },
+        {
+          "sources": [
+            11,
+            28,
+            45
+          ],
+          "sets": 72,
+          "identitySets": 72,
+          "appendMilliseconds": 27.341599999985192
+        },
+        {
+          "sources": [
+            62,
+            15,
+            32
+          ],
+          "sets": 58,
+          "identitySets": 58,
+          "appendMilliseconds": 24.918100000009872
+        },
+        {
+          "sources": [
+            49,
+            2,
+            19
+          ],
+          "sets": 30,
+          "identitySets": 30,
+          "appendMilliseconds": 18.362599999993108
+        },
+        {
+          "sources": [
+            36,
+            53,
+            6
+          ],
+          "sets": 36,
+          "identitySets": 36,
+          "appendMilliseconds": 15.053599999984726
+        },
+        {
+          "sources": [
+            23,
+            40,
+            57
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 28.870699999970384
+        },
+        {
+          "sources": [
+            10,
+            27,
+            44
+          ],
+          "sets": 72,
+          "identitySets": 72,
+          "appendMilliseconds": 27.38019999995595
+        },
+        {
+          "sources": [
+            61,
+            14,
+            31
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 24.020599999988917
+        },
+        {
+          "sources": [
+            48,
+            1,
+            18
+          ],
+          "sets": 32,
+          "identitySets": 32,
+          "appendMilliseconds": 14.973200000007637
+        },
+        {
+          "sources": [
+            35,
+            52,
+            5
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 26.565100000007078
+        },
+        {
+          "sources": [
+            22,
+            39,
+            56
+          ],
+          "sets": 60,
+          "identitySets": 60,
+          "appendMilliseconds": 26.600500000000466
+        },
+        {
+          "sources": [
+            9,
+            26,
+            43
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 38.20429999998305
+        },
+        {
+          "sources": [
+            60,
+            13,
+            30
+          ],
+          "sets": 66,
+          "identitySets": 66,
+          "appendMilliseconds": 34.000400000019
+        },
+        {
+          "sources": [
+            47
+          ],
+          "sets": 2,
+          "identitySets": 2,
+          "appendMilliseconds": 0.0744999999878928
+        }
+      ]
+    }
+  ],
+  "contracts": [
+    "Append preserves the input route, registry, accepted trajectories, and current preview.",
+    "Repeat counts are integers from 1 to 16; the full route including bridges is limited to 128 sets.",
+    "Missing transitions reject append instead of creating new motion. A separate explicit registration step prepares a new transition.",
+    "The selected source is joined through registered physical ports only, with no arm search or avatar validation during append.",
+    "UI previews added bridge/source sets and a possible return path with movement and ball-identity periods.",
+    "A generated transition purpose is display metadata, persists through save/restore, and does not bypass source validation.",
+    "Older documents without transition-purpose metadata still import and show all their sources."
+  ],
+  "staticChecks": {
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed",
+    "uniqueHtmlIds": 117,
+    "missingScriptTargets": 0,
+    "diffWhitespace": "passed"
+  },
+  "browser": {
+    "verified": false,
+    "reason": "Local browser access was previously rejected by URL safety policy; no alternate access was attempted.",
+    "pending": [
+      "Motion/repeat selection and return preview",
+      "Append and undo including bridges",
+      "Transition visibility after save/restore",
+      "Rendered appearance and mobile layout"
+    ]
+  }
+}

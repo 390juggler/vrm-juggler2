@@ -1,0 +1,266 @@
+{
+  "source": "https://drive.google.com/file/d/1fFPsxH-jKZ-HuEZg3YjEko07Fli0ZDkb/view",
+  "duration": 9.083,
+  "frames": [
+    {
+      "requestedMilliseconds": 500,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 0.5,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-500.png"
+    },
+    {
+      "requestedMilliseconds": 750,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 0.75,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-750.png"
+    },
+    {
+      "requestedMilliseconds": 1000,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1000.png"
+    },
+    {
+      "requestedMilliseconds": 1250,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.25,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1250.png"
+    },
+    {
+      "requestedMilliseconds": 1100,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.1,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1100.png"
+    },
+    {
+      "requestedMilliseconds": 1200,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.2,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1200.png"
+    },
+    {
+      "requestedMilliseconds": 1300,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.3,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1300.png"
+    },
+    {
+      "requestedMilliseconds": 1400,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.4,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1400.png"
+    },
+    {
+      "requestedMilliseconds": 1500,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.5,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1500.png"
+    },
+    {
+      "requestedMilliseconds": 1600,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.6,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1600.png"
+    },
+    {
+      "requestedMilliseconds": 1700,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.7,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1700.png"
+    },
+    {
+      "requestedMilliseconds": 1800,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.8,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1800.png"
+    },
+    {
+      "requestedMilliseconds": 1900,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 1.9,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-1900.png"
+    },
+    {
+      "requestedMilliseconds": 2000,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 2,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-2000.png"
+    },
+    {
+      "requestedMilliseconds": 2100,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 2.1,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-2100.png"
+    },
+    {
+      "requestedMilliseconds": 2200,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 2.2,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-2200.png"
+    },
+    {
+      "requestedMilliseconds": 2300,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 2.3,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-2300.png"
+    },
+    {
+      "requestedMilliseconds": 2500,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 2.5,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-2500.png"
+    },
+    {
+      "requestedMilliseconds": 2700,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 2.7,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-2700.png"
+    },
+    {
+      "requestedMilliseconds": 3100,
+      "state": [
+        {
+          "height": 360,
+          "paused": true,
+          "ready": 4,
+          "time": 3.1,
+          "width": 360
+        }
+      ],
+      "path": "hf-crosses-3100.png"
+    }
+  ]
+}

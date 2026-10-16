@@ -1,0 +1,391 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "06E2C4C885DC1CE6AA44009CDDF1FA20041B782D7ED7BB97686B685DBA96CC73",
+  "sourceFiles": {
+    "dist/vrm-juggler.min.js": "06E2C4C885DC1CE6AA44009CDDF1FA20041B782D7ED7BB97686B685DBA96CC73",
+    "dist/models/default.vrm": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+    "dist/sync-compose.js": "EBBF927216F382932462E0AFC951062E671A0F12B1C590EE3DFC8548C75A84EC",
+    "dist/sync-compose.html": "66F099B30B07AD20071A58AF7610018F14C80264DB1FEE820A4E0A389D132403",
+    "src/index.ts": "8F57C6BC2E236ACBF73EBDD748A71A7E47025DC698805B0FA9853F44348126BA",
+    "src/motion/juggling/sync-basic-network.ts": "28854F8BBDB6450CD2775C30EA8CEE4C2AA85A1BF1EED5A74C0E1E9F5CCC4F77",
+    "src/motion/juggling/sync-transitions.ts": "45842D5FCB12EF287A31EBE898B7BFA5E20068EFF90BFA9B6A9929EC1A5D9CB3",
+    "src/motion/juggling/sync-sequence.ts": "32B32C06A9E2C4008853F23676070DC1F295A1B68CF893D4F9A413504525C42D",
+    "src/motion/juggling/sync-replay.ts": "191971D01F4E2209D9B5C188C165A272A4B5E132C728BEAA3C34A0BD3FFA7CAD",
+    "test/sync-network-upgrade.test.ts": "CC96CDF98A94D5BF9E357CBC258309252CB192EDAA861234584A1F7045EE037C",
+    "test/sync-component-graph.test.ts": "6A4CE605028DEC5964C5B9241A05B647AEE54F72588CDA6543637F03EC0F50ED",
+    "test/sync-connection-recipes.test.ts": "C0A1DC6677C0A4994007C7FB96DBCC0E0E3587040BAB3F1EEA0C3233D7CFA43B"
+  },
+  "targetedTests": {
+    "passed": 572,
+    "failed": 0,
+    "reports": [
+      "underarm-expanded-network-targeted-tests.json",
+      "underarm-expanded-core-tests.json",
+      "underarm-expanded-regression-tests.json",
+      "underarm-expanded-upgrade-tests.json"
+    ]
+  },
+  "typecheck": "passed",
+  "build": "passed",
+  "fixedUnderarmConnections": [
+    {
+      "name": "hf-fixed-uai-0.25",
+      "mirror": false,
+      "beat": 0.25,
+      "forward": 6,
+      "backward": 6,
+      "sets": 18,
+      "identitySets": 18,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "hf-fixed-uai-0.25",
+      "mirror": true,
+      "beat": 0.25,
+      "forward": 6,
+      "backward": 6,
+      "sets": 18,
+      "identitySets": 18,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "hf-fixed-uai-0.3",
+      "mirror": false,
+      "beat": 0.3,
+      "forward": 4,
+      "backward": 4,
+      "sets": 14,
+      "identitySets": 42,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "hf-fixed-uai-0.3",
+      "mirror": true,
+      "beat": 0.3,
+      "forward": 4,
+      "backward": 4,
+      "sets": 14,
+      "identitySets": 42,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "networks": [
+    {
+      "name": "hf-underarm",
+      "mirror": false,
+      "beat": 0.25,
+      "sources": [
+        "ボックス",
+        "リバースシャッフル往復",
+        "HF / Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Inverted-Box*",
+        "2xの役割を固定 / 左 下→下",
+        "2xの役割を固定 / 左 上→上",
+        "HF / Reverse-Under-Arm-Inverted-Box（役割固定）",
+        "コラムと2の保持 / Box Roll",
+        "HF / Under-Arm-Claw-Box*",
+        "HF / Double Under-Arm-Claw-Box"
+      ],
+      "paths": [
+        {
+          "to": 1,
+          "forward": 4,
+          "backward": 4,
+          "sets": 12
+        },
+        {
+          "to": 2,
+          "forward": 8,
+          "backward": 8,
+          "sets": 20
+        },
+        {
+          "to": 3,
+          "via": "リバースシャッフル往復",
+          "forward": 8,
+          "backward": 10,
+          "sets": 22
+        },
+        {
+          "to": 4,
+          "via": "HF / Reverse-Under-Arm-Box*",
+          "forward": 12,
+          "backward": 14,
+          "sets": 30
+        },
+        {
+          "to": 5,
+          "forward": 3,
+          "backward": 4,
+          "sets": 12
+        },
+        {
+          "to": 6,
+          "forward": 5,
+          "backward": 6,
+          "sets": 16
+        },
+        {
+          "to": 7,
+          "via": "2xの役割を固定 / 左 上→上",
+          "forward": 11,
+          "backward": 12,
+          "sets": 28
+        },
+        {
+          "to": 8,
+          "forward": 6,
+          "backward": 6,
+          "sets": 26
+        },
+        {
+          "to": 9,
+          "forward": 8,
+          "backward": 8,
+          "sets": 20
+        },
+        {
+          "to": 10,
+          "forward": 12,
+          "backward": 8,
+          "sets": 26
+        }
+      ],
+      "cycles": [
+        {
+          "order": [
+            2,
+            4,
+            3,
+            1,
+            0
+          ],
+          "sets": 52,
+          "identitySets": 52
+        },
+        {
+          "order": [
+            4,
+            2,
+            0,
+            3,
+            1
+          ],
+          "sets": 62,
+          "identitySets": 62
+        },
+        {
+          "order": [
+            7,
+            9,
+            0
+          ],
+          "sets": 45,
+          "identitySets": 45
+        },
+        {
+          "order": [
+            10,
+            8,
+            9
+          ],
+          "sets": 34,
+          "identitySets": 102
+        }
+      ],
+      "registeredTransitions": 10,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "restoredSets": 34,
+      "batchSteps": 21,
+      "batchPublishedAtomically": true,
+      "cancelPreservesRegistry": true,
+      "differentTempoPreservesRegistry": true,
+      "repeatedBatchAddedSources": 0
+    },
+    {
+      "name": "hf-underarm",
+      "mirror": true,
+      "beat": 0.25,
+      "sources": [
+        "ボックス",
+        "リバースシャッフル往復",
+        "HF / Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Inverted-Box*",
+        "2xの役割を固定 / 左 下→下",
+        "2xの役割を固定 / 左 上→上",
+        "HF / Reverse-Under-Arm-Inverted-Box（役割固定）",
+        "コラムと2の保持 / Box Roll",
+        "HF / Under-Arm-Claw-Box*",
+        "HF / Double Under-Arm-Claw-Box"
+      ],
+      "paths": [
+        {
+          "to": 1,
+          "forward": 4,
+          "backward": 4,
+          "sets": 12
+        },
+        {
+          "to": 2,
+          "forward": 8,
+          "backward": 8,
+          "sets": 20
+        },
+        {
+          "to": 3,
+          "via": "リバースシャッフル往復",
+          "forward": 8,
+          "backward": 10,
+          "sets": 22
+        },
+        {
+          "to": 4,
+          "via": "HF / Reverse-Under-Arm-Box*",
+          "forward": 12,
+          "backward": 14,
+          "sets": 30
+        },
+        {
+          "to": 5,
+          "forward": 3,
+          "backward": 4,
+          "sets": 12
+        },
+        {
+          "to": 6,
+          "forward": 5,
+          "backward": 6,
+          "sets": 16
+        },
+        {
+          "to": 7,
+          "via": "2xの役割を固定 / 左 上→上",
+          "forward": 11,
+          "backward": 12,
+          "sets": 28
+        },
+        {
+          "to": 8,
+          "forward": 6,
+          "backward": 6,
+          "sets": 26
+        },
+        {
+          "to": 9,
+          "forward": 8,
+          "backward": 8,
+          "sets": 20
+        },
+        {
+          "to": 10,
+          "forward": 12,
+          "backward": 8,
+          "sets": 26
+        }
+      ],
+      "cycles": [
+        {
+          "order": [
+            2,
+            4,
+            3,
+            1,
+            0
+          ],
+          "sets": 52,
+          "identitySets": 52
+        },
+        {
+          "order": [
+            4,
+            2,
+            0,
+            3,
+            1
+          ],
+          "sets": 62,
+          "identitySets": 62
+        },
+        {
+          "order": [
+            7,
+            9,
+            0
+          ],
+          "sets": 45,
+          "identitySets": 45
+        },
+        {
+          "order": [
+            10,
+            8,
+            9
+          ],
+          "sets": 34,
+          "identitySets": 102
+        }
+      ],
+      "registeredTransitions": 10,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "restoredSets": 34,
+      "batchSteps": 21,
+      "batchPublishedAtomically": true,
+      "cancelPreservesRegistry": true,
+      "differentTempoPreservesRegistry": true,
+      "repeatedBatchAddedSources": 0
+    }
+  ],
+  "oldRegistryUpgrade": [
+    {
+      "mirror": false,
+      "oldSources": 9,
+      "addedSources": 6,
+      "addedTransitions": 6,
+      "newSources": 21,
+      "connectedMotions": 11,
+      "oldCycleSets": 48,
+      "oldCyclePoseSamplesUnchanged": 240,
+      "restoredAfterUpgrade": true
+    },
+    {
+      "mirror": true,
+      "oldSources": 9,
+      "addedSources": 6,
+      "addedTransitions": 6,
+      "newSources": 21,
+      "connectedMotions": 11,
+      "oldCycleSets": 48,
+      "oldCyclePoseSamplesUnchanged": 240,
+      "restoredAfterUpgrade": true
+    }
+  ],
+  "sourceMotionComparisons": 250,
+  "comparison": "underarm-expanded-accepted-track-comparison.json",
+  "prior90MotionValidation": {
+    "report": "sync-authored-connections-audit.json",
+    "bundleSha256": "4F2ED8196A72CABE7AD8F95F19949102F6A9B3E45D5DC95B74814B68C3A7094C",
+    "rerunOnThisBundle": false,
+    "guard": "New fixed bridge rejects all 90 source definitions; the basicNetworkPlan body is unchanged."
+  },
+  "previousFullSuite": {
+    "passed": 1599,
+    "report": "test-results.json",
+    "bundleSha256": "F943457CF2DA536E44169F4DEFB0551C2D0EF0129C4829ADF956A7488FA8C3E0"
+  },
+  "editor": {
+    "group": "HFの腕下・クロー・役割固定 / 11動作",
+    "secondsPerSet": 0.5,
+    "steps": 21,
+    "htmlIds": 129,
+    "renderedAcceptance": "Not verified: prior browser auto-review rejection remains in force."
+  },
+  "limitations": [
+    "Separate from the 90-motion group at 0.41 seconds per set.",
+    "The 40 unfitted height configurations, fixed underarm claw connection and four unresolved HF source categories remain.",
+    "Targeted tests do not replace the older full-suite report."
+  ]
+}

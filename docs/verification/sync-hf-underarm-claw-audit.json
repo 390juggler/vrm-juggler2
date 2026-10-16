@@ -1,0 +1,173 @@
+{
+  "date": "2026-10-15",
+  "template": "example:40",
+  "sourceKey": "under-arm-claw-box*",
+  "bundleSha256": "39BBFF35770452006D1C09D82A81BDFAD888688ABFA434532F512305D71D836B",
+  "sourceAudit": "hf-underarm-claw-playback-audit.json",
+  "sourceStructureReviewed": true,
+  "exactSourceMotionVerified": false,
+  "automated": {
+    "testsPassed": 1183,
+    "rigCases": [
+      {
+        "id": "sequence-40",
+        "mirror": false,
+        "planned": true,
+        "plan": {
+          "keyCount": 122,
+          "wristStep": 0.03918461282356738
+        },
+        "grip": 7.021666937153402e-16,
+        "orientationError": 2.1073424255447017e-08,
+        "arm": 0.14173845874169597,
+        "ball": 0.07449722888207817,
+        "speed": 4.219158932927103,
+        "angularSpeed": [
+          17.606159597067165,
+          35.351778178284306,
+          24.973645310628527
+        ],
+        "elbowOut": 0.363438470508747,
+        "elbowRaise": 0.035917124782141485,
+        "armPhase": 0.776,
+        "ballPhase": 0.38,
+        "speedPhase": 0.588,
+        "minCrossGap": null,
+        "maxCrossGap": null,
+        "relations": [
+          {
+            "kind": "release",
+            "hand": 1,
+            "horizontalDistance": 0.011424019000714847,
+            "verticalGap": 0.08587024831689116
+          },
+          {
+            "kind": "release",
+            "hand": 0,
+            "horizontalDistance": 0.011219493907890878,
+            "verticalGap": 0.08565636791527043
+          }
+        ],
+        "handoffOrders": [],
+        "posture": {
+          "ok": true,
+          "torso": 1.0226142757591894,
+          "behind": 0.08253362661111234,
+          "side": 0.1502003627204283,
+          "height": 0.02808353060650437,
+          "wristBend": 1.4616902984355005,
+          "elbowFlex": 2.0835815059759475,
+          "phase": 0
+        }
+      },
+      {
+        "id": "sequence-40",
+        "mirror": true,
+        "planned": true,
+        "plan": {
+          "keyCount": 122,
+          "wristStep": 0.03918461282356738
+        },
+        "grip": 5.389157964038493e-16,
+        "orientationError": 2.1073424255447017e-08,
+        "arm": 0.14173845874169597,
+        "ball": 0.07449722888207799,
+        "speed": 4.219158932927105,
+        "angularSpeed": [
+          17.606159597067165,
+          35.351778178285095,
+          24.973645310628527
+        ],
+        "elbowOut": 0.363438470508747,
+        "elbowRaise": 0.03591712478214171,
+        "armPhase": 0.776,
+        "ballPhase": 0.38,
+        "speedPhase": 0.588,
+        "minCrossGap": null,
+        "maxCrossGap": null,
+        "relations": [
+          {
+            "kind": "release",
+            "hand": 0,
+            "horizontalDistance": 0.011424019000714847,
+            "verticalGap": 0.08587024831689116
+          },
+          {
+            "kind": "release",
+            "hand": 1,
+            "horizontalDistance": 0.011219493907890878,
+            "verticalGap": 0.08565636791527043
+          }
+        ],
+        "handoffOrders": [],
+        "posture": {
+          "ok": true,
+          "torso": 1.0226142757591892,
+          "behind": 0.08253362661111233,
+          "side": 0.15020036272042817,
+          "height": 0.028083530606504148,
+          "wristBend": 1.4616902984355005,
+          "elbowFlex": 2.083581505975947,
+          "phase": 0
+        }
+      }
+    ],
+    "semanticTest": "HF腕下クローは2xを腕下から上げて反対の手でクロー捕球し、自己投げ4と区別する"
+  },
+  "connections": {
+    "published": false,
+    "experiments": [
+      {
+        "file": "../../tmp/box-reference/hf-underarm-claw-direct-connections.json",
+        "cases": 5,
+        "accepted": 0,
+        "rejections": {
+          "geometry": 5
+        }
+      },
+      {
+        "file": "../../tmp/box-reference/hf-underarm-claw-bridge-fits.json",
+        "cases": 24,
+        "accepted": 0,
+        "rejections": {
+          "no-feasible-pose": 1,
+          "geometry": 23
+        }
+      },
+      {
+        "file": "../../tmp/box-reference/hf-underarm-claw-blended-bridge-fits.json",
+        "cases": 18,
+        "accepted": 0,
+        "rejections": {
+          "geometry": 18
+        }
+      },
+      {
+        "file": "../../tmp/box-reference/hf-underarm-claw-separated-bridge-fits.json",
+        "cases": 18,
+        "accepted": 0,
+        "rejections": {
+          "no-feasible-pose": 8,
+          "geometry": 10
+        }
+      },
+      {
+        "file": "../../tmp/box-reference/hf-underarm-claw-open-bridge-fits.json",
+        "cases": 18,
+        "accepted": 0,
+        "rejections": {
+          "geometry": 18
+        }
+      }
+    ],
+    "scope": "These failures describe the tested candidates, not a proof that the source techniques cannot be connected."
+  },
+  "browser": {
+    "status": "blocked",
+    "verified": false,
+    "url": "http://127.0.0.1:8080/sync-compose.html",
+    "operation": "cua.getTab on the existing in-app browser tab",
+    "reason": "Browser Use rejected this action due to browser security policy. The browser URL policy blocks this action. The requested URL protocol is not allowed. Allowed protocols: http:, https:.",
+    "followup": "No alternate browser surface or navigation workaround attempted. Manual or later authorized UI verification remains pending."
+  }
+}

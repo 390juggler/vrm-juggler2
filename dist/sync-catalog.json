@@ -1,0 +1,1761 @@
+{
+  "records": [
+    {
+      "id": "loj:Box",
+      "name": "Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Box.html",
+      "note": "通常のコラムと下の2x。",
+      "template": "preset:box"
+    },
+    {
+      "id": "loj:Luke%27sShuffle",
+      "name": "Luke's Shuffle / Drop Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Luke%27sShuffle.html",
+      "note": "上から下への2x。",
+      "template": "preset:shuffle"
+    },
+    {
+      "id": "loj:N-Box",
+      "name": "N-Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/N-Box.html",
+      "note": "ReverseとShuffleを交互に行う。",
+      "template": "preset:n-box"
+    },
+    {
+      "id": "loj:InvertedBox",
+      "name": "Inverted Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/InvertedBox.html",
+      "note": "上の2x。",
+      "template": "preset:inverted"
+    },
+    {
+      "id": "loj:SwitchedBox",
+      "name": "Switched Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/SwitchedBox.html",
+      "note": "反対側のコラムを担当する。",
+      "template": "preset:switched"
+    },
+    {
+      "id": "loj:ThreadedBox",
+      "name": "Threaded Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/ThreadedBox.html",
+      "note": "コラムを腕の下で捕る。HFのUA全種と同一とは扱わない。",
+      "template": "preset:underarm"
+    },
+    {
+      "id": "loj:ExtendedBox",
+      "name": "Extended Box / Double Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/ExtendedBox.html",
+      "note": "中央の4xを縦に保ち、外側の4を左右交代。",
+      "template": "example:4"
+    },
+    {
+      "id": "loj:TrueBox",
+      "name": "True Box / Box with a Lid",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/TrueBox.html",
+      "note": "縦上げ、高い横パス、縦下ろし、低い横パス。",
+      "template": "example:5"
+    },
+    {
+      "id": "loj:BizarreBox",
+      "name": "Bizarre Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/BizarreBox.html",
+      "note": "2Tの下へ反対の空の手を通し、投げた手自身が腕の下で捕る。次の2で運び戻してから2x。左右交代の6セット。",
+      "template": "example:10"
+    },
+    {
+      "id": "loj:BrokenBox",
+      "name": "Broken Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/BrokenBox.html",
+      "note": "両方の縦コラムを体の同じ側に置き、外側を反対の手が腕の下で扱う。左右反転で反対側へ。",
+      "template": "example:11"
+    },
+    {
+      "id": "loj:SwapBox",
+      "name": "Swap Box / High-Low Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/SwapBox.html",
+      "note": "高い6の下で左右同時の2xを交換する。参照図と高低関係を照合。",
+      "template": "example:3"
+    },
+    {
+      "id": "loj:Karas%27Box",
+      "name": "Karas' Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Karas%27Box.html",
+      "note": "腕の下で捕る2Tと腕の下から投げる2Tで、同じ手への自己投げを往復する。",
+      "template": "example:12"
+    },
+    {
+      "id": "loj:BurstBox",
+      "name": "Burst Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/BurstBox.html",
+      "note": "左右それぞれのBrokenを通常のBoxの横パスでつなぐ6セット。4xも球は縦に飛ぶ。",
+      "template": "example:13"
+    },
+    {
+      "id": "loj:Penman%27sBox",
+      "name": "Penman's Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Penman%27sBox.html",
+      "note": "2の保持球を降下中の内側コラムの上へ回し、外側へ運んでから2xを渡す。左右交代の4セット。",
+      "template": "example:14"
+    },
+    {
+      "id": "loj:UnderarmBox",
+      "name": "Underarm Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/UnderarmBox.html",
+      "note": "腕の下から4xを投げ、横パスを捕るために手を戻す。腕の下の捕球を含まない4セット。Threaded Boxと区別。",
+      "template": "example:15"
+    },
+    {
+      "id": "loj:Gilligan%27sBox",
+      "name": "Gilligan's Box",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Gilligan%27sBox.html",
+      "note": "内から外へのファウンテンと腕の下の捕球。2で球を保持したまま戻り、横パスを再開する6セット。",
+      "template": "example:16"
+    },
+    {
+      "id": "loj:Levels",
+      "name": "Levels",
+      "category": "名前のある技",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Levels.html",
+      "note": "三段のExtended Box。説明文の頂点捕球を採用。中央はクロー捕球、上段→中段→下段で受け渡す。",
+      "template": "example:28"
+    },
+    {
+      "id": "moore:High-Low Box",
+      "name": "High-Low Box",
+      "category": "ハイロー",
+      "status": "playable",
+      "source": "https://jugglingedge.com/forum.php?ThreadID=2281",
+      "note": "6と同時2xを含む4セット。",
+      "template": "example:3"
+    },
+    {
+      "id": "moore:High-Low Inverted Box",
+      "name": "High-Low Inverted Box",
+      "category": "ハイロー",
+      "status": "playable",
+      "source": "https://jugglingedge.com/forum.php?ThreadID=2281",
+      "note": "6を上から越す2xと、6の下の同時2x。",
+      "template": "example:6"
+    },
+    {
+      "id": "moore:High-Low-Around Inverted Box",
+      "name": "High-Low-Around Inverted Box",
+      "category": "ハイロー",
+      "status": "playable",
+      "source": "https://jugglingedge.com/forum.php?ThreadID=2281",
+      "note": "同時2xが飛行中の6を上下から挟む。",
+      "template": "example:8"
+    },
+    {
+      "id": "sync:columns3",
+      "name": "3球コラム / Columns",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/3balltricks/Columns.html",
+      "note": "(4,4)(4,0)。外側の2球と中央の1球を交互に投げる。中央は左手が担当し、反転で右手へ。",
+      "template": "example:30"
+    },
+    {
+      "id": "sync:fountain4",
+      "name": "4球の同期ファウンテン",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/SynchFountain.html",
+      "note": "(4,4)。同じ手へ戻る球を内から外へ回す。",
+      "template": "example:7"
+    },
+    {
+      "id": "sync:4球コラム / Four Ball Columns",
+      "name": "4球コラム / Four Ball Columns",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallColumns.html",
+      "note": "内側の2球と外側の2球を交互に投げる。4球とも縦の軌道を保つ。内外を片側ずつ組にするPistonsと区別。",
+      "template": "example:31"
+    },
+    {
+      "id": "sync:4 ball Box",
+      "name": "4 ball Box",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallBox.html",
+      "note": "同じ向きに2回ずつパス。6は内から外へ回す。動き4セット、同じ球まで8セット。",
+      "template": "example:17"
+    },
+    {
+      "id": "sync:Stacked Box",
+      "name": "Stacked Box",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallStackedBox.html",
+      "note": "同じ縦線に8と4を重ね、両方が同時に頂点に達する。4セット。",
+      "template": "example:18"
+    },
+    {
+      "id": "sync:Synchronous Pistons",
+      "name": "Synchronous Pistons",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/SynchPistons.html",
+      "note": "2組の同時投げが交互に並ぶ4本の縦線。位置が2セットで交代する。",
+      "template": "example:19"
+    },
+    {
+      "id": "sync:Wimpy",
+      "name": "Wimpy",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/Wimpy.html",
+      "note": "同時の4xを少し違う高さで交差させる。動き1セット、同じ球まで4セット。",
+      "template": "example:20"
+    },
+    {
+      "id": "sync:Reverse Synchronous Fountain",
+      "name": "Reverse Synchronous Fountain",
+      "category": "同期パターン",
+      "status": "playable",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/ReverseSynchFountain.html",
+      "note": "逆同期ファウンテン。両手の外から内へ同時に投げ、投げた手自身で捕る。動き1セット、同じ球まで2セット。",
+      "template": "example:23"
+    },
+    {
+      "id": "loj:FourBallTakeouts",
+      "name": "Four Ball Takeouts / 非同期・多重投げ",
+      "category": "関連技（非同期）",
+      "status": "reference",
+      "source": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallTakeouts.html",
+      "note": "以前のSynchronous Takeoutsという登録名を原資料に合わせて訂正。[43]23の非同期・多重投げであり、現在の同期セット列では未対応。"
+    },
+    {
+      "id": "hf:box",
+      "name": "HF / Box",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1QQkoauTwL6FfI1LUA54WVNZUzyWxpqW-/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "preset:shower"
+    },
+    {
+      "id": "hf:box*",
+      "name": "HF / Box*",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1P-CGom34uOIsP1M29ALWp-LJ9Y0DZ9OQ/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "preset:box"
+    },
+    {
+      "id": "hf:shuffle",
+      "name": "HF / Shuffle",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1wOJyXgSxrC_jsABhySA3D4zv8uQidFEn/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "preset:shower-shuffle"
+    },
+    {
+      "id": "hf:shuffle*",
+      "name": "HF / Shuffle*",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1HsNE90zg9wTi1nSC5_wIEALYaI-lhAIP/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "preset:shuffle"
+    },
+    {
+      "id": "hf:reverse-shuffle",
+      "name": "HF / Reverse-Shuffle",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1Hai_Rp2ZRzzl9iHD0TpXzHztUvCi3HRa/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "example:25"
+    },
+    {
+      "id": "hf:reverse-shuffle*",
+      "name": "HF / Reverse-Shuffle*",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/14jB-szzGLYsV_z7TQ4r-TdBubFmKxZ97/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "preset:reverse"
+    },
+    {
+      "id": "hf:inverted-box",
+      "name": "HF / Inverted-Box",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1AT8e0AnnDgpAjGsfh1vaEFoS6sYmZs7w/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "example:26"
+    },
+    {
+      "id": "hf:inverted-box*",
+      "name": "HF / Inverted-Box*",
+      "category": "HFの18分類",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1GHucs2GqkEQ_7GVRZWM4MLCCf3B6m-8i/preview",
+      "note": "基本動作を編集できる。HF原動画の全局面との一致とは区別する。",
+      "template": "preset:inverted"
+    },
+    {
+      "id": "hf:under-arm-box",
+      "name": "HF / UA-Box",
+      "category": "HFの18分類",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1S2Nknk3AA6tvbkPLOeuC1cAGGiKgNuUY/preview",
+      "note": "原表記を保持。星印の有無を区別し、原動画との一致を照合する。"
+    },
+    {
+      "id": "hf:under-arm-box*",
+      "name": "HF / UA-Box*",
+      "category": "HFの18分類",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1YjoNjbKNp_5xOvi3blrL7o-q5QFtMQz8/preview",
+      "note": "腕下から4を投げ、同じ手で内側に捕る。上の2xと捕球時刻を揃える2セット。腕下で捕るThreaded Boxとは区別。実演の局面を照合し、細かな時間・奥行きの一致は未検証。",
+      "template": "example:36"
+    },
+    {
+      "id": "hf:reverse-under-arm-box",
+      "name": "HF / Reverse-UA-Box",
+      "category": "HFの18分類",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/throws.html",
+      "note": "原表記を保持。星印の有無を区別し、原動画との一致を照合する。"
+    },
+    {
+      "id": "hf:reverse-under-arm-box*",
+      "name": "HF / Reverse-UA-Box*",
+      "category": "HFの18分類",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1viIYM9NSUUqLlPbPTsRVapxttrZZE3mb/preview",
+      "note": "下から高い位置へ2xを渡すとき、反対の手が自己投げ4を腕下で捕る。投げ側が腕下のUA-Box*とは区別。2セットで同じ球まで戻る。実演の局面を照合し、細かな時間・奥行きの一致は未検証。",
+      "template": "example:38"
+    },
+    {
+      "id": "hf:under-arm-inverted-box",
+      "name": "HF / UAI-Box",
+      "category": "HFの18分類",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/throws.html",
+      "note": "原表記を保持。星印の有無を区別し、原動画との一致を照合する。"
+    },
+    {
+      "id": "hf:under-arm-inverted-box*",
+      "name": "HF / UAI-Box*",
+      "category": "HFの18分類",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/throws.html",
+      "note": "原表記を保持。星印の有無を区別し、原動画との一致を照合する。"
+    },
+    {
+      "id": "hf:reverse-under-arm-inverted-box",
+      "name": "HF / Reverse-UAI-Box",
+      "category": "HFの18分類",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1qwWwuu752Xu7LM9PIm3TQY30TiAdzqkK/preview",
+      "note": "動画の向きでは左の高い2xと右の4xを固定。4xは体の反対側から反対の手へ横移動し、左手が右の前腕の下で捕る。動き1セット、同じ球まで3セット。通常の左2x固定Invertedとの往復は動き4セット・球識別12セット。原表の左右を反転して動画に対応。細かな寸法・奥行きの一致は未検証。",
+      "template": "example:47"
+    },
+    {
+      "id": "hf:reverse-under-arm-inverted-box*",
+      "name": "HF / Reverse-UAI-Box*",
+      "category": "HFの18分類",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1naqpwTQvu4FP5mUSZ5ZQrK8acXllQBuJ/preview",
+      "note": "高い2xを下から支えて受け渡し、反対側の縦4を同じ手で腕下に捕る。4を投げた空の手は自分側へ先に戻す。2セットで同じ球まで戻る。Reverse-UA-Box*との4セット往復見本あり。実演の局面を照合し、細かな時間・奥行きの一致は未検証。",
+      "template": "example:45"
+    },
+    {
+      "id": "hf:under-arm-claw-box",
+      "name": "HF / UA-Claw-Box",
+      "category": "HFの18分類",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1MZ-iXCCSqVAP8dz4ZiHwP5a8wTLuqb5y/preview",
+      "note": "左右の役割を固定。動画に合わせて左手が腕下から2xを上げ、右手がクロー捕球して4xで返す。4xの低い捕球は高い2x捕球より体の反対側に置く。動き1セット、同じ球まで3セット。細かな時間・奥行きの一致は未検証。試した他の型との接続は未成立。",
+      "template": "example:42"
+    },
+    {
+      "id": "hf:under-arm-claw-box*",
+      "name": "HF / UA-Claw-Box*",
+      "category": "HFの18分類",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1pK_2ki0ngCj-TW_DSiix4Oc0dS3_qnt1/preview",
+      "note": "2xを反対の前腕の下から上げ、その手が高い位置でクロー捕球する。4は同じ手で低く捕る。左右が4と2xを交代する2セットで、同じ球まで戻る。Box Rollとの接続と、ダブル型の開始セットをずらす6セット接続の見本あり。実演の局面を照合し、細かな時間・奥行きの一致は未検証。",
+      "template": "example:40"
+    },
+    {
+      "id": "hf-double:box_box*",
+      "name": "HF Double / box + box*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1I8rTL4FsXcTwFMttc4Htcp2YqtVWezDP/preview",
+      "note": "同じ手が4x、4を続けて投げ、左右を交代する4セット。2xは下→下。4xは横移動するため、中央の縦線を保つExtended Boxと区別する。既存Double Boxに対応し、通常Boxとの6セット往復見本あり。原動画の局面を照合し、細かな時刻・奥行きの一致は未検証。",
+      "template": "preset:double-box",
+      "component_refs": [
+        "hf:box",
+        "hf:box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "normal",
+          "selfSet": "normal"
+        }
+      }
+    },
+    {
+      "id": "hf-double:shuffle_box*",
+      "name": "HF Double / shuffle + box*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1k8ZNuu8OYlZ3EGWo20zfLpYfo2gL-pFT/preview",
+      "note": "4xと同時の2xはShuffleの上→下、自己4と同時の2xは下→下。Shuffleは下から支える手向きを明示する。4セット周期。部品欄のDoubleから作成でき、逆のBox+Shuffle型との8セット往復もある。23枚の実演フレームを照合し、細かな寸法・時刻は未検証。",
+      "template": "example:52",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "shuffle",
+          "selfSet": "normal"
+        }
+      }
+    },
+    {
+      "id": "hf-double:reverse-shuffle_box*",
+      "name": "HF Double / reverse-shuffle + box*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはReverse-Shuffle、自己4と組む2xはBox*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "reverse",
+          "selfSet": "normal"
+        }
+      }
+    },
+    {
+      "id": "hf-double:inverted-box_box*",
+      "name": "HF Double / inverted-box + box*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはInverted-Box、自己4と組む2xはBox*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "inverted",
+          "selfSet": "normal"
+        }
+      }
+    },
+    {
+      "id": "hf-double:under-arm-box_box*",
+      "name": "HF Double / under-arm-box + box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_box*",
+      "name": "HF Double / reverse-under-arm-box + box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1oijdtNQZ1f5FHW1gwRgFmfPgnHxOfspy/preview",
+      "note": "原表の組合せ。実演動画の局面照合が必要。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_box*",
+      "name": "HF Double / under-arm-inverted-box + box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_box*",
+      "name": "HF Double / under-arm-claw-box + box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:box*"
+      ]
+    },
+    {
+      "id": "hf-double:box_shuffle*",
+      "name": "HF Double / box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1TcAeiX32pP958ySDkzwc_jM6e-k58ZWA/preview",
+      "note": "4xと同時の2xは下→下、自己4と同時の2xはShuffleの上→下。Shuffleは下から支える手向きを明示する。4セット周期。Shuffle+Boxと同じ部品でも配置する局面が異なる。22枚の実演フレームを照合し、細かな寸法・時刻は未検証。",
+      "template": "example:53",
+      "component_refs": [
+        "hf:box",
+        "hf:shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "normal",
+          "selfSet": "shuffle"
+        }
+      }
+    },
+    {
+      "id": "hf-double:shuffle_shuffle*",
+      "name": "HF Double / shuffle + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1VBXkgpaYcIcitbSWYPokPwWf5FEly-EA/preview",
+      "note": "4xと組む2xはShuffle、自己4と組む2xはShuffle*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "shuffle",
+          "selfSet": "shuffle"
+        }
+      }
+    },
+    {
+      "id": "hf-double:reverse-shuffle_shuffle*",
+      "name": "HF Double / reverse-shuffle + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはReverse-Shuffle、自己4と組む2xはShuffle*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "reverse",
+          "selfSet": "shuffle"
+        }
+      }
+    },
+    {
+      "id": "hf-double:inverted-box_shuffle*",
+      "name": "HF Double / inverted-box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはInverted-Box、自己4と組む2xはShuffle*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "inverted",
+          "selfSet": "shuffle"
+        }
+      }
+    },
+    {
+      "id": "hf-double:under-arm-box_shuffle*",
+      "name": "HF Double / under-arm-box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_shuffle*",
+      "name": "HF Double / reverse-under-arm-box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_shuffle*",
+      "name": "HF Double / under-arm-inverted-box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_shuffle*",
+      "name": "HF Double / reverse-under-arm-inverted-box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_shuffle*",
+      "name": "HF Double / under-arm-claw-box + shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:box_reverse-shuffle*",
+      "name": "HF Double / box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1FGl6jnR9n4MwWr8gnz4P_nSVo8asFeLi/preview",
+      "note": "4xと同時の2xは下→下、自己4と同時の2xは下→上。4セットで同じ球まで戻る。Reverse同士のDoubleとの8セット往復あり。24枚の実演フレームで投げ先と高さを照合。捕球は標準設定を使い、実演の掌の細かな傾き・寸法・時刻の一致は未検証。",
+      "template": "example:55",
+      "component_refs": [
+        "hf:box",
+        "hf:reverse-shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "normal",
+          "selfSet": "reverse"
+        }
+      }
+    },
+    {
+      "id": "hf-double:shuffle_reverse-shuffle*",
+      "name": "HF Double / shuffle + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはShuffle、自己4と組む2xはReverse-Shuffle*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:reverse-shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "shuffle",
+          "selfSet": "reverse"
+        }
+      }
+    },
+    {
+      "id": "hf-double:reverse-shuffle_reverse-shuffle*",
+      "name": "HF Double / reverse-shuffle + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1E872nmikyPEpUJZEqiPVUZ4L-x9SY1Cg/preview",
+      "note": "4xと自己4の両局面で、2xを下から上へ渡す4セット周期。23枚の実演フレームで投げ先と高さを照合。部品欄で2種類とも下→上にすると作れる。捕球の掌の傾きは動画から断定せず、モデルでは標準設定を採用。手向きは別に変更して検査できる。",
+      "template": "example:56",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:reverse-shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "reverse",
+          "selfSet": "reverse"
+        }
+      }
+    },
+    {
+      "id": "hf-double:inverted-box_reverse-shuffle*",
+      "name": "HF Double / inverted-box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはInverted-Box、自己4と組む2xはReverse-Shuffle*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:reverse-shuffle*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "inverted",
+          "selfSet": "reverse"
+        }
+      }
+    },
+    {
+      "id": "hf-double:under-arm-box_reverse-shuffle*",
+      "name": "HF Double / under-arm-box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:reverse-shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_reverse-shuffle*",
+      "name": "HF Double / reverse-under-arm-box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:reverse-shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_reverse-shuffle*",
+      "name": "HF Double / under-arm-inverted-box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:reverse-shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_reverse-shuffle*",
+      "name": "HF Double / reverse-under-arm-inverted-box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:reverse-shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_reverse-shuffle*",
+      "name": "HF Double / under-arm-claw-box + reverse-shuffle*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:reverse-shuffle*"
+      ]
+    },
+    {
+      "id": "hf-double:box_inverted-box*",
+      "name": "HF Double / box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1nyOoCvcgXdb4YtRKUQuLhg6RXytYjmg_/preview",
+      "note": "同じ手が4x→4を続けてから左右交代する4セット。4xと同時の2xは下→下、自己4と同時の2xは上→上。部品欄のDoubleから2種類を指定して作れる。通常Boxとの6セット往復見本あり。23枚の原動画フレームで構造を照合し、寸法・時刻の完全一致は未検証。",
+      "template": "example:50",
+      "component_refs": [
+        "hf:box",
+        "hf:inverted-box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "normal",
+          "selfSet": "inverted"
+        }
+      }
+    },
+    {
+      "id": "hf-double:shuffle_inverted-box*",
+      "name": "HF Double / shuffle + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはShuffle、自己4と組む2xはInverted-Box*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:inverted-box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "shuffle",
+          "selfSet": "inverted"
+        }
+      }
+    },
+    {
+      "id": "hf-double:reverse-shuffle_inverted-box*",
+      "name": "HF Double / reverse-shuffle + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "4xと組む2xはReverse-Shuffle、自己4と組む2xはInverted-Box*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:inverted-box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "reverse",
+          "selfSet": "inverted"
+        }
+      }
+    },
+    {
+      "id": "hf-double:inverted-box_inverted-box*",
+      "name": "HF Double / inverted-box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "components",
+      "source": "https://drive.google.com/file/d/1WcHGgOIbzHyODSXHCRCEHQTnZOLUE2Jy/preview",
+      "note": "4xと組む2xはInverted-Box、自己4と組む2xはInverted-Box*。Double部品で4セットの候補を作れる。標準の手向きを使うため、原動画の手向き・運びとの一致は未照合。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:inverted-box*"
+      ],
+      "builder": {
+        "kind": "double",
+        "parts": {
+          "crossSet": "inverted",
+          "selfSet": "inverted"
+        }
+      }
+    },
+    {
+      "id": "hf-double:under-arm-box_inverted-box*",
+      "name": "HF Double / under-arm-box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_inverted-box*",
+      "name": "HF Double / reverse-under-arm-box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_inverted-box*",
+      "name": "HF Double / under-arm-inverted-box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_inverted-box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_inverted-box*",
+      "name": "HF Double / under-arm-claw-box + inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:box_under-arm-box*",
+      "name": "HF Double / box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:shuffle_under-arm-box*",
+      "name": "HF Double / shuffle + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-shuffle_under-arm-box*",
+      "name": "HF Double / reverse-shuffle + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:inverted-box_under-arm-box*",
+      "name": "HF Double / inverted-box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-box_under-arm-box*",
+      "name": "HF Double / under-arm-box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_under-arm-box*",
+      "name": "HF Double / reverse-under-arm-box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/12voT4S1Ql-nXvqqKddPCrmQ5lvNI_jQw/preview",
+      "note": "原表の組合せ。実演動画の局面照合が必要。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_under-arm-box*",
+      "name": "HF Double / under-arm-inverted-box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_under-arm-box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_under-arm-box*",
+      "name": "HF Double / under-arm-claw-box + under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:box_reverse-under-arm-box*",
+      "name": "HF Double / box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:shuffle_reverse-under-arm-box*",
+      "name": "HF Double / shuffle + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-shuffle_reverse-under-arm-box*",
+      "name": "HF Double / reverse-shuffle + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:inverted-box_reverse-under-arm-box*",
+      "name": "HF Double / inverted-box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-box_reverse-under-arm-box*",
+      "name": "HF Double / under-arm-box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_reverse-under-arm-box*",
+      "name": "HF Double / reverse-under-arm-box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_reverse-under-arm-box*",
+      "name": "HF Double / under-arm-inverted-box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_reverse-under-arm-box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_reverse-under-arm-box*",
+      "name": "HF Double / under-arm-claw-box + reverse-under-arm-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:reverse-under-arm-box*"
+      ]
+    },
+    {
+      "id": "hf-double:box_under-arm-inverted-box*",
+      "name": "HF Double / box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:shuffle_under-arm-inverted-box*",
+      "name": "HF Double / shuffle + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-shuffle_under-arm-inverted-box*",
+      "name": "HF Double / reverse-shuffle + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:inverted-box_under-arm-inverted-box*",
+      "name": "HF Double / inverted-box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-box_under-arm-inverted-box*",
+      "name": "HF Double / under-arm-box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_under-arm-inverted-box*",
+      "name": "HF Double / reverse-under-arm-box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_under-arm-inverted-box*",
+      "name": "HF Double / under-arm-inverted-box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_under-arm-inverted-box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1NXUhWxuRQlP3dnqr6sp85-E3bYrB3X6V/preview",
+      "note": "原表の組合せ。実演動画の局面照合が必要。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_under-arm-inverted-box*",
+      "name": "HF Double / under-arm-claw-box + under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:shuffle_reverse-under-arm-inverted-box*",
+      "name": "HF Double / shuffle + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-shuffle_reverse-under-arm-inverted-box*",
+      "name": "HF Double / reverse-shuffle + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:inverted-box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / inverted-box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / under-arm-box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / reverse-under-arm-box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / under-arm-inverted-box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_reverse-under-arm-inverted-box*",
+      "name": "HF Double / under-arm-claw-box + reverse-under-arm-inverted-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:reverse-under-arm-inverted-box*"
+      ]
+    },
+    {
+      "id": "hf-double:box_under-arm-claw-box*",
+      "name": "HF Double / box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1uREsLkN1HgYCOZwNkPF6i3bsDEMeAaV8/preview",
+      "note": "原表の組合せ。実演動画の局面照合が必要。",
+      "component_refs": [
+        "hf:box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:shuffle_under-arm-claw-box*",
+      "name": "HF Double / shuffle + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:shuffle",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-shuffle_under-arm-claw-box*",
+      "name": "HF Double / reverse-shuffle + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-shuffle",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:inverted-box_under-arm-claw-box*",
+      "name": "HF Double / inverted-box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:inverted-box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-box_under-arm-claw-box*",
+      "name": "HF Double / under-arm-box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/18g2nOLdf2TYWfc_UDHRaPH_2djyJvUpu/preview",
+      "note": "原表の組合せ。実演動画の局面照合が必要。",
+      "component_refs": [
+        "hf:under-arm-box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-box_under-arm-claw-box*",
+      "name": "HF Double / reverse-under-arm-box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-inverted-box_under-arm-claw-box*",
+      "name": "HF Double / under-arm-inverted-box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:under-arm-inverted-box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:reverse-under-arm-inverted-box_under-arm-claw-box*",
+      "name": "HF Double / reverse-under-arm-inverted-box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "原表の組合せ。個別の実演動画リンクなし。",
+      "component_refs": [
+        "hf:reverse-under-arm-inverted-box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-double:under-arm-claw-box_under-arm-claw-box*",
+      "name": "HF Double / under-arm-claw-box + under-arm-claw-box*",
+      "category": "HFの81組合せ",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/11N0s9rDO9RxqP-hzdHYDswdOpptV-Y-D/preview",
+      "note": "高い投げを右4x→右4→左4x→左4の順に行い、毎セット2xを腕下からクローへ渡す。動きと同じ球が4セットで戻る。3セット目から始めると交代型の腕下クローと6セットで往復できる。低い捕球位置は単独の役割固定型と異なる。原動画の局面を照合し、細かな時間・奥行きの一致は未検証。",
+      "template": "example:43",
+      "component_refs": [
+        "hf:under-arm-claw-box",
+        "hf:under-arm-claw-box*"
+      ]
+    },
+    {
+      "id": "hf-extra:roll-in",
+      "name": "HF / Roll-In",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1jK_KISr52RT5gi6e0211DnW-Q1OMNSwI/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:roll-in*",
+      "name": "HF / Roll-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1iBD_hWSFMALUVf-x7f5fuEzu06CgZcuu/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:roll-out",
+      "name": "HF / Roll-Out",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1yarDe6j6UjYwEj64F5fjm83Awzm9nz7-/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:roll-out*",
+      "name": "HF / Roll-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/195j_mEZNfubB4f_CfyBYpXsaoRKkpf5B/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:take-in*",
+      "name": "HF / Take-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1waoXBgNe9HMaf3Ihwt-6hhZvma3I-Twe/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:take-out*",
+      "name": "HF / Take-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/13B2-X-1NSAOcFZ1owvjkVtJssYkA8-hQ/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:box_roll-out*",
+      "name": "HF / Box Roll-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1lkDEGGDHiBrG8yDAw18KKUvyY2pDt1-i/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:shuffle_roll-out*",
+      "name": "HF / Shuffle Roll-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1hJVw8XdaKmU5gC1ZglNLOIhbuGxKxlVV/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:reverse-shuffle_roll-out*",
+      "name": "HF / Reverse-Shuffle Roll-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/11OZGvkpeyuHfRDDfnCxnNtzoR8eAKk_a/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:inverted-box_roll-out*",
+      "name": "HF / Inverted-Box Roll-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1tFp0BmDs_Yg_17u8iuS8snmSB4-jw_7Y/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:box_roll-in*",
+      "name": "HF / Box Roll-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1eKorkECwOlzJFO8no0WTa0fcvprK8WE-/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:shuffle_roll-in*",
+      "name": "HF / Shuffle Roll-in*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://henfish.github.io/juggling-database/tricks.html",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。 原資料の動画欄がURLではないため、資料一覧へリンクする。"
+    },
+    {
+      "id": "hf-extra:reverse-shuffle_roll-in*",
+      "name": "HF / Reverse-Shuffle Roll-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1qMt6CJ_6kkTyIUFjgiCha9QYn6zyRJ8r/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:inverted-box_roll-in*",
+      "name": "HF / Inverted-Box Roll-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1g6lLURZlWeYGwdO1rUlAcUR6LtLqOxYB/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:box_take-in*",
+      "name": "HF / Box Take-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1ghvNXxQJ20_7qda9JoYXDlFfq5f4_gAg/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:shuffle_take-in*",
+      "name": "HF / Shuffle Take-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1wY60SRJCtK-68ma10ycwHCYjhYEJ4lr1/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:reverse-shuffle_take-in*",
+      "name": "HF / Reverse-Shuffle Take-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1LMrDp7603FHDMaY0HBgVDYkhjDkQIYph/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:inverted-box_take-in*",
+      "name": "HF / Inverted-Box Take-In*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1MdiawQDFxL6r_rJXuxjInxvyEdSBmijo/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:box_take-out*",
+      "name": "HF / Box Take-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1PDE_heR6r97cVztn1VfyB31jqTgiNOb4/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:shuffle_take-out*",
+      "name": "HF / Shuffle Take-Out*",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1FM0Ih3I_LtD7OIWHBtV7P4ivBWLkyVEB/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:reverse-shuffle*_take-in",
+      "name": "HF / Reverse-Shuffle* Take-In",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1_HI8BgJGcvNeRQ0qABnLSVnwxcPEi2vR/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:reverse-shuffle*_take-out",
+      "name": "HF / Reverse-Shuffle* Take-Out",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1mvblw73sQmAOtG93bdFzGgZ9f0yjVVzu/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:older videos",
+      "name": "HF / Older Videos",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1UIpEXi8LR8NBDZJTwLH1UfLYkFG6e84_/preview",
+      "note": "過去の実演を集めた参照動画。単一の技名として扱わない。"
+    },
+    {
+      "id": "hf-extra:crosses*",
+      "name": "HF / Crosses*",
+      "category": "HFの追加資料",
+      "status": "playable",
+      "source": "https://drive.google.com/file/d/1fFPsxH-jKZ-HuEZg3YjEko07Fli0ZDkb/preview",
+      "note": "実演の局面から、腕下から縦に投げて反対の手で捕る4xと、上側で保持して運ぶ2を構成。動き2セット、同じ球まで6セット。実演と秒単位の完全一致は未検証。",
+      "template": "example:35"
+    },
+    {
+      "id": "hf-extra:shuffle_roll-in",
+      "name": "HF / Shuffle Roll-In",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1gEhoABBfE3qpI9MPI4QL0Y74cUe_7Sg3/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:shuffle*_roll-in",
+      "name": "HF / Shuffle* Roll-In",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1f3DWrl99YKzEmJYJHN1W5JeWegDg9LCq/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:box*_roll-in",
+      "name": "HF / Box* Roll-In",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/10OweASQ0d3ceTZg_9Wp2N65g-G6opbsh/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:shuffle*_roll-out",
+      "name": "HF / Shuffle* Roll-Out",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1vcb6enOUF54zObSZDCoaYA-nsHGVW50h/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    },
+    {
+      "id": "hf-extra:box*_roll-out",
+      "name": "HF / Box* Roll-Out",
+      "category": "HFの追加資料",
+      "status": "reference",
+      "source": "https://drive.google.com/file/d/1KL4jV85HFze2tyuzQ-a8bIpDZjukawnJ/preview",
+      "note": "HFの公開資料にある追加項目。原動作は未照合。"
+    }
+  ],
+  "dependencies": {
+    "basic_count": 18,
+    "unresolved_components": [
+      "hf:under-arm-box",
+      "hf:reverse-under-arm-box",
+      "hf:under-arm-inverted-box",
+      "hf:under-arm-inverted-box*"
+    ],
+    "combination_count": 81,
+    "combinations_with_unresolved_components": 33,
+    "editable_basic_combinations": 16
+  },
+  "boundary": "再生あり、部品対応、資料登録を区別する。全技を網羅した一覧ではなく、参照資料を照合する対象表。",
+  "guide": "sync-compose.md",
+  "browser_report": "verification/sync-sequence-browser-audit.json"
+}

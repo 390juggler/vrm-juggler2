@@ -1,0 +1,466 @@
+{
+  "date": "2026-10-15",
+  "template": "example:41",
+  "name": "Box Roll → HF Under-Arm-Claw-Box* → Box Roll",
+  "bundleSha256": "0858D7FB9B70AF50D456929F434116AB524C5FF291A1F3F8D4F568394AD767E6",
+  "analysis": {
+    "balls": 3,
+    "movementSets": 6,
+    "identitySets": 18,
+    "setDurationSeconds": 0.5,
+    "movementSeconds": 3,
+    "identitySeconds": 9,
+    "movementRepeatsToRestoreIdentities": 3
+  },
+  "sections": [
+    {
+      "sets": [
+        1,
+        4
+      ],
+      "source": "preset:box-roll"
+    },
+    {
+      "sets": [
+        5,
+        6
+      ],
+      "source": "example:40"
+    }
+  ],
+  "sequence": {
+    "version": 1,
+    "name": "Box Roll → HF Under-Arm-Claw-Box* → Box Roll",
+    "mirrorRepeat": false,
+    "beatDuration": 0.25,
+    "sets": [
+      {
+        "throws": [
+          "4",
+          "2x"
+        ],
+        "motion": {
+          "profileId": "box-roll",
+          "profileStep": 0,
+          "columns": "normal",
+          "short": [
+            "normal"
+          ]
+        },
+        "repeat": 1,
+        "sourceName": "コラムと2の保持 / Box Roll"
+      },
+      {
+        "throws": [
+          "4",
+          "2"
+        ],
+        "motion": {
+          "profileId": "box-roll",
+          "profileStep": 1,
+          "columns": "normal",
+          "short": [
+            "normal"
+          ]
+        },
+        "repeat": 1,
+        "sourceName": "コラムと2の保持 / Box Roll"
+      },
+      {
+        "throws": [
+          "2x",
+          "4"
+        ],
+        "motion": {
+          "profileId": "box-roll",
+          "profileStep": 2,
+          "columns": "normal",
+          "short": [
+            "normal"
+          ]
+        },
+        "repeat": 1,
+        "sourceName": "コラムと2の保持 / Box Roll"
+      },
+      {
+        "throws": [
+          "2",
+          "4"
+        ],
+        "motion": {
+          "profileId": "box-roll",
+          "profileStep": 3,
+          "columns": "normal",
+          "short": [
+            "normal"
+          ]
+        },
+        "repeat": 1,
+        "sourceName": "コラムと2の保持 / Box Roll"
+      },
+      {
+        "throws": [
+          "4",
+          "2x"
+        ],
+        "repeat": 1,
+        "motion": {
+          "columns": "normal",
+          "short": [
+            "vertical-up"
+          ],
+          "hands": [
+            {
+              "definition": {
+                "release": {
+                  "x": -0.16,
+                  "y": 0.08,
+                  "z": -0.3
+                },
+                "passage": {
+                  "at": 0.5
+                },
+                "catch": {
+                  "x": -0.04,
+                  "y": -0.08,
+                  "z": -0.3
+                },
+                "carry": {
+                  "route": "outside",
+                  "amount": 0.04
+                },
+                "emptyReturn": {
+                  "route": "front",
+                  "amount": 0.12
+                }
+              },
+              "releaseGrip": "underhand",
+              "catchGrip": "underhand"
+            },
+            {
+              "definition": {
+                "release": {
+                  "x": -0.14,
+                  "y": -0.12,
+                  "z": -0.22,
+                  "relation": "underarm"
+                },
+                "passage": {
+                  "at": 0.5
+                },
+                "catch": {
+                  "x": -0.14,
+                  "y": 0.28,
+                  "z": -0.3
+                },
+                "carry": {
+                  "route": "outside",
+                  "amount": 0.2,
+                  "via": [
+                    {
+                      "at": 0.5,
+                      "offset": [
+                        0,
+                        -0.18,
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "emptyReturn": {
+                  "route": "front",
+                  "amount": 0.06
+                }
+              },
+              "releaseGrip": "underhand",
+              "catchGrip": "overhand"
+            }
+          ]
+        },
+        "sourceName": "HF / Under-Arm-Claw-Box*"
+      },
+      {
+        "throws": [
+          "2x",
+          "4"
+        ],
+        "repeat": 1,
+        "motion": {
+          "columns": "normal",
+          "short": [
+            "vertical-up"
+          ],
+          "hands": [
+            {
+              "definition": {
+                "release": {
+                  "x": -0.14,
+                  "y": -0.12,
+                  "z": -0.22,
+                  "relation": "underarm"
+                },
+                "passage": {
+                  "at": 0.5
+                },
+                "catch": {
+                  "x": -0.14,
+                  "y": 0.28,
+                  "z": -0.3
+                },
+                "carry": {
+                  "route": "outside",
+                  "amount": 0.2,
+                  "via": [
+                    {
+                      "at": 0.5,
+                      "offset": [
+                        0,
+                        -0.18,
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "emptyReturn": {
+                  "route": "front",
+                  "amount": 0.06
+                }
+              },
+              "releaseGrip": "underhand",
+              "catchGrip": "overhand"
+            },
+            {
+              "definition": {
+                "release": {
+                  "x": -0.16,
+                  "y": 0.08,
+                  "z": -0.3
+                },
+                "passage": {
+                  "at": 0.5
+                },
+                "catch": {
+                  "x": -0.04,
+                  "y": -0.08,
+                  "z": -0.3
+                },
+                "carry": {
+                  "route": "outside",
+                  "amount": 0.04
+                },
+                "emptyReturn": {
+                  "route": "front",
+                  "amount": 0.12
+                }
+              },
+              "releaseGrip": "underhand",
+              "catchGrip": "underhand"
+            }
+          ]
+        },
+        "sourceName": "HF / Under-Arm-Claw-Box*"
+      }
+    ]
+  },
+  "geometry": {
+    "balls": 3,
+    "minBallDistance": 0.07524087612683598,
+    "minHandDistance": 0.10339168285495964,
+    "maxReachRatio": 0.9365395756394966,
+    "maxHandSpeed": 4.824781450274294,
+    "ownershipConflicts": 0,
+    "ballClearance": 0.005240876126835978,
+    "period": 9,
+    "ballPhase": 0.04555555555555556,
+    "handPhase": 0.7188888888888889,
+    "reachPhase": 0.023333333333333334,
+    "peakY": 1.811508503213815,
+    "geometryOK": true
+  },
+  "rigCases": [
+    {
+      "id": "sequence-41",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 243,
+        "wristStep": 0.16628989541027353
+      },
+      "grip": 7.216449660063518e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.11557238453213314,
+      "ball": 0.06594537694055087,
+      "speed": 3.6483627524516336,
+      "angularSpeed": [
+        17.856170088833245,
+        33.47360041988808,
+        24.973645310644095
+      ],
+      "elbowOut": 0.3883730817879423,
+      "elbowRaise": 0.037684036482314553,
+      "armPhase": 0.9124444444444444,
+      "ballPhase": 0.652,
+      "speedPhase": 0.6751111111111111,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.017788773013689786,
+          "verticalGap": 0.09278486599325131
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.02827649567400572,
+          "verticalGap": 0.10537007909564333
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.024135877517745322,
+          "verticalGap": 0.10021141677431755
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.027680224408494512,
+          "verticalGap": 0.1046110216831615
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.01778877301369123,
+          "verticalGap": 0.09278486599325309
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.028276495674005718,
+          "verticalGap": 0.10537007909564333
+        }
+      ],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.015345767618913,
+        "behind": 0.08311962989639676,
+        "side": 0.14827633264952395,
+        "height": 0.02648999569378163,
+        "wristBend": 1.4803381032542124,
+        "elbowFlex": 2.083581505975948,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-41",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 243,
+        "wristStep": 0.16628989541027356
+      },
+      "grip": 9.192921513844874e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.11557238453213317,
+      "ball": 0.06594537694055085,
+      "speed": 3.648362752451636,
+      "angularSpeed": [
+        17.856170088833245,
+        33.47360041988808,
+        24.973645310645207
+      ],
+      "elbowOut": 0.3883730817879423,
+      "elbowRaise": 0.037684036482314553,
+      "armPhase": 0.9124444444444444,
+      "ballPhase": 0.652,
+      "speedPhase": 0.6751111111111111,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.017788773013689786,
+          "verticalGap": 0.09278486599325131
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.02827649567400575,
+          "verticalGap": 0.10537007909564333
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.024135877517745572,
+          "verticalGap": 0.10021141677431777
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.027680224408494512,
+          "verticalGap": 0.1046110216831615
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.017788773013691368,
+          "verticalGap": 0.09278486599325331
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.028276495674005718,
+          "verticalGap": 0.10537007909564333
+        }
+      ],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0153457676189133,
+        "behind": 0.08311962989639676,
+        "side": 0.14827633264952414,
+        "height": 0.02648999569378163,
+        "wristBend": 1.4803381032542131,
+        "elbowFlex": 2.083581505975948,
+        "phase": 0
+      }
+    }
+  ],
+  "semanticChecks": [
+    "Both original sections keep their throw, catch and carry definitions.",
+    "The normal append/arrival-bridge editor operation, followed by a 0.5-second set time, produces the identical canonical structure.",
+    "All six underarm releases in the eighteen-set identity cycle belong to short 2x throws.",
+    "Two holding-2 rows per movement cycle retain their balls.",
+    "The final row connects back to the first row without extra bridge rows."
+  ],
+  "candidateSearch": {
+    "cases": 67,
+    "accepted": 1,
+    "rejected": {
+      "geometry": 53,
+      "no-feasible-pose": 6,
+      "schedule": 7
+    },
+    "source": "../../tmp/box-reference/hf-underarm-claw-all-direct-connections.json",
+    "scope": "Existing presets and three-ball examples may describe overlapping patterns; this is a candidate count, not a count of distinct named tricks."
+  },
+  "browser": {
+    "verified": false,
+    "status": "pending",
+    "reason": "The preceding browser attempt to open the local composer was rejected by its URL safety policy. No workaround or repeat browser attempt was made.",
+    "cycleExplanationText": "動きは6セット（3秒）で一周。同じ球の配置まで戻るには、この動きを3周（18セット・9秒）繰り返します。",
+    "textStatus": "Implemented; live rendering remains unverified."
+  },
+  "limits": [
+    "This proves the supplied avatar skeleton cycle, not mesh/clothing clearance or exact human source-motion fidelity.",
+    "The passing connection at a 0.5-second set time does not certify other combinations or tempos."
+  ],
+  "automatedTestsPassed": 1187,
+  "typecheck": "passed",
+  "build": "passed",
+  "editorJsSha256": "EAC5438E6B7F5FC1B12384BA1F1539D7600A6329C3EAFA3722D22B0311E8885B",
+  "editorHtmlSha256": "09CEB8883AB432571114F0713536581BC1439281162F9019F32CC4FBFD56E069"
+}

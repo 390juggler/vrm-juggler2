@@ -1,0 +1,189 @@
+{
+  "sourceKey": "under-arm-claw-box*",
+  "url": "https://drive.google.com/file/d/1pK_2ki0ngCj-TW_DSiix4Oc0dS3_qnt1/view",
+  "frames": [
+    {
+      "requestedMs": 200,
+      "file": "hf-underarm-claw-hd-200-confirmed.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.2,
+      "width": 1920
+    },
+    {
+      "requestedMs": 300,
+      "file": "hf-underarm-claw-hd-ready-300.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.3,
+      "width": 1920
+    },
+    {
+      "requestedMs": 400,
+      "file": "hf-underarm-claw-hd-ready-400.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.4,
+      "width": 1920
+    },
+    {
+      "requestedMs": 500,
+      "file": "hf-underarm-claw-hd-ready-500.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.5,
+      "width": 1920
+    },
+    {
+      "requestedMs": 600,
+      "file": "hf-underarm-claw-hd-600.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.6,
+      "width": 1920
+    },
+    {
+      "requestedMs": 700,
+      "file": "hf-underarm-claw-hd-700.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.7,
+      "width": 1920
+    },
+    {
+      "requestedMs": 800,
+      "file": "hf-underarm-claw-hd-800.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.8,
+      "width": 1920
+    },
+    {
+      "requestedMs": 900,
+      "file": "hf-underarm-claw-hd-900.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 0.9,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1000,
+      "file": "hf-underarm-claw-hd-1000.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1050,
+      "file": "hf-underarm-claw-hd-1050.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1.05,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1100,
+      "file": "hf-underarm-claw-hd-1100.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1.1,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1150,
+      "file": "hf-underarm-claw-hd-1150.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1.15,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1200,
+      "file": "hf-underarm-claw-hd-1200.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1.2,
+      "width": 1920
+    },
+    {
+      "requestedMs": 1300,
+      "file": "hf-underarm-claw-hd-1300.png",
+      "duration": 5.712107,
+      "height": 1080,
+      "paused": true,
+      "ready": 4,
+      "time": 1.3,
+      "width": 1920
+    }
+  ],
+  "loadingAttempts": [
+    {
+      "requestedMs": 200,
+      "file": "hf-underarm-claw-hd-200.png",
+      "duration": 5.712107,
+      "height": 0,
+      "paused": true,
+      "ready": 0,
+      "time": 0,
+      "width": 0
+    },
+    {
+      "requestedMs": 300,
+      "file": "hf-underarm-claw-hd-300.png",
+      "duration": 5.712107,
+      "height": 0,
+      "paused": true,
+      "ready": 0,
+      "time": 0,
+      "width": 0
+    },
+    {
+      "requestedMs": 400,
+      "file": "hf-underarm-claw-hd-400.png",
+      "duration": 5.712107,
+      "height": 0,
+      "paused": true,
+      "ready": 0,
+      "time": 0,
+      "width": 0
+    },
+    {
+      "requestedMs": 500,
+      "file": "hf-underarm-claw-hd-500.png",
+      "duration": 5.712107,
+      "height": 0,
+      "paused": true,
+      "ready": 0,
+      "time": 0,
+      "width": 0
+    }
+  ],
+  "scope": "Paused frames reviewed; full timing and depth reconstruction is not verified."
+}

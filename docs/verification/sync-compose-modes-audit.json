@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-16",
+  "scope": "Separate basic and connection workflows; human motion descriptions; visible validation and preview state",
+  "automated": {
+    "passed": 39,
+    "failed": 0,
+    "descriptionTests": 12,
+    "savedDocumentTests": 27,
+    "report": "compose-ui-tests.json"
+  },
+  "static": {
+    "htmlIds": 166,
+    "nesting": "passed",
+    "literalSelectors": "passed",
+    "modeContainment": "passed",
+    "ariaReferences": "passed",
+    "javascriptSyntax": "passed",
+    "typecheck": "passed"
+  },
+  "browser": {
+    "url": "http://127.0.0.1:8080/sync-compose.html",
+    "passed": true,
+    "checks": [
+      "Basic and connect panels exclusive, drafts retained on tab switch",
+      "Schedule passes while ball and arm remain untested after edits",
+      "Basic Box and both-hand Reverse descriptions match selection",
+      "Validated motion registration switches to connection mode",
+      "Missing transition shown before Box to Reverse registration",
+      "A to B and B to A transition registration: 4 sets each",
+      "8-set open route displays required 4-set return and disables playback",
+      "Closing yields 12-set motion and ball identity period; playback succeeds",
+      "JSON filename follows free display name; file import rechecks 3 source definitions and restores 12 segments",
+      "Autosaved route restored after page reload",
+      "Additional open route shows no contradictory raw closing error; undo restores 12 sets",
+      "Cross left-over upper-release failure shows continuity reason, phase and set 2; jump opens and focuses set 2",
+      "Failed candidate retains preceding playable route",
+      "Initial failure after reload reports stopped state, not loading",
+      "Global mirror changes status to untested and requires validation; both mirror states passed",
+      "Original user Cross left-over draft restored through file chooser",
+      "No console errors on final checked page"
+    ],
+    "screenshots": [
+      "sync-compose-modes-basic.jpg",
+      "sync-compose-modes-connect.jpg",
+      "sync-compose-modes-failure.jpg"
+    ],
+    "example": "sync-compose-modes-example.json"
+  },
+  "motionBundleUnchanged": true,
+  "hashes": {
+    "dist/sync-compose.html": "38DC3C3BB56D8FD5D919248E74B16CF513957E8E0387295F3B863D5705123F45",
+    "dist/sync-compose.js": "DE700AC3F4C290A8D74769AA084F1D182EA17926DAFD84AC65EC213D3E121F08",
+    "dist/sync-compose-ui.js": "C7C6039EB9C3BCD69BC5321F99C9329466117533560E37D12CEBAEB58C0D6CAC",
+    "dist/sync-compose.css": "CB1A7BF4851D6BF22686029598783B5AAA13141CA561758BCF97F2C2F01EDE29",
+    "dist/vrm-juggler.min.js": "2CAA7947C688DFFE3E1D914D6EB15A40F7E5E3F85E6D19485603A6E039D67B5D"
+  },
+  "limits": [
+    "This validates the revised workflows on the current model and desktop viewport; it does not close all reference-pattern coverage gaps."
+  ]
+}

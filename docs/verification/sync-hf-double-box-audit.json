@@ -1,0 +1,206 @@
+{
+  "date": "2026-10-15",
+  "bundleSha256": "362EEC19CE59558122DDB51E235ADD0CE0A6F7A5BDE6D5C596381F40F8FB3D9E",
+  "defaultVrmSha256": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+  "sourceKey": "box_box*",
+  "sourceUrl": "https://drive.google.com/file/d/1I8rTL4FsXcTwFMttc4Htcp2YqtVWezDP/preview",
+  "sourcePlaybackAudit": "hf-double-box-playback-audit.json",
+  "validSourceFrames": 17,
+  "excludedSourceSeeks": 2,
+  "template": "preset:double-box",
+  "connectionExampleIndex": 49,
+  "notation": "(4x,2x)(4,2x)(2x,4x)(2x,4)",
+  "notationInferredFromVideo": true,
+  "balls": 3,
+  "movementSets": 4,
+  "identitySets": 4,
+  "secondsPerSet": 0.41,
+  "cycleSeconds": 1.64,
+  "originalPresetChanged": false,
+  "connection": {
+    "fromExample": 0,
+    "toPreset": "double-box",
+    "movementSets": 6,
+    "identitySets": 6,
+    "cycleSeconds": 2.46,
+    "extraBridgeSets": 0,
+    "sourceDefinitionsPreserved": true
+  },
+  "motionContracts": [
+    "The high hand throws 4x then self 4 before changing sides; low underhand 2x transfers occur every set.",
+    "The 4x travels laterally between hand sides. The existing Extended Box example instead keeps its 4x on the central vertical line.",
+    "The six-set connection preserves both original Box rows and all four Double Box rows, including the seam back to Box."
+  ],
+  "realRigCases": [
+    {
+      "id": "double-box",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.033207764528930026
+      },
+      "grip": 7.135936359693696e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.09584989585052657,
+      "speed": 0.5236954137643198,
+      "angularSpeed": [
+        7.401211569590053,
+        10.45192640998416,
+        8.662744014014573
+      ],
+      "elbowOut": 0.1692815585749427,
+      "elbowRaise": -0.27495333319212256,
+      "armPhase": 0,
+      "ballPhase": 0.024390243902439025,
+      "speedPhase": 0.40487804878048783,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0652647067515146,
+        "behind": 0.08517767482058375,
+        "side": 0.19158713359062418,
+        "height": 0.2331360450421225,
+        "wristBend": 0.8725908860844181,
+        "elbowFlex": 1.7392371145149583,
+        "phase": 0
+      }
+    },
+    {
+      "id": "double-box",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.033207764528930026
+      },
+      "grip": 7.108895957933346e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.09584989585052645,
+      "speed": 0.5236954137643177,
+      "angularSpeed": [
+        7.401211569590053,
+        10.45192640998416,
+        8.662744014014573
+      ],
+      "elbowOut": 0.1692815585749427,
+      "elbowRaise": -0.27495333319212256,
+      "armPhase": 0,
+      "ballPhase": 0.524390243902439,
+      "speedPhase": 0.40487804878048783,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0652647067515146,
+        "behind": 0.08517767482058375,
+        "side": 0.19158713359062413,
+        "height": 0.2331360450421225,
+        "wristBend": 0.8725908860844183,
+        "elbowFlex": 1.7392371145149592,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-49",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.048164856812014004
+      },
+      "grip": 7.216449660063518e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.09584469726772608,
+      "speed": 0.5333379869519571,
+      "angularSpeed": [
+        7.469975311553085,
+        10.453883827440235,
+        8.665169400485391
+      ],
+      "elbowOut": 0.16928155857494273,
+      "elbowRaise": -0.274953325315652,
+      "armPhase": 0,
+      "ballPhase": 0.25365853658536586,
+      "speedPhase": 0.16910569105691056,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0649736718753193,
+        "behind": 0.08517767171340634,
+        "side": 0.19141230515841,
+        "height": 0.2331360371656519,
+        "wristBend": 0.8728013901602257,
+        "elbowFlex": 1.739264049464465,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-49",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 120,
+        "wristStep": 0.048164856812014
+      },
+      "grip": 7.216449660063518e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.27245347585244223,
+      "ball": 0.09584469726772617,
+      "speed": 0.5333379869519428,
+      "angularSpeed": [
+        7.469975311553085,
+        10.453883827442889,
+        8.665169400482187
+      ],
+      "elbowOut": 0.16928155857494273,
+      "elbowRaise": -0.274953325315652,
+      "armPhase": 0,
+      "ballPhase": 0.25365853658536586,
+      "speedPhase": 0.16910569105691056,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.0649736718753198,
+        "behind": 0.08517767171340629,
+        "side": 0.19141230515841012,
+        "height": 0.2331360371656519,
+        "wristBend": 0.872801390160226,
+        "elbowFlex": 1.739264049464464,
+        "phase": 0
+      }
+    }
+  ],
+  "automated": {
+    "fullSuitePassed": 1340,
+    "fullSuiteFailed": 0,
+    "rigCases": 260,
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed"
+  },
+  "browser": {
+    "verified": false,
+    "status": "pending",
+    "reason": "Prior local-composer access was rejected by browser URL safety policy; no workaround was attempted."
+  },
+  "limitations": [
+    "Source video supports the four-set structure and hand destinations; exact timing, depth, metric dimensions and elbow angles are not reconstructed.",
+    "The original thirty-seven presets retain their ball and hand paths. Current catalog expansion, six-set connection UI and rendered appearance remain unverified.",
+    "This basic Double mapping does not verify other entries in the author eighty-one-combination matrix."
+  ]
+}

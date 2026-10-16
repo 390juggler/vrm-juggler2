@@ -1,0 +1,27 @@
+{
+  "levels": {
+    "active": "セット25",
+    "top": -0.15625
+  },
+  "return": {
+    "active": "1–4：Extended Box / 中央コラムを保つDouble Box",
+    "top": 0.140625
+  },
+  "reload": {
+    "sameCanonical": true,
+    "rows": 48
+  },
+  "repeated": {
+    "active": "セット4",
+    "repeat": "3",
+    "top": 0.1875
+  },
+  "directJoin": {
+    "error": "この配置では、球・腕の干渉や無理な曲がりを避けて1周期をつなげられません。投げ・捕球位置か手の運びを調整してください。直前の配置を保持しています。",
+    "playing": "Extended Box → Levels → Extended Box",
+    "status": "この列は再生できません"
+  },
+  "bundleSha256": "1FFB94907EA11C8EFD41BFEC1F593E5CEC45884E1F448B1BF0BF87E0FD3400C0",
+  "editorSha256": "EA9107DFA8B557A917E1A56036DFDFED539B771FAA4555C3C185CC0A2BEAB9B6",
+  "editorCssSha256": "C985563327A7BE9433325923280D3616EC136809CFF82709F2707EBEEF6FFD86"
+}

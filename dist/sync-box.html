@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>コラムと2 — VRM 同期ボックス</title>
+  <link rel="stylesheet" href="./sync-box.css" />
+  <script src="./vrm-juggler.min.js"></script>
+  <script src="./sync-box.js" defer></script>
+</head>
+<body>
+  <main id="stage" aria-label="VRMのジャグリング表示">
+    <div class="caption"><span>VRM JUGGLER / SYNC</span><h1>コラムと2</h1><p>縦に動く4と、短い側の動きを組み合わせる。</p></div>
+    <div class="legend"><i class="column"></i>4側の飛行 <i class="short"></i>2側の飛行 <span>球の色は同じ球を追跡</span></div>
+  </main>
+  <aside aria-label="同期ボックスの操作">
+    <header><h2>同期ボックス</h2><a href="./sync-compose.html">セットで組む ↗</a><a href="./">通常版</a></header>
+    <label>パターン<select id="pattern"></select></label>
+    <p id="description" class="description"></p>
+    <p class="notation"><span id="siteswap"></span> <span id="kind"></span></p>
+    <div class="buttons"><button id="play" class="primary">一時停止</button><button id="step">コマ送り</button><button id="reset">先頭</button></div>
+    <label>速度 <output id="speed-value">0.50×</output><input id="speed" type="range" min="0.1" max="1.5" value="0.5" step="0.05" /></label>
+    <label>周期内の位置 <output id="phase-value">0%</output><input id="phase" type="range" min="0" max="1000" value="0" step="1" /></label>
+    <div class="checks"><label><input id="paths" type="checkbox" checked />飛行軌道</label><label><input id="mirror" type="checkbox" />左右反転</label></div>
+    <div class="buttons" id="views"><button data-view="front">正面</button><button data-view="diagonal">斜め</button><button data-view="side">横</button><button data-view="close">寄り</button></div>
+    <details id="custom"><summary>投げ・通過・捕り・運びを編集</summary>
+      <label>4の担当<select id="columns"><option value="normal">同じ側のコラム</option><option value="switched">反対側のコラム（Switched）</option><option value="underarm">コラムのアンダーアーム</option></select></label>
+      <label>クロスハンドの上下<select id="arm-order"><option value="none">クロスの指定なし</option><option value="left-over">左腕が上を維持</option><option value="right-over">右腕が上を維持</option><option value="alternate">左上・右上を交代</option></select></label>
+<label>球の配置<select id="arrangement"><option value="columns">左右のコラム</option><option value="inline">In-line 3・常に縦一列</option></select></label>
+      <label>コラムの上がり幅 <output id="rise-value">39 cm</output><input id="rise" type="range" min="24" max="60" value="39" step="1" /></label>
+      <p class="small">高さに合わせて投げの間隔も変わります。速度は動作全体のスロー再生です。</p>
+      <div id="motion-editors"></div>
+      <button id="apply">この組合せで再生</button><p class="small">中央・外側・反対側は縦2xの通る場所。投げと捕りのアンダーアームは別々に指定できます。組合せは下の検査と各視点で確認してください。</p>
+    </details>
+    <details id="program"><summary>4段階の位置を確認</summary><p class="small">ボタンでその瞬間に移動します。左右は演者から見た手です。</p><div id="program-steps"></div></details>
+    <section class="audit"><h3>軌道の確認</h3><p id="audit-status" role="status">モデル読込後に確認します。</p><dl id="audit-values"></dl><button id="inspect" disabled>1周期の骨格を検査</button><p id="skeleton-status" role="status"></p><dl id="skeleton-values"></dl><p class="small">骨格による間隔は近似です。袖や手の形は正面と斜めで確認してください。</p><details><summary>プリセットの一括検査</summary><button id="inspect-all">全プリセットと左右反転を検査</button><p id="batch-status" role="status"></p><a id="batch-download" hidden download="sync-box-audit.json">検査結果を保存</a></details></section>
+    <p id="error" role="alert"></p>
+    <a id="source" target="_blank" rel="noreferrer">動きの参照資料 ↗</a>
+    <label class="file">自分のVRMを読み込む<input id="model" type="file" accept=".vrm" /></label>
+    <p class="small">Space: 一時停止 / →: コマ送り<br />ドラッグで視点を回転、ホイールで拡大。</p>
+  </aside>
+</body>
+</html>

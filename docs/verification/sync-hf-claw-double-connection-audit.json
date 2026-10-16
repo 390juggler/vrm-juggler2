@@ -1,0 +1,210 @@
+{
+  "date": "2026-10-15",
+  "bundleSha256": "D0275BE6EB442976A28B6CD18C233DFC441F7C1A8686C6B4BA6D900D1DA90F7A",
+  "exampleIndex": 44,
+  "name": "HF Under-Arm-Claw-Box* → Double（セット3から） → Under-Arm-Claw-Box*",
+  "kind": "Constructed transition example; not claimed as an independently named source technique.",
+  "sourceExamples": [
+    40,
+    43
+  ],
+  "targetStartSet": 3,
+  "sequenceOrder": {
+    "first": [
+      1,
+      2
+    ],
+    "second": [
+      3,
+      4,
+      1,
+      2
+    ]
+  },
+  "movementSets": 6,
+  "identitySets": 6,
+  "secondsPerSet": 0.5,
+  "cycleSeconds": 3,
+  "bridgeSets": 0,
+  "construction": "Append the complete two-set alternating-claw cycle to the complete Double cycle rotated by two sets. All throw, catch, grip and carry definitions are preserved; both boundaries are inspected.",
+  "rejectedCandidates": {
+    "unrotatedDirect": "Arrival schedule fails for 40 -> 43.",
+    "unrotatedWithScheduleBridge": "Schedule passes, but minimum ball spacing is 0.03748 m, below 0.07 m.",
+    "otherSources": "Fixed-role claw and Box Roll candidates also failed schedule or geometry; these are not registered as working joins.",
+    "records": [
+      "../../tmp/box-reference/hf-double-claw-direct-connections.json",
+      "../../tmp/box-reference/hf-double-claw-schedule-connections.json",
+      "../../tmp/box-reference/hf-double-claw-rotated-connection.json"
+    ]
+  },
+  "realRigCases": [
+    {
+      "id": "sequence-44",
+      "mirror": false,
+      "planned": true,
+      "plan": {
+        "keyCount": 126,
+        "wristStep": 0.11578594035104992
+      },
+      "grip": 7.301351988545593e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.1368503226145342,
+      "ball": 0.07212118400360529,
+      "speed": 3.572912482077951,
+      "angularSpeed": [
+        15.51412565388784,
+        33.26718783261269,
+        24.973645310631866
+      ],
+      "elbowOut": 0.37954727947582456,
+      "elbowRaise": 0.03513415296916644,
+      "armPhase": 0.9186666666666666,
+      "ballPhase": 0.62,
+      "speedPhase": 0.028,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.014672775949539488,
+          "verticalGap": 0.08933600504736328
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.011583254087721822,
+          "verticalGap": 0.08603711529006408
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.014819965700469475,
+          "verticalGap": 0.08949608375834006
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.022499179740933125,
+          "verticalGap": 0.09823799175734305
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.014672775949539458,
+          "verticalGap": 0.08933600504736328
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.022499179740933288,
+          "verticalGap": 0.09823799175734327
+        }
+      ],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.016120186533036,
+        "behind": 0.09045431686441324,
+        "side": 0.1518624702736708,
+        "height": 0.027758253089220863,
+        "wristBend": 1.4666793745513433,
+        "elbowFlex": 2.083581505975948,
+        "phase": 0
+      }
+    },
+    {
+      "id": "sequence-44",
+      "mirror": true,
+      "planned": true,
+      "plan": {
+        "keyCount": 126,
+        "wristStep": 0.11578594035104992
+      },
+      "grip": 7.328010758342069e-16,
+      "orientationError": 2.1073424255447017e-08,
+      "arm": 0.13685032261453453,
+      "ball": 0.07212118400360529,
+      "speed": 3.5729124820779523,
+      "angularSpeed": [
+        15.51412565388605,
+        33.26718783261352,
+        24.973645310631866
+      ],
+      "elbowOut": 0.3795472794758247,
+      "elbowRaise": 0.03513415296916644,
+      "armPhase": 0.9186666666666666,
+      "ballPhase": 0.62,
+      "speedPhase": 0.36133333333333334,
+      "minCrossGap": null,
+      "maxCrossGap": null,
+      "relations": [
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.014672775949539068,
+          "verticalGap": 0.08933600504736283
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.011583254087721793,
+          "verticalGap": 0.08603711529006408
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.014819965700469447,
+          "verticalGap": 0.08949608375834006
+        },
+        {
+          "kind": "release",
+          "hand": 0,
+          "horizontalDistance": 0.02249917974093318,
+          "verticalGap": 0.09823799175734305
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.01467277594953965,
+          "verticalGap": 0.0893360050473635
+        },
+        {
+          "kind": "release",
+          "hand": 1,
+          "horizontalDistance": 0.02249917974093329,
+          "verticalGap": 0.09823799175734327
+        }
+      ],
+      "handoffOrders": [],
+      "posture": {
+        "ok": true,
+        "torso": 1.016120186533036,
+        "behind": 0.09045431686441319,
+        "side": 0.1518624702736708,
+        "height": 0.027758253089221085,
+        "wristBend": 1.4666793745513433,
+        "elbowFlex": 2.0835815059759475,
+        "phase": 0
+      }
+    }
+  ],
+  "fullSuitePassed": 1311,
+  "fullRigCases": 250,
+  "testReport": "test-results.json",
+  "rigReport": "sync-rig-audit.json",
+  "browser": {
+    "verified": false,
+    "reason": "Prior local-composer access was rejected by browser URL safety policy; no workaround or new local access was attempted.",
+    "pending": [
+      "Load example:44, play and mirror; inspect both section boundaries.",
+      "Load example:40, select example:43 / start set 3, append, and compare canonical structure to example:44.",
+      "Select default start set 1, append, reject the invalid physical join, then choose the offered example:44.",
+      "Restore the constructed six-set draft after reload."
+    ]
+  },
+  "limitations": [
+    "Measured skeleton clearance does not prove mesh/clothing clearance.",
+    "This phase-specific pair does not certify arbitrary joins or different tempos."
+  ]
+}

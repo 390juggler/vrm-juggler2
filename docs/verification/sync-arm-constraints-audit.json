@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "214BDB403B5842C5D2C612DF5415ED33CFA48FBCED949C32E65B0EAA69F9A403",
+  "sourceFiles": {
+    "dist/vrm-juggler.min.js": "214BDB403B5842C5D2C612DF5415ED33CFA48FBCED949C32E65B0EAA69F9A403",
+    "dist/models/default.vrm": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+    "dist/sync-compose.js": "13EC16B1F4B482BE49C2D39BB687EB5CB2D5249F191A83E55C52CAA69618A782",
+    "dist/sync-compose.html": "C2DC3EA120D5CE982097551A859B8D61D33A2F968162EA51202CD22768FC4E75",
+    "src/motion/inspection.ts": "BE7773EA193C257631797A761CCC3C2E966D5A99A01F44CC2785E1ACBD750A86",
+    "src/motion/body/index.ts": "BE09F3FB13B791EC1DFA8CFC83E47010EF36B3790DC5780A741CA32E2E7D7031",
+    "src/motion/juggling/sync-validation.ts": "4C6024729D6D9A75A5D821D0954F326918B380338E6662C533505215CB1299F5",
+    "src/index.ts": "7809B9ECA2E2ABF14FE7DB69FB049D76B9D61286BCF9A2894BBC3F4147D2CFFC",
+    "test/inspection.test.ts": "054CA950710942371B7ED467FC5B1AA9D784AAD86354E97B69F9857872ACBED7",
+    "test/sync-validation.test.ts": "3F612496DF416DB1B932ABA345740DDE080F17C4BE2B0E7F4775EE6C6C7C2612",
+    "test/sync-arm-failure.test.ts": "48E51F2D96C3E5FD3EE4BB7BFA0C02B026C6016D3C522ED9C743A29086CC35CF",
+    "test/sync-vrm.test.ts": "FFFDB22F822167D6E9926CC586B12A9906BAB8B7E05C945426B9EDFEE8EFD17B"
+  },
+  "scope": "Expose measured arm clearance and distinguish arm-pair relations, single-arm feasibility and temporal continuity failures without changing motion or acceptance criteria.",
+  "targetedTests": {
+    "passed": 361,
+    "failed": 0,
+    "files": 4,
+    "reports": [
+      "arm-constraints-targeted-tests.json",
+      "arm-constraints-rig-tests.json"
+    ]
+  },
+  "typecheck": "passed",
+  "build": "passed",
+  "api": [
+    {
+      "mirror": false,
+      "rejectedSpacing": {
+        "kind": "arm-path",
+        "armConstraint": "arm-spacing",
+        "armClearance": {
+          "sampledMaximum": 0.06642701700123448,
+          "required": 0.08
+        },
+        "message": "左右の腕の間隔が不足しています。検査した姿勢では最大6.6cm（検査基準8.0cm）です。投げ・捕りと途中の手の位置を離してください。",
+        "phase": 0.36666666666666664,
+        "location": {
+          "rowIndex": 0,
+          "repeatIndex": 0,
+          "expandedSet": 0,
+          "mirrored": false,
+          "withinSet": 0.7333333333333334
+        }
+      },
+      "rejectedContinuity": {
+        "kind": "arm-path",
+        "armConstraint": "continuity",
+        "message": "各時点で取れる姿勢はありますが、腕を急に動かさず一周期につなぐ経路が見つかりません。捕ってから次に投げるまでの運びと、空の手の戻り方を調整してください。",
+        "phase": 0.95,
+        "location": {
+          "rowIndex": 1,
+          "repeatIndex": 0,
+          "expandedSet": 1,
+          "mirrored": false,
+          "withinSet": 0.8999999999999999
+        }
+      },
+      "restoredPoseSamplesUnchanged": 240,
+      "registryUnchanged": true
+    },
+    {
+      "mirror": true,
+      "rejectedSpacing": {
+        "kind": "arm-path",
+        "armConstraint": "arm-spacing",
+        "armClearance": {
+          "sampledMaximum": 0.0664270170012345,
+          "required": 0.08
+        },
+        "message": "左右の腕の間隔が不足しています。検査した姿勢では最大6.6cm（検査基準8.0cm）です。投げ・捕りと途中の手の位置を離してください。",
+        "phase": 0.36666666666666664,
+        "location": {
+          "rowIndex": 0,
+          "repeatIndex": 0,
+          "expandedSet": 0,
+          "mirrored": false,
+          "withinSet": 0.7333333333333334
+        }
+      },
+      "rejectedContinuity": {
+        "kind": "arm-path",
+        "armConstraint": "continuity",
+        "message": "各時点で取れる姿勢はありますが、腕を急に動かさず一周期につなぐ経路が見つかりません。捕ってから次に投げるまでの運びと、空の手の戻り方を調整してください。",
+        "phase": 0.95,
+        "location": {
+          "rowIndex": 1,
+          "repeatIndex": 0,
+          "expandedSet": 1,
+          "mirrored": false,
+          "withinSet": 0.8999999999999999
+        }
+      },
+      "restoredPoseSamplesUnchanged": 240,
+      "registryUnchanged": true
+    }
+  ],
+  "rig": {
+    "cases": 334,
+    "report": "arm-constraints-rig.json",
+    "allMeasurementsExact": true,
+    "comparedTo": "sync-rig-audit.json",
+    "comparisonBundleSha256": "F943457CF2DA536E44169F4DEFB0551C2D0EF0129C4829ADF956A7488FA8C3E0"
+  },
+  "constraints": {
+    "armClearanceMeters": 0.08,
+    "crossOrderMeters": 0.035,
+    "plannerDirections": 36,
+    "changed": false
+  },
+  "investigation": {
+    "report": "cross-upper-release-diagnostic.json",
+    "investigationBundleSha256": "6E64D369D6014147661F6227DBDEF5F083C42486A24F02CE14B2153BD9C61B05",
+    "adoptedCandidates": 0,
+    "unfittedHeightConfigurations": 40,
+    "conclusion": "These sampled upper-throw fixed-cross candidates have individually feasible arms but insufficient simultaneous arm spacing. Diagnostic 72-direction sampling does not clear the two investigated frames. This is not a proof of human impossibility."
+  },
+  "ui": {
+    "existingFailurePanelReceivesNewMessages": true,
+    "htmlAndJavascriptUnchanged": true,
+    "liveVerified": false
+  },
+  "limitations": [
+    "The 40 fixed/alternating-cross configurations remain unfitted.",
+    "Source-fidelity gaps and other missing connections remain open.",
+    "Live browser validation remains blocked by the prior auto-review rejection.",
+    "This focused run does not replace the older full-suite record."
+  ]
+}

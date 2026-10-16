@@ -1,0 +1,484 @@
+{
+  "baseline": {
+    "name": "クロス（左腕が上）",
+    "phase": "313",
+    "report": {
+      "analysis": {
+        "balls": 3,
+        "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+        "code": "3B-S2-C2-bca96501",
+        "documentOK": true,
+        "expandedSets": 2,
+        "identitySets": 2,
+        "inputSets": 2,
+        "issues": [],
+        "movementSets": 2,
+        "name": "クロス（左腕が上）",
+        "notation": "(4,2x)(2x,4)",
+        "ok": true,
+        "siteswap": "(4,2x)(2x,4)"
+      },
+      "geometry": {
+        "ballClearance": 0.038356704144197146,
+        "ballPhase": 0.4268292682926829,
+        "balls": 3,
+        "geometryOK": true,
+        "handPhase": 0.8536585365853658,
+        "maxHandSpeed": 2.629897297905748,
+        "maxReachRatio": 0.9985539220098644,
+        "minBallDistance": 0.10835670414419717,
+        "minHandDistance": 0.17210685927458058,
+        "ownershipConflicts": 0,
+        "peakY": 1.742555383087455,
+        "period": 0.82,
+        "reachPhase": 0.07926829268292683
+      },
+      "name": "クロス（左腕が上）",
+      "skeleton": {
+        "armPhase": 0.4625,
+        "ballArmPhase": 0.4166666666666667,
+        "closestBallArm": {
+          "ball": 1,
+          "elbow": [
+            -0.11530288084716324,
+            1.2638872596930657,
+            -0.246480546955172
+          ],
+          "hand": 0,
+          "handTarget": [
+            0.07314864553846627,
+            1.3681543034356036,
+            -0.4250968263334776
+          ],
+          "heldHere": false,
+          "position": [
+            0.010809115696776506,
+            1.3263921455398842,
+            -0.4189027255380713
+          ],
+          "shoulder": [
+            -0.13622673792622111,
+            1.400353420808476,
+            -0.0042852981334656134
+          ],
+          "wrist": [
+            0.0947533655901046,
+            1.3092485708425174,
+            -0.3851131810340568
+          ]
+        },
+        "gripPhase": 0.4166666666666667,
+        "largestJump": {
+          "distance": 0.007277536347810765,
+          "from": [
+            -0.04665312422306406,
+            1.2635299186545437,
+            -0.2300623041879812
+          ],
+          "hand": 0,
+          "phase": 0.49583333333333335,
+          "to": [
+            -0.0398006619134068,
+            1.2644855209498675,
+            -0.22780551003662283
+          ]
+        },
+        "maxElbowFlex": 1.3097686869972325,
+        "maxElbowJump": 0.007277536347810765,
+        "maxElbowSpeed": 2.130010638383639,
+        "maxGripError": 6.13768602261588e-16,
+        "maxJointAngularSpeed": 13.560738244019497,
+        "maxWristBend": 1.290185883301122,
+        "minArmDistance": 0.07951619626020011,
+        "minBallArmDistance": 0.07892954881557654,
+        "minTorsoClearance": 1.024551623750028,
+        "mirror": false,
+        "pattern": "sequence",
+        "planInfo": {
+          "keyCount": 120,
+          "wristStep": 0.017570895681086364
+        },
+        "plannedCycle": true,
+        "postureOK": true,
+        "posturePhase": 0,
+        "samples": 240,
+        "short": [
+          "normal"
+        ],
+        "skeletonOK": true
+      }
+    }
+  },
+  "editJump": {
+    "focused": "セット1",
+    "top": 0.140625
+  },
+  "initialFailure": {
+    "name": "編集中の列は再生していません",
+    "panel": "調整が必要なところ発生時刻：セット1の時間帯 / 0.29秒（周期の35.0%）球と腕の間隔、クロスの上下関係、腕の曲げ方を保って1周期をつなげられません。この時刻のセットを編集編集中の列の動きは再生していません。球は前のセットから飛んでくるため、発生時刻の前後も確認してください。",
+    "report": {
+      "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"reverse\"],\"shortMotions\":[{}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+      "issues": [
+        {
+          "kind": "arm-path",
+          "location": {
+            "expandedSet": 0,
+            "mirrored": false,
+            "repeatIndex": 0,
+            "rowIndex": 0,
+            "withinSet": 0.7000000000000001
+          },
+          "message": "球と腕の間隔、クロスの上下関係、腕の曲げ方を保って1周期をつなげられません。",
+          "phase": 0.35
+        }
+      ],
+      "mirror": false,
+      "name": "クロス左上 / 左 下→下・右 下→上",
+      "period": 0.82
+    },
+    "status": "この列は再生できません"
+  },
+  "recovery": {
+    "hidden": true,
+    "preview": {
+      "analysis": {
+        "balls": 3,
+        "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+        "code": "3B-S2-C2-bca96501",
+        "documentOK": true,
+        "expandedSets": 2,
+        "identitySets": 2,
+        "inputSets": 2,
+        "issues": [],
+        "movementSets": 2,
+        "name": "クロス（左腕が上）",
+        "notation": "(4,2x)(2x,4)",
+        "ok": true,
+        "siteswap": "(4,2x)(2x,4)"
+      },
+      "geometry": {
+        "ballClearance": 0.038356704144197146,
+        "ballPhase": 0.4268292682926829,
+        "balls": 3,
+        "geometryOK": true,
+        "handPhase": 0.8536585365853658,
+        "maxHandSpeed": 2.629897297905748,
+        "maxReachRatio": 0.9985539220098644,
+        "minBallDistance": 0.10835670414419717,
+        "minHandDistance": 0.17210685927458058,
+        "ownershipConflicts": 0,
+        "peakY": 1.742555383087455,
+        "period": 0.82,
+        "reachPhase": 0.07926829268292683
+      },
+      "name": "クロス（左腕が上）",
+      "skeleton": {
+        "armPhase": 0.4625,
+        "ballArmPhase": 0.4166666666666667,
+        "closestBallArm": {
+          "ball": 1,
+          "elbow": [
+            -0.11530288084716324,
+            1.2638872596930657,
+            -0.246480546955172
+          ],
+          "hand": 0,
+          "handTarget": [
+            0.07314864553846627,
+            1.3681543034356036,
+            -0.4250968263334776
+          ],
+          "heldHere": false,
+          "position": [
+            0.010809115696776506,
+            1.3263921455398842,
+            -0.4189027255380713
+          ],
+          "shoulder": [
+            -0.13622673792622111,
+            1.400353420808476,
+            -0.0042852981334656134
+          ],
+          "wrist": [
+            0.0947533655901046,
+            1.3092485708425174,
+            -0.3851131810340568
+          ]
+        },
+        "gripPhase": 0.4166666666666667,
+        "largestJump": {
+          "distance": 0.007277536347810765,
+          "from": [
+            -0.04665312422306406,
+            1.2635299186545437,
+            -0.2300623041879812
+          ],
+          "hand": 0,
+          "phase": 0.49583333333333335,
+          "to": [
+            -0.0398006619134068,
+            1.2644855209498675,
+            -0.22780551003662283
+          ]
+        },
+        "maxElbowFlex": 1.3097686869972325,
+        "maxElbowJump": 0.007277536347810765,
+        "maxElbowSpeed": 2.130010638383639,
+        "maxGripError": 6.13768602261588e-16,
+        "maxJointAngularSpeed": 13.560738244019497,
+        "maxWristBend": 1.290185883301122,
+        "minArmDistance": 0.07951619626020011,
+        "minBallArmDistance": 0.07892954881557654,
+        "minTorsoClearance": 1.024551623750028,
+        "mirror": false,
+        "pattern": "sequence",
+        "planInfo": {
+          "keyCount": 120,
+          "wristStep": 0.017570895681086364
+        },
+        "plannedCycle": true,
+        "postureOK": true,
+        "posturePhase": 0,
+        "samples": 240,
+        "short": [
+          "normal"
+        ],
+        "skeletonOK": true
+      }
+    },
+    "report": null,
+    "status": "この列を再生中"
+  },
+  "finalNormal": {
+    "error": "このセット列は接続できません。以下の箇所を調整してください。",
+    "phase": "313",
+    "playing": "クロス（左腕が上）",
+    "report": {
+      "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"reverse\"],\"shortMotions\":[{}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+      "issues": [
+        {
+          "kind": "arm-path",
+          "location": {
+            "expandedSet": 0,
+            "mirrored": false,
+            "repeatIndex": 0,
+            "rowIndex": 0,
+            "withinSet": 0.7000000000000001
+          },
+          "message": "球と腕の間隔、クロスの上下関係、腕の曲げ方を保って1周期をつなげられません。",
+          "phase": 0.35
+        }
+      ],
+      "mirror": false,
+      "name": "クロス左上 / 左 下→下・右 下→上",
+      "period": 0.82
+    },
+    "status": "この列は再生できません"
+  },
+  "mirror": {
+    "phase": "313",
+    "playing": "クロス（左腕が上）",
+    "report": {
+      "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"reverse\"],\"shortMotions\":[{}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+      "issues": [
+        {
+          "kind": "arm-path",
+          "location": {
+            "expandedSet": 0,
+            "mirrored": false,
+            "repeatIndex": 0,
+            "rowIndex": 0,
+            "withinSet": 0.7000000000000001
+          },
+          "message": "球と腕の間隔、クロスの上下関係、腕の曲げ方を保って1周期をつなげられません。",
+          "phase": 0.35
+        }
+      ],
+      "mirror": true,
+      "name": "クロス左上 / 左 下→下・右 下→上",
+      "period": 0.82
+    },
+    "status": "この列は再生できません"
+  },
+  "shiftedStart": {
+    "phase": "313",
+    "playing": "クロス（左腕が上）",
+    "report": {
+      "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"shuffle\"],\"shortMotions\":[{}]},\"throws\":[\"4\",\"2x\"]}]}",
+      "issues": [
+        {
+          "kind": "arm-path",
+          "location": {
+            "expandedSet": 0,
+            "mirrored": false,
+            "repeatIndex": 0,
+            "rowIndex": 0,
+            "withinSet": 0
+          },
+          "message": "球と腕の間隔、クロスの上下関係、腕の曲げ方を保って1周期をつなげられません。",
+          "phase": 0
+        }
+      ],
+      "mirror": false,
+      "name": "クロス左上 / 左 下→下・右 上→下",
+      "period": 0.82
+    },
+    "focused": "セット1"
+  },
+  "handSpacing": {
+    "error": "このセット列は接続できません。以下の箇所を調整してください。",
+    "phase": "313",
+    "playing": "クロス（左腕が上）",
+    "report": {
+      "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"inverted\"],\"shortMotions\":[{}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+      "issues": [
+        {
+          "kind": "hand-spacing",
+          "location": {
+            "expandedSet": 0,
+            "mirrored": false,
+            "repeatIndex": 0,
+            "rowIndex": 0,
+            "withinSet": 0.7926829268292686
+          },
+          "message": "左右の手が近すぎます。手の運びや投げ・捕りの位置を離してください。",
+          "phase": 0.39634146341463417
+        }
+      ],
+      "mirror": false,
+      "name": "クロス左上 / 左 下→下・右 上→上",
+      "period": 0.82
+    },
+    "status": "この列は再生できません"
+  },
+  "screenshot": "sync-compose-failure-details.png",
+  "finalRecovery": {
+    "failureReport": null,
+    "hidden": true,
+    "report": {
+      "analysis": {
+        "balls": 3,
+        "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"armOrder\":\"left-over\",\"columnMotion\":{\"carry\":{\"amount\":0,\"route\":\"outside\"},\"catch\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445},\"emptyReturn\":{\"amount\":0,\"route\":\"outside\"},\"passage\":{\"at\":0.5},\"release\":{\"x\":-0.07629999999999999,\"y\":0.07300000000000001,\"z\":-0.445}},\"columns\":\"crossed\",\"short\":[\"normal\"],\"shortMotions\":[{\"definition\":{\"carry\":{\"amount\":0,\"route\":\"back\"},\"catch\":{\"relation\":\"free\",\"x\":0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997},\"emptyReturn\":{\"amount\":0,\"route\":\"inside\"},\"passage\":{\"at\":0.5},\"release\":{\"relation\":\"free\",\"x\":-0.10919999999999999,\"y\":0.07300000000000001,\"z\":-0.46799999999999997}}}]},\"throws\":[\"2x\",\"4\"]}]}",
+        "code": "3B-S2-C2-bca96501",
+        "documentOK": true,
+        "expandedSets": 2,
+        "identitySets": 2,
+        "inputSets": 2,
+        "issues": [],
+        "movementSets": 2,
+        "name": "クロス（左腕が上）",
+        "notation": "(4,2x)(2x,4)",
+        "ok": true,
+        "siteswap": "(4,2x)(2x,4)"
+      },
+      "geometry": {
+        "ballClearance": 0.038356704144197146,
+        "ballPhase": 0.4268292682926829,
+        "balls": 3,
+        "geometryOK": true,
+        "handPhase": 0.8536585365853658,
+        "maxHandSpeed": 2.629897297905748,
+        "maxReachRatio": 0.9985539220098644,
+        "minBallDistance": 0.10835670414419717,
+        "minHandDistance": 0.17210685927458058,
+        "ownershipConflicts": 0,
+        "peakY": 1.742555383087455,
+        "period": 0.82,
+        "reachPhase": 0.07926829268292683
+      },
+      "name": "クロス（左腕が上）",
+      "skeleton": {
+        "armPhase": 0.4625,
+        "ballArmPhase": 0.4166666666666667,
+        "closestBallArm": {
+          "ball": 1,
+          "elbow": [
+            -0.11530288084716324,
+            1.2638872596930657,
+            -0.246480546955172
+          ],
+          "hand": 0,
+          "handTarget": [
+            0.07314864553846627,
+            1.3681543034356036,
+            -0.4250968263334776
+          ],
+          "heldHere": false,
+          "position": [
+            0.010809115696776506,
+            1.3263921455398842,
+            -0.4189027255380713
+          ],
+          "shoulder": [
+            -0.13622673792622111,
+            1.400353420808476,
+            -0.0042852981334656134
+          ],
+          "wrist": [
+            0.0947533655901046,
+            1.3092485708425174,
+            -0.3851131810340568
+          ]
+        },
+        "gripPhase": 0.4166666666666667,
+        "largestJump": {
+          "distance": 0.007277536347810765,
+          "from": [
+            -0.04665312422306406,
+            1.2635299186545437,
+            -0.2300623041879812
+          ],
+          "hand": 0,
+          "phase": 0.49583333333333335,
+          "to": [
+            -0.0398006619134068,
+            1.2644855209498675,
+            -0.22780551003662283
+          ]
+        },
+        "maxElbowFlex": 1.3097686869972325,
+        "maxElbowJump": 0.007277536347810765,
+        "maxElbowSpeed": 2.130010638383639,
+        "maxGripError": 6.13768602261588e-16,
+        "maxJointAngularSpeed": 13.560738244019497,
+        "maxWristBend": 1.290185883301122,
+        "minArmDistance": 0.07951619626020011,
+        "minBallArmDistance": 0.07892954881557654,
+        "minTorsoClearance": 1.024551623750028,
+        "mirror": false,
+        "pattern": "sequence",
+        "planInfo": {
+          "keyCount": 120,
+          "wristStep": 0.017570895681086364
+        },
+        "plannedCycle": true,
+        "postureOK": true,
+        "posturePhase": 0,
+        "samples": 240,
+        "short": [
+          "normal"
+        ],
+        "skeletonOK": true
+      }
+    },
+    "status": "この列を再生中"
+  },
+  "bundleSha256": "00D6992F422466D20EC8E448D45021EC6C40DAD6B01A65D061DFB5F293394F59",
+  "editorJsSha256": "B7C33418C5DE29C9BFE403A55A933067404B5C94606710DA330E11A26B1902E9",
+  "editorCssSha256": "BA7202352FC856C16D1B20517C6DB152CF9B3477F80F1CA2DF92B5BD368CF266",
+  "editorHtmlSha256": "54BEE78C478AF12009837841538589D420FD55A4E2E658B87202BE2D7BAE80A6",
+  "scope": "Rejected candidate diagnostics and edit-row navigation. Preview and its playhead remain on the last accepted cycle. Failures are not counted as playable patterns.",
+  "baselineCaptureNote": "Baseline report uses this bundle; earlier than the final error-copy refinement. All recorded failure cases and final recovery use the final editor hashes.",
+  "checks": {
+    "handSpacingSeparated": true,
+    "armPathSeparated": true,
+    "failedCanonicalDiffersFromPreview": true,
+    "mirrorRecorded": true,
+    "previewPreserved": true,
+    "editRowFocused": true,
+    "phaseZeroRetained": true,
+    "initialFailureStatesNoAcceptedPreview": true,
+    "recoveryClearsDetails": true,
+    "recoveryFullCyclePasses": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-16",
+  "source": "https://github.com/henfish/henfish.github.io/blob/main/juggling-database/data.json",
+  "repository": "henfish/henfish.github.io",
+  "path": "juggling-database/data.json",
+  "ref": "main",
+  "blobSha": "7ef345f7a7187cfd2dab3d388ea1a5aee56aea86",
+  "recordCount": 58,
+  "storedCatalogBlobSha": "7ef345f7a7187cfd2dab3d388ea1a5aee56aea86",
+  "matchesStoredCatalog": true,
+  "unresolvedBasicTerms": [
+    {
+      "key": "under-arm-box",
+      "detailRecordPresent": true,
+      "video": "https://drive.google.com/file/d/1S2Nknk3AA6tvbkPLOeuC1cAGGiKgNuUY/preview"
+    },
+    {
+      "key": "reverse-under-arm-box",
+      "detailRecordPresent": false,
+      "video": null
+    },
+    {
+      "key": "under-arm-inverted-box",
+      "detailRecordPresent": false,
+      "video": null
+    },
+    {
+      "key": "under-arm-inverted-box*",
+      "detailRecordPresent": false,
+      "video": null
+    }
+  ],
+  "note": "Read primary repository JSON through the GitHub connector. No browser access or remote-media download. Matching source metadata does not verify performance motion."
+}

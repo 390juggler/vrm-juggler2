@@ -1,0 +1,259 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "4F2ED8196A72CABE7AD8F95F19949102F6A9B3E45D5DC95B74814B68C3A7094C",
+  "editorJsSha256": "9928BB01886F984841196CE7F5F6E81E057B82132F2116C430EAD8802AD4203D",
+  "editorHtmlSha256": "14C1444D557B9BFD13F54FFF2478EC099E4FDF2D069FD27E0C46108F79E5738D",
+  "defaultVrmSha256": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+  "scope": "Reuse authored connections by repeating unchanged source cycles until their full standalone states occur, then join the underarm primitives through a shared base.",
+  "targetedTests": {
+    "passed": 623,
+    "failed": 0,
+    "files": 7,
+    "report": "authored-connection-tests.json"
+  },
+  "previousFullSuite": {
+    "passed": 1599,
+    "report": "test-results.json",
+    "bundleSha256": "F943457CF2DA536E44169F4DEFB0551C2D0EF0129C4829ADF956A7488FA8C3E0"
+  },
+  "sourceMotionComparisons": 250,
+  "comparison": "authored-accepted-track-comparison.json",
+  "candidateRules": [
+    "Match complete cycle definitions, allowing cyclic start changes and the registry tempo.",
+    "Never shorten a repeated input or match an edited position/grip by its name.",
+    "Repeat only complete source cycles; retain every authored bridge row.",
+    "Inspect the loaded VRM and require both complete boundary-state paths before atomic publication.",
+    "Reuse an already reachable intermediate; no new whole-pattern arm planning after registration."
+  ],
+  "nativeTempoConnections": [
+    {
+      "name": "hf-underarm-release",
+      "mirror": false,
+      "beat": 0.225,
+      "forward": 8,
+      "backward": 8,
+      "sets": 20,
+      "identitySets": 20,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "hf-underarm-release",
+      "mirror": true,
+      "beat": 0.225,
+      "forward": 8,
+      "backward": 8,
+      "sets": 20,
+      "identitySets": 20,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "hf-underarm-catch",
+      "mirror": false,
+      "beat": 0.25,
+      "forward": 6,
+      "backward": 6,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "hf-underarm-catch",
+      "mirror": true,
+      "beat": 0.25,
+      "forward": 6,
+      "backward": 6,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "networks": [
+    {
+      "name": "hf-underarm",
+      "mirror": false,
+      "beat": 0.25,
+      "sources": [
+        "ボックス",
+        "リバースシャッフル往復",
+        "HF / Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Inverted-Box*"
+      ],
+      "paths": [
+        {
+          "to": 1,
+          "forward": 4,
+          "backward": 4,
+          "sets": 12
+        },
+        {
+          "to": 2,
+          "forward": 8,
+          "backward": 8,
+          "sets": 20
+        },
+        {
+          "to": 3,
+          "via": "リバースシャッフル往復",
+          "forward": 8,
+          "backward": 10,
+          "sets": 22
+        },
+        {
+          "to": 4,
+          "via": "HF / Reverse-Under-Arm-Box*",
+          "forward": 12,
+          "backward": 14,
+          "sets": 30
+        }
+      ],
+      "cycles": [
+        {
+          "order": [
+            2,
+            4,
+            3,
+            1,
+            0
+          ],
+          "sets": 52,
+          "identitySets": 52
+        },
+        {
+          "order": [
+            4,
+            2,
+            0,
+            3,
+            1
+          ],
+          "sets": 62,
+          "identitySets": 62
+        }
+      ],
+      "registeredTransitions": 4,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "restoredSets": 62,
+      "batchSteps": 9,
+      "batchPublishedAtomically": true,
+      "cancelPreservesRegistry": true,
+      "differentTempoPreservesRegistry": true,
+      "repeatedBatchAddedSources": 0
+    },
+    {
+      "name": "hf-underarm",
+      "mirror": true,
+      "beat": 0.25,
+      "sources": [
+        "ボックス",
+        "リバースシャッフル往復",
+        "HF / Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Box*",
+        "HF / Reverse-Under-Arm-Inverted-Box*"
+      ],
+      "paths": [
+        {
+          "to": 1,
+          "forward": 4,
+          "backward": 4,
+          "sets": 12
+        },
+        {
+          "to": 2,
+          "forward": 8,
+          "backward": 8,
+          "sets": 20
+        },
+        {
+          "to": 3,
+          "via": "リバースシャッフル往復",
+          "forward": 8,
+          "backward": 10,
+          "sets": 22
+        },
+        {
+          "to": 4,
+          "via": "HF / Reverse-Under-Arm-Box*",
+          "forward": 12,
+          "backward": 14,
+          "sets": 30
+        }
+      ],
+      "cycles": [
+        {
+          "order": [
+            2,
+            4,
+            3,
+            1,
+            0
+          ],
+          "sets": 52,
+          "identitySets": 52
+        },
+        {
+          "order": [
+            4,
+            2,
+            0,
+            3,
+            1
+          ],
+          "sets": 62,
+          "identitySets": 62
+        }
+      ],
+      "registeredTransitions": 4,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "restoredSets": 62,
+      "batchSteps": 9,
+      "batchPublishedAtomically": true,
+      "cancelPreservesRegistry": true,
+      "differentTempoPreservesRegistry": true,
+      "repeatedBatchAddedSources": 0
+    }
+  ],
+  "existing90MotionNetworks": [
+    {
+      "mirror": false,
+      "motions": 90,
+      "directions": 178,
+      "closedWalks": 30,
+      "armSearchesDuringReuse": 0
+    },
+    {
+      "mirror": true,
+      "motions": 90,
+      "directions": 178,
+      "closedWalks": 30,
+      "armSearchesDuringReuse": 0
+    }
+  ],
+  "editor": {
+    "group": "HFの腕下投げ・捕球 / 5動作",
+    "secondsPerSet": 0.5,
+    "steps": 9,
+    "differentTempo": "Reject before registration and preserve the saved/current registry.",
+    "htmlIds": 129,
+    "javascriptSyntax": "passed",
+    "renderedAcceptance": "Not verified; browser access remains blocked by prior auto-review rejection."
+  },
+  "sourceFiles": {
+    "src/index.ts": "A3E58E5A68BAA255AF1FD1888E462F0CF9747795EE8DEE7B5A3E0E6B563B49BA",
+    "src/motion/juggling/sync-sequence.ts": "32B32C06A9E2C4008853F23676070DC1F295A1B68CF893D4F9A413504525C42D",
+    "src/motion/juggling/sync-basic-network.ts": "6558480ECDEA3C0EF7EA63F792FA92C71A0291A7E7B9F5F4C77D44CF0722B412",
+    "test/sync-connection-recipes.test.ts": "BA92D8A1B45ABC3B29ADA4033AD956AB4CB4AB0E25F31E3E4036F1223CE5609F",
+    "test/sync-component-graph.test.ts": "5083B6AD6F0CCF4A7894057F680DC085C4F16DB8AC7698C907338FD30CF56D15",
+    "dist/vrm-juggler.min.js": "4F2ED8196A72CABE7AD8F95F19949102F6A9B3E45D5DC95B74814B68C3A7094C",
+    "dist/sync-compose.js": "9928BB01886F984841196CE7F5F6E81E057B82132F2116C430EAD8802AD4203D",
+    "dist/sync-compose.html": "14C1444D557B9BFD13F54FFF2478EC099E4FDF2D069FD27E0C46108F79E5738D",
+    "dist/models/default.vrm": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81"
+  },
+  "limitations": [
+    "The HF group is verified at 0.5 seconds per set on the bundled VRM in both mirrors; it is not added to the 0.41-second 90-motion group.",
+    "The existing 40 unfitted height configurations and source-fidelity gaps remain unresolved.",
+    "This targeted run does not replace the prior 1599-test full-suite report."
+  ]
+}

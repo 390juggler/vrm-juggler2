@@ -1,0 +1,126 @@
+{
+  "knownName": "見本名：N-Box。(4,2x)(2x,4) / 3球・動き2セット・同じ球まで2セット。4は同じ手、2xは反対の手へ。1セット0.41秒。作成後に「接続して再生」で球と腕を確認します。",
+  "connected": {
+    "name": "2xの組合せ / 左 下→下・右 下→下 → 2xの組合せ / 左 上→下・右 下→上",
+    "analysis": {
+      "ok": true,
+      "documentOK": true,
+      "issues": [],
+      "inputSets": 4,
+      "expandedSets": 4,
+      "movementSets": 4,
+      "identitySets": 4,
+      "balls": 3,
+      "siteswap": "(4,2x)(2x,4)(4,2x)(2x,4)",
+      "name": "2xの組合せ / 左 下→下・右 下→下 → 2xの組合せ / 左 上→下・右 下→上",
+      "notation": "(4,2x)(2x,4)(4,2x)(2x,4)",
+      "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"short\":[\"normal\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"normal\"]},\"throws\":[\"2x\",\"4\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"shuffle\"]},\"throws\":[\"2x\",\"4\"]}]}",
+      "code": "3B-S4-C4-24e844e2"
+    },
+    "geometry": {
+      "balls": 3,
+      "minBallDistance": 0.09295476267837698,
+      "minHandDistance": 0.300502729451339,
+      "maxReachRatio": 0.8207840816993534,
+      "maxHandSpeed": 5.090421598917687,
+      "ownershipConflicts": 0,
+      "ballClearance": 0.02295476267837697,
+      "period": 1.64,
+      "ballPhase": 0.9085365853658537,
+      "handPhase": 0.45426829268292684,
+      "reachPhase": 0.08841463414634146,
+      "peakY": 1.5438933391000003,
+      "geometryOK": true
+    },
+    "skeleton": {
+      "pattern": "sequence",
+      "mirror": false,
+      "short": [
+        "normal"
+      ],
+      "samples": 410,
+      "maxGripError": 7.889616961715915e-16,
+      "minArmDistance": 0.27245347585244223,
+      "minBallArmDistance": 0.07482319510148946,
+      "gripPhase": 0.9682926829268292,
+      "armPhase": 0,
+      "ballArmPhase": 0.7634146341463415,
+      "closestBallArm": {
+        "hand": 0,
+        "ball": 1,
+        "position": [
+          -0.21213180696443257,
+          1.5338460412752055,
+          -0.18708084859805169
+        ],
+        "shoulder": [
+          -0.13622673792622111,
+          1.400353420808476,
+          -0.0042852981334656134
+        ],
+        "elbow": [
+          -0.3790571208832309,
+          1.3670783962531,
+          -0.13712180414834596
+        ],
+        "wrist": [
+          -0.24976604446489065,
+          1.587254646870172,
+          -0.1514925616425352
+        ],
+        "handTarget": [
+          -0.21213180696443257,
+          1.5338460412752055,
+          -0.18708084859805169
+        ],
+        "heldHere": true
+      },
+      "maxElbowJump": 0.02864431111142568,
+      "maxElbowSpeed": 7.16107777785642,
+      "maxJointAngularSpeed": 39.12555530458896,
+      "largestJump": {
+        "hand": 0,
+        "phase": 0.9414634146341463,
+        "distance": 0.02864431111142568,
+        "from": [
+          -0.338322798716258,
+          1.2393432259020454,
+          -0.1089383383463193
+        ],
+        "to": [
+          -0.33339376077058924,
+          1.2214976818607934,
+          -0.08708112667945658
+        ]
+      },
+      "plannedCycle": true,
+      "planInfo": {
+        "wristStep": 0.0899780864522279
+      },
+      "postureOK": true,
+      "minTorsoClearance": 1.0468378276417385,
+      "maxWristBend": 1.3398532470639333,
+      "maxElbowFlex": 2.4309410603282564,
+      "posturePhase": 0,
+      "skeletonOK": true
+    }
+  },
+  "beforeReload": {
+    "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"short\":[\"normal\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"normal\"]},\"throws\":[\"2x\",\"4\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"shuffle\"]},\"throws\":[\"2x\",\"4\"]}]}",
+    "outline": "元の見本とセット範囲（各セットは個別に編集できます）\n\n1–2：2xの組合せ / 左 下→下・右 下→下\n\n3–4：2xの組合せ / 左 上→下・右 下→上\n\n末尾 → セット1へ戻る",
+    "rows": 4
+  },
+  "restored": {
+    "canonical": "SYNC1:{\"beatDuration\":0.205,\"sets\":[{\"motion\":{\"columns\":\"normal\",\"short\":[\"normal\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"normal\"]},\"throws\":[\"2x\",\"4\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"reverse\"]},\"throws\":[\"4\",\"2x\"]},{\"motion\":{\"columns\":\"normal\",\"short\":[\"shuffle\"]},\"throws\":[\"2x\",\"4\"]}]}",
+    "outline": "元の見本とセット範囲（各セットは個別に編集できます）\n\n1–2：2xの組合せ / 左 下→下・右 下→下\n\n3–4：2xの組合せ / 左 上→下・右 下→上\n\n末尾 → セット1へ戻る",
+    "rows": 4
+  },
+  "catalog": {
+    "description": "HF / Reverse-Shuffle\nHFの18分類\n\n基本動作を編集できる。HF原動画の全局面との一致とは区別する。\n\n参照資料 ↗セットに展開",
+    "count": "2件を表示 / 出典別125項目。再生できる見本、対応部品、原動作の照合待ちを分けています。",
+    "loaded": "同期シャワー / 2xは下→上"
+  },
+  "bundleSha256": "CD12855BF24D1BECC66893A4E6B9AB17B81D9C4AB4DA0CC6F0AFF44833E5EAE8",
+  "editorSha256": "8633A2D999D9324546208CAB78838CBE9198AF02899DEFCD4AB98272E6F1E6F1",
+  "editorCssSha256": "2C5EDC915868CDC96BF85F953EC793C92440A829C08E3C8314B0053A68BD644F"
+}

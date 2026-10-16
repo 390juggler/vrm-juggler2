@@ -6,6 +6,7 @@
   "author": "torabe <s2808282245@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "@types/three": "^0.186.0",
     "typescript": "^5.9.3",
     "vite": "^8.3.1",

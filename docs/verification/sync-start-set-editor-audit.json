@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-15",
+  "bundleSha256": "B84BF274F64F439CCE7531DCD69C9DADEED4DFA063B3E92C4E1D3758053602B8",
+  "editorJsSha256": "03E4BFACFFBACC5CCCD972CDCECE8215132D7AA8DBD554D5DDDA148D47358B0E",
+  "editorHtmlSha256": "9E767EA38E0204B11E883B03904AB09FD107B23E118C0CFF6625D01C6DD3CED0",
+  "editorCssSha256": "C3B275A80AB4BA0D0DC4FDAA6D9F4434810DA69DC108B663394DF5AA8AE4240A",
+  "catalogSha256": "0FDCDAC9DF7ED32894543290D940DADD76540DEB08FE4935ED17E0C86DDA4887",
+  "api": "VRMJuggler.rotateSyncSequenceStart(sequence, zeroBasedExpandedSet)",
+  "control": "#template-start",
+  "contract": [
+    "Start at the selected expanded set and keep one complete cyclic order.",
+    "Index zero returns an independent copy preserving repeat and mirror compression.",
+    "Other starts expand mirror halves and split repeats as necessary; adjacent identical definitions and source labels may regroup to repeats of at most sixteen.",
+    "Pin each implicit alternating-cross phase before rotating an even spatial cycle. Preserve explicit armPhase.",
+    "Reject invalid schedules, invalid indices, odd implicit cross cycles and representations over sixty-four rows without changing the source."
+  ],
+  "automated": {
+    "startSetTests": 102,
+    "connectionSuggestionTests": 30,
+    "source": "test-results.json",
+    "fullSuitePassed": 1449,
+    "fullRigCases": 316,
+    "positionToleranceMeters": 1e-07,
+    "flightEndpointToleranceMeters": 1e-09,
+    "sourceCases": 95,
+    "typecheck": "passed",
+    "javascriptSyntax": "passed",
+    "build": "passed"
+  },
+  "coverage": [
+    "All thirty-seven original presets and fifty-eight sequence examples.",
+    "For multi-set sources, compare cyclically shifted ball and hand tracks over eighty sample times and every flight endpoint, duration, receiver and grip. Single-set sources retain the no-op start and reject unavailable indices.",
+    "Repeat splitting, mirror-half selection, source independence, cross-phase preservation, JSON persistence of the rotated document, and input/row-limit rejection.",
+    "Six-set alternating-claw / Double connection preserves both source motions and needs no schedule bridge."
+  ],
+  "interaction": [
+    "Template selection resets the start set to one; choosing a start alone leaves the draft unchanged.",
+    "Load and append apply the chosen start. A one-set template disables the start selector.",
+    "Catalog expansion, query template initialization and connection-example replacement reset the selector to match the newly chosen template.",
+    "Changing source or start selection clears stale connection suggestions.",
+    "Edited sequence data, including its materialized start, uses the existing saved-draft path."
+  ],
+  "browser": {
+    "verified": false,
+    "status": "pending",
+    "reason": "Prior local-composer access was rejected by browser URL safety policy; no workaround or new local access was attempted.",
+    "pending": [
+      "Inspect start-selector layout, labels and keyboard navigation.",
+      "Select a repeated or mirrored start and verify load/append labels and saved-draft restoration.",
+      "Inspect the cross-phase starting side in playback.",
+      "Load example:44, play and mirror; inspect both section boundaries.",
+      "Load example:40, select example:43 / start set 3, append, and compare canonical structure to example:44.",
+      "Select default start set 1, append, reject the invalid physical join, then choose the offered example:44.",
+      "Restore the constructed six-set draft after reload."
+    ]
+  }
+}

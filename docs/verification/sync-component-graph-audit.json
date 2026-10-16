@@ -1,0 +1,6644 @@
+{
+  "registries": [
+    {
+      "mirror": false,
+      "results": [
+        {
+          "name": "ボックス",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Luke's Shuffle / シャッフル往復",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            2,
+            3
+          ]
+        },
+        {
+          "name": "N-Box",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            4,
+            5
+          ]
+        },
+        {
+          "name": "リバースシャッフル往復",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            6,
+            7
+          ]
+        },
+        {
+          "name": "インバーテッド",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            8,
+            9
+          ]
+        },
+        {
+          "name": "スイッチド",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            10,
+            11
+          ]
+        },
+        {
+          "name": "クロス（左腕が上）",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            12,
+            13
+          ]
+        },
+        {
+          "name": "アンダーアーム / Threaded Box",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            14,
+            15
+          ]
+        },
+        {
+          "name": "中央の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            16,
+            17
+          ]
+        },
+        {
+          "name": "中央の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            18,
+            19
+          ]
+        },
+        {
+          "name": "同期シャワー",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 3,
+          "registered": true,
+          "ids": [
+            20,
+            21,
+            22
+          ]
+        },
+        {
+          "name": "同期シャワー × シャッフル",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 3,
+          "registered": true,
+          "ids": [
+            23,
+            24,
+            25
+          ]
+        },
+        {
+          "name": "Double Box",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            26,
+            27,
+            28,
+            29
+          ]
+        },
+        {
+          "name": "コラムと2の保持 / Box Roll",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 12,
+          "registered": true,
+          "ids": [
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41
+          ]
+        },
+        {
+          "name": "外側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            42,
+            43
+          ]
+        },
+        {
+          "name": "外側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            44,
+            45
+          ]
+        },
+        {
+          "name": "反対側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            46,
+            47
+          ]
+        },
+        {
+          "name": "反対側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            48,
+            49
+          ]
+        },
+        {
+          "name": "Slam",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            50,
+            51
+          ]
+        },
+        {
+          "name": "Reverse Slam",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            52,
+            53
+          ]
+        },
+        {
+          "name": "Inverted switched",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            54,
+            55
+          ]
+        },
+        {
+          "name": "Switched / 外側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            56,
+            57
+          ]
+        },
+        {
+          "name": "Switched / 外側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            58,
+            59
+          ]
+        },
+        {
+          "name": "Switched / 中央の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            60,
+            61
+          ]
+        },
+        {
+          "name": "Switched / 中央の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            62,
+            63
+          ]
+        },
+        {
+          "name": "Switched / 反対側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            64,
+            65
+          ]
+        },
+        {
+          "name": "Switched / 反対側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            66,
+            67
+          ]
+        },
+        {
+          "name": "Normal lateral",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            68,
+            69
+          ]
+        },
+        {
+          "name": "Shuffle lateral",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            70,
+            71
+          ]
+        },
+        {
+          "name": "Reverse lateral",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            72,
+            73
+          ]
+        },
+        {
+          "name": "Inverted lateral",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            74,
+            75
+          ]
+        },
+        {
+          "name": "クロス（右腕が上）",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            76,
+            77
+          ]
+        },
+        {
+          "name": "クロス（上下を交代）",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            78,
+            79
+          ]
+        },
+        {
+          "name": "2xを腕の下で捕る",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            80,
+            81
+          ]
+        },
+        {
+          "name": "2xを腕の下から投げる",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            82,
+            83
+          ]
+        },
+        {
+          "name": "In-line 3",
+          "context": "3B/0.12646476232514015",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "In-line 3 / 上の2x（候補）",
+          "context": "3B/0.12646476232514015",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            2,
+            3
+          ]
+        },
+        {
+          "name": "High-Low Box / Swap Box",
+          "context": "3B/0.18",
+          "mirror": false,
+          "sets": 12,
+          "registered": true,
+          "ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "name": "High-Low Inverted Box",
+          "context": "3B/0.18",
+          "mirror": false,
+          "sets": 12,
+          "registered": true,
+          "ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "name": "True Box / 蓋付きボックス",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            84,
+            85,
+            86,
+            87
+          ]
+        },
+        {
+          "name": "Bizarre Box",
+          "context": "3B/0.18",
+          "mirror": false,
+          "sets": 6,
+          "registered": true,
+          "ids": [
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ]
+        },
+        {
+          "name": "Penman's Box",
+          "context": "3B/0.18",
+          "mirror": false,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            30,
+            31,
+            32,
+            33
+          ]
+        },
+        {
+          "name": "Underarm Box",
+          "context": "3B/0.18",
+          "mirror": false,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            34,
+            35,
+            36,
+            37
+          ]
+        },
+        {
+          "name": "4球の同期ファウンテン",
+          "context": "4B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Levels / 三段のExtended Box",
+          "context": "3B/0.12",
+          "mirror": false,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "name": "3球コラム / Columns",
+          "context": "3B/0.205",
+          "mirror": false,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            88,
+            89
+          ]
+        }
+      ],
+      "contexts": [
+        {
+          "key": "3B/0.205",
+          "states": 78,
+          "segments": 90,
+          "sources": 37,
+          "joins": []
+        },
+        {
+          "key": "3B/0.12646476232514015",
+          "states": 4,
+          "segments": 4,
+          "sources": 2,
+          "joins": []
+        },
+        {
+          "key": "3B/0.18",
+          "states": 22,
+          "segments": 38,
+          "sources": 5,
+          "joins": []
+        },
+        {
+          "key": "4B/0.205",
+          "states": 1,
+          "segments": 2,
+          "sources": 1,
+          "joins": []
+        },
+        {
+          "key": "3B/0.12",
+          "states": 4,
+          "segments": 4,
+          "sources": 1,
+          "joins": []
+        }
+      ]
+    },
+    {
+      "mirror": true,
+      "results": [
+        {
+          "name": "ボックス",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Luke's Shuffle / シャッフル往復",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            2,
+            3
+          ]
+        },
+        {
+          "name": "N-Box",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            4,
+            5
+          ]
+        },
+        {
+          "name": "リバースシャッフル往復",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            6,
+            7
+          ]
+        },
+        {
+          "name": "インバーテッド",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            8,
+            9
+          ]
+        },
+        {
+          "name": "スイッチド",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            10,
+            11
+          ]
+        },
+        {
+          "name": "クロス（左腕が上）",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            12,
+            13
+          ]
+        },
+        {
+          "name": "アンダーアーム / Threaded Box",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            14,
+            15
+          ]
+        },
+        {
+          "name": "中央の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            16,
+            17
+          ]
+        },
+        {
+          "name": "中央の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            18,
+            19
+          ]
+        },
+        {
+          "name": "同期シャワー",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 3,
+          "registered": true,
+          "ids": [
+            20,
+            21,
+            22
+          ]
+        },
+        {
+          "name": "同期シャワー × シャッフル",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 3,
+          "registered": true,
+          "ids": [
+            23,
+            24,
+            25
+          ]
+        },
+        {
+          "name": "Double Box",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            26,
+            27,
+            28,
+            29
+          ]
+        },
+        {
+          "name": "コラムと2の保持 / Box Roll",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 12,
+          "registered": true,
+          "ids": [
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41
+          ]
+        },
+        {
+          "name": "外側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            42,
+            43
+          ]
+        },
+        {
+          "name": "外側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            44,
+            45
+          ]
+        },
+        {
+          "name": "反対側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            46,
+            47
+          ]
+        },
+        {
+          "name": "反対側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            48,
+            49
+          ]
+        },
+        {
+          "name": "Slam",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            50,
+            51
+          ]
+        },
+        {
+          "name": "Reverse Slam",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            52,
+            53
+          ]
+        },
+        {
+          "name": "Inverted switched",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            54,
+            55
+          ]
+        },
+        {
+          "name": "Switched / 外側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            56,
+            57
+          ]
+        },
+        {
+          "name": "Switched / 外側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            58,
+            59
+          ]
+        },
+        {
+          "name": "Switched / 中央の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            60,
+            61
+          ]
+        },
+        {
+          "name": "Switched / 中央の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            62,
+            63
+          ]
+        },
+        {
+          "name": "Switched / 反対側の縦2x・上投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            64,
+            65
+          ]
+        },
+        {
+          "name": "Switched / 反対側の縦2x・下投げ",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            66,
+            67
+          ]
+        },
+        {
+          "name": "Normal lateral",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            68,
+            69
+          ]
+        },
+        {
+          "name": "Shuffle lateral",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            70,
+            71
+          ]
+        },
+        {
+          "name": "Reverse lateral",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            72,
+            73
+          ]
+        },
+        {
+          "name": "Inverted lateral",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            74,
+            75
+          ]
+        },
+        {
+          "name": "クロス（右腕が上）",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            76,
+            77
+          ]
+        },
+        {
+          "name": "クロス（上下を交代）",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            78,
+            79
+          ]
+        },
+        {
+          "name": "2xを腕の下で捕る",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            80,
+            81
+          ]
+        },
+        {
+          "name": "2xを腕の下から投げる",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            82,
+            83
+          ]
+        },
+        {
+          "name": "In-line 3",
+          "context": "3B/0.12646476232514015",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "In-line 3 / 上の2x（候補）",
+          "context": "3B/0.12646476232514015",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            2,
+            3
+          ]
+        },
+        {
+          "name": "High-Low Box / Swap Box",
+          "context": "3B/0.18",
+          "mirror": true,
+          "sets": 12,
+          "registered": true,
+          "ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "name": "High-Low Inverted Box",
+          "context": "3B/0.18",
+          "mirror": true,
+          "sets": 12,
+          "registered": true,
+          "ids": [
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "name": "True Box / 蓋付きボックス",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            84,
+            85,
+            86,
+            87
+          ]
+        },
+        {
+          "name": "Bizarre Box",
+          "context": "3B/0.18",
+          "mirror": true,
+          "sets": 6,
+          "registered": true,
+          "ids": [
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ]
+        },
+        {
+          "name": "Penman's Box",
+          "context": "3B/0.18",
+          "mirror": true,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            30,
+            31,
+            32,
+            33
+          ]
+        },
+        {
+          "name": "Underarm Box",
+          "context": "3B/0.18",
+          "mirror": true,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            34,
+            35,
+            36,
+            37
+          ]
+        },
+        {
+          "name": "4球の同期ファウンテン",
+          "context": "4B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Levels / 三段のExtended Box",
+          "context": "3B/0.12",
+          "mirror": true,
+          "sets": 4,
+          "registered": true,
+          "ids": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "name": "3球コラム / Columns",
+          "context": "3B/0.205",
+          "mirror": true,
+          "sets": 2,
+          "registered": true,
+          "ids": [
+            88,
+            89
+          ]
+        }
+      ],
+      "contexts": [
+        {
+          "key": "3B/0.205",
+          "states": 78,
+          "segments": 90,
+          "sources": 37,
+          "joins": []
+        },
+        {
+          "key": "3B/0.12646476232514015",
+          "states": 4,
+          "segments": 4,
+          "sources": 2,
+          "joins": []
+        },
+        {
+          "key": "3B/0.18",
+          "states": 22,
+          "segments": 38,
+          "sources": 5,
+          "joins": []
+        },
+        {
+          "key": "4B/0.205",
+          "states": 1,
+          "segments": 2,
+          "sources": 1,
+          "joins": []
+        },
+        {
+          "key": "3B/0.12",
+          "states": 4,
+          "segments": 4,
+          "sources": 1,
+          "joins": []
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "mirror": false,
+      "ab": {
+        "forward": 4,
+        "backward": 4
+      },
+      "ac": {
+        "forward": 4,
+        "backward": 4
+      },
+      "bc": {
+        "forward": 6,
+        "backward": 6,
+        "added": false
+      },
+      "routes": [
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "sets": 20,
+          "identitySets": 20
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "sets": 20,
+          "identitySets": 20
+        }
+      ],
+      "restoredSets": 16,
+      "failedCandidatesPreserveRegistry": 2,
+      "sourceAppend": {
+        "viaExisting": true,
+        "repeats": 2,
+        "sets": 22,
+        "noNewValidation": true,
+        "metadataRestored": true
+      }
+    },
+    {
+      "mirror": true,
+      "ab": {
+        "forward": 4,
+        "backward": 4
+      },
+      "ac": {
+        "forward": 4,
+        "backward": 4
+      },
+      "bc": {
+        "forward": 6,
+        "backward": 6,
+        "added": false
+      },
+      "routes": [
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "sets": 20,
+          "identitySets": 20
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "sets": 20,
+          "identitySets": 20
+        }
+      ],
+      "restoredSets": 16,
+      "failedCandidatesPreserveRegistry": 2,
+      "sourceAppend": {
+        "viaExisting": true,
+        "repeats": 2,
+        "sets": 22,
+        "noNewValidation": true,
+        "metadataRestored": true
+      }
+    }
+  ],
+  "families": [
+    {
+      "name": "fixed",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 4,
+      "backward": 3,
+      "sets": 12,
+      "identitySets": 12,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "fixed",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 4,
+      "backward": 3,
+      "sets": 12,
+      "identitySets": 12,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "threaded",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "threaded",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-shuffle",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-shuffle",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-inverted",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 4,
+      "backward": 4,
+      "sets": 12,
+      "identitySets": 12,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-inverted",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 4,
+      "backward": 4,
+      "sets": 12,
+      "identitySets": 12,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-left",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 5,
+      "backward": 7,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-left",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 5,
+      "backward": 7,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-right",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-right",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "vertical-drop-lane",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "vertical-drop-lane",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "vertical-drop-handoff",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "vertical-drop-handoff",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 7,
+      "backward": 5,
+      "sets": 16,
+      "identitySets": 16,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "short-under-catch",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 14,
+      "backward": 12,
+      "sets": 30,
+      "identitySets": 30,
+      "sourceDefinitionsUnchanged": true,
+      "underarmRelations": [
+        {
+          "horizontalDistance": 0.004457462907727625,
+          "verticalGap": 0.11449006257612959
+        },
+        {
+          "horizontalDistance": 0.003625447928846093,
+          "verticalGap": 0.11383429021144109
+        },
+        {
+          "horizontalDistance": 0.004457462907728019,
+          "verticalGap": 0.11449006257613514
+        },
+        {
+          "horizontalDistance": 0.0036254089103604993,
+          "verticalGap": 0.11383426025272159
+        }
+      ]
+    },
+    {
+      "name": "short-under-catch",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 14,
+      "backward": 12,
+      "sets": 30,
+      "identitySets": 30,
+      "sourceDefinitionsUnchanged": true,
+      "underarmRelations": [
+        {
+          "horizontalDistance": 0.004457462907727625,
+          "verticalGap": 0.11449006257612959
+        },
+        {
+          "horizontalDistance": 0.003625447928846093,
+          "verticalGap": 0.11383429021144109
+        },
+        {
+          "horizontalDistance": 0.004457462907728019,
+          "verticalGap": 0.11449006257613514
+        },
+        {
+          "horizontalDistance": 0.0036254089103605175,
+          "verticalGap": 0.11383426025272159
+        }
+      ]
+    },
+    {
+      "name": "lateral-shuffle",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 12,
+      "backward": 12,
+      "sets": 28,
+      "identitySets": 28,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "lateral-shuffle",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 12,
+      "backward": 12,
+      "sets": 28,
+      "identitySets": 28,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-cross-side-up",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-cross-side-up",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-cross-side-down",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 12,
+      "backward": 12,
+      "sets": 28,
+      "identitySets": 28,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "switched-cross-side-down",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 12,
+      "backward": 12,
+      "sets": 28,
+      "identitySets": 28,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 12,
+      "backward": 12,
+      "sets": 28,
+      "identitySets": 28,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 12,
+      "backward": 12,
+      "sets": 28,
+      "identitySets": 28,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate-inverted",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 12,
+      "sets": 26,
+      "identitySets": 26,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate-inverted",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 12,
+      "sets": 26,
+      "identitySets": 26,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate-mixed-normal",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate-mixed-normal",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate-mixed-inverted",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "cross-alternate-mixed-inverted",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 10,
+      "backward": 10,
+      "sets": 24,
+      "identitySets": 24,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low",
+      "mirror": false,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low",
+      "mirror": true,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-inverted",
+      "mirror": false,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-inverted",
+      "mirror": true,
+      "beat": 0.18,
+      "forward": 4,
+      "backward": 2,
+      "sets": 20,
+      "identitySets": 60,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "inline",
+      "mirror": false,
+      "beat": 0.12646476232514015,
+      "forward": 14,
+      "backward": 12,
+      "sets": 30,
+      "identitySets": 30,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "inline",
+      "mirror": true,
+      "beat": 0.12646476232514015,
+      "forward": 14,
+      "backward": 12,
+      "sets": 30,
+      "identitySets": 30,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "inline-upper",
+      "mirror": false,
+      "beat": 0.12646476232514015,
+      "forward": 20,
+      "backward": 22,
+      "sets": 46,
+      "identitySets": 46,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "inline-upper",
+      "mirror": true,
+      "beat": 0.12646476232514015,
+      "forward": 20,
+      "backward": 22,
+      "sets": 46,
+      "identitySets": 46,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "claw",
+      "mirror": false,
+      "beat": 0.25,
+      "forward": 6,
+      "backward": 6,
+      "sets": 26,
+      "identitySets": 78,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "claw",
+      "mirror": true,
+      "beat": 0.25,
+      "forward": 6,
+      "backward": 6,
+      "sets": 26,
+      "identitySets": 78,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "columns",
+      "mirror": false,
+      "beat": 0.205,
+      "forward": 3,
+      "backward": 4,
+      "sets": 11,
+      "identitySets": 22,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "columns",
+      "mirror": true,
+      "beat": 0.205,
+      "forward": 3,
+      "backward": 4,
+      "sets": 11,
+      "identitySets": 22,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "networks": [
+    {
+      "mirror": false,
+      "beat": 0.205,
+      "sources": [
+        "box",
+        "switched",
+        "crossed",
+        "crossed-right",
+        "underarm",
+        "crossed-alternate"
+      ],
+      "registeredTransitions": 5,
+      "pairs": [
+        {
+          "from": "box",
+          "to": "switched",
+          "bridgeSets": 7
+        },
+        {
+          "from": "box",
+          "to": "crossed",
+          "bridgeSets": 5
+        },
+        {
+          "from": "box",
+          "to": "crossed-right",
+          "bridgeSets": 7
+        },
+        {
+          "from": "box",
+          "to": "underarm",
+          "bridgeSets": 7
+        },
+        {
+          "from": "box",
+          "to": "crossed-alternate",
+          "bridgeSets": 19
+        },
+        {
+          "from": "switched",
+          "to": "box",
+          "bridgeSets": 5
+        },
+        {
+          "from": "switched",
+          "to": "crossed",
+          "bridgeSets": 10
+        },
+        {
+          "from": "switched",
+          "to": "crossed-right",
+          "bridgeSets": 12
+        },
+        {
+          "from": "switched",
+          "to": "underarm",
+          "bridgeSets": 12
+        },
+        {
+          "from": "switched",
+          "to": "crossed-alternate",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "box",
+          "bridgeSets": 7
+        },
+        {
+          "from": "crossed",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "crossed-right",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "underarm",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "crossed-alternate",
+          "bridgeSets": 24
+        },
+        {
+          "from": "crossed-right",
+          "to": "box",
+          "bridgeSets": 5
+        },
+        {
+          "from": "crossed-right",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed-right",
+          "to": "crossed",
+          "bridgeSets": 10
+        },
+        {
+          "from": "crossed-right",
+          "to": "underarm",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed-right",
+          "to": "crossed-alternate",
+          "bridgeSets": 24
+        },
+        {
+          "from": "underarm",
+          "to": "box",
+          "bridgeSets": 5
+        },
+        {
+          "from": "underarm",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "underarm",
+          "to": "crossed",
+          "bridgeSets": 10
+        },
+        {
+          "from": "underarm",
+          "to": "crossed-right",
+          "bridgeSets": 12
+        },
+        {
+          "from": "underarm",
+          "to": "crossed-alternate",
+          "bridgeSets": 24
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "box",
+          "bridgeSets": 17
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "crossed",
+          "bridgeSets": 22
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "crossed-right",
+          "bridgeSets": 24
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "underarm",
+          "bridgeSets": 24
+        }
+      ],
+      "cycleSets": 82,
+      "identitySets": 82,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "mirror": true,
+      "beat": 0.205,
+      "sources": [
+        "box",
+        "switched",
+        "crossed",
+        "crossed-right",
+        "underarm",
+        "crossed-alternate"
+      ],
+      "registeredTransitions": 5,
+      "pairs": [
+        {
+          "from": "box",
+          "to": "switched",
+          "bridgeSets": 7
+        },
+        {
+          "from": "box",
+          "to": "crossed",
+          "bridgeSets": 5
+        },
+        {
+          "from": "box",
+          "to": "crossed-right",
+          "bridgeSets": 7
+        },
+        {
+          "from": "box",
+          "to": "underarm",
+          "bridgeSets": 7
+        },
+        {
+          "from": "box",
+          "to": "crossed-alternate",
+          "bridgeSets": 19
+        },
+        {
+          "from": "switched",
+          "to": "box",
+          "bridgeSets": 5
+        },
+        {
+          "from": "switched",
+          "to": "crossed",
+          "bridgeSets": 10
+        },
+        {
+          "from": "switched",
+          "to": "crossed-right",
+          "bridgeSets": 12
+        },
+        {
+          "from": "switched",
+          "to": "underarm",
+          "bridgeSets": 12
+        },
+        {
+          "from": "switched",
+          "to": "crossed-alternate",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "box",
+          "bridgeSets": 7
+        },
+        {
+          "from": "crossed",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "crossed-right",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "underarm",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed",
+          "to": "crossed-alternate",
+          "bridgeSets": 24
+        },
+        {
+          "from": "crossed-right",
+          "to": "box",
+          "bridgeSets": 5
+        },
+        {
+          "from": "crossed-right",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed-right",
+          "to": "crossed",
+          "bridgeSets": 10
+        },
+        {
+          "from": "crossed-right",
+          "to": "underarm",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed-right",
+          "to": "crossed-alternate",
+          "bridgeSets": 24
+        },
+        {
+          "from": "underarm",
+          "to": "box",
+          "bridgeSets": 5
+        },
+        {
+          "from": "underarm",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "underarm",
+          "to": "crossed",
+          "bridgeSets": 10
+        },
+        {
+          "from": "underarm",
+          "to": "crossed-right",
+          "bridgeSets": 12
+        },
+        {
+          "from": "underarm",
+          "to": "crossed-alternate",
+          "bridgeSets": 24
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "box",
+          "bridgeSets": 17
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "switched",
+          "bridgeSets": 12
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "crossed",
+          "bridgeSets": 22
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "crossed-right",
+          "bridgeSets": 24
+        },
+        {
+          "from": "crossed-alternate",
+          "to": "underarm",
+          "bridgeSets": 24
+        }
+      ],
+      "cycleSets": 82,
+      "identitySets": 82,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-around",
+      "mirror": false,
+      "beat": 0.15,
+      "sources": [
+        "ボックス",
+        "High-Low Box / Swap Box",
+        "High-Low-Around Inverted Box"
+      ],
+      "registrationOrder": [
+        0,
+        1,
+        2
+      ],
+      "registeredTransitions": 2,
+      "pairs": [
+        {
+          "from": "ボックス",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "ボックス",
+          "bridgeSets": 10
+        },
+        {
+          "from": "High-Low Box / Swap Box",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "High-Low Box / Swap Box",
+          "bridgeSets": 8
+        }
+      ],
+      "cycleSets": 52,
+      "identitySets": 52,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "high-low-around",
+      "mirror": true,
+      "beat": 0.15,
+      "sources": [
+        "ボックス",
+        "High-Low Box / Swap Box",
+        "High-Low-Around Inverted Box"
+      ],
+      "registrationOrder": [
+        2,
+        1,
+        0
+      ],
+      "registeredTransitions": 2,
+      "pairs": [
+        {
+          "from": "ボックス",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "ボックス",
+          "bridgeSets": 10
+        },
+        {
+          "from": "High-Low Box / Swap Box",
+          "to": "High-Low-Around Inverted Box",
+          "bridgeSets": 8
+        },
+        {
+          "from": "High-Low-Around Inverted Box",
+          "to": "High-Low Box / Swap Box",
+          "bridgeSets": 8
+        }
+      ],
+      "cycleSets": 52,
+      "identitySets": 52,
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "mixedNetworks": [
+    {
+      "mirror": false,
+      "beat": 0.205,
+      "parts": [
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed-right",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "inverted"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "inverted"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "inverted"
+        },
+        {
+          "columns": "crossed",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "crossed-right",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "inverted"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "inverted"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "inverted"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "inverted",
+          "right": "inverted"
+        }
+      ],
+      "spatial": [
+        "vertical-up",
+        "vertical-down",
+        "cross-side-vertical-up",
+        "cross-side-vertical-down",
+        "lateral-normal",
+        "lateral-inverted",
+        "short-under-release",
+        "outside-vertical-up",
+        "switched-outside-vertical-up",
+        "switched-center-vertical-up",
+        "switched-center-vertical-down",
+        "lateral-reverse",
+        "outside-vertical-down",
+        "switched-outside-vertical-down",
+        "short-under-catch",
+        "lateral-shuffle",
+        "switched-cross-side-vertical-up",
+        "switched-cross-side-vertical-down"
+      ],
+      "doubles": [
+        {
+          "crossSet": "normal",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "normal",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "normal",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "normal",
+          "selfSet": "inverted"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "inverted"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "inverted"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "inverted"
+        }
+      ],
+      "documentBytes": 698074,
+      "registeredSources": 174,
+      "registeredTransitions": 84,
+      "additions": [
+        {
+          "from": 0,
+          "to": 1,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 2,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 3,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 4,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 5,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 6,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 7,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 8,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 9,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 10,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 11,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 12,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 13,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 14,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 15,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 16,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 17,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 18,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 19,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 20,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 21,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 22,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 23,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 24,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 25,
+          "added": true,
+          "via": "2xの組合せ / 左 下→下・右 下→下"
+        },
+        {
+          "from": 1,
+          "to": 26,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 27,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 28,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 29,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 30,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 31,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 32,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 33,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 34,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 35,
+          "added": true,
+          "via": "2xの組合せ / 左 下→下・右 下→下"
+        },
+        {
+          "from": 2,
+          "to": 36,
+          "added": true
+        },
+        {
+          "from": 3,
+          "to": 37,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 38,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 39,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 40,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 41,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 42,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 43,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 44,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 45,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 46,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 47,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 48,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 49,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 50,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 51,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 52,
+          "added": true
+        },
+        {
+          "from": 5,
+          "to": 53,
+          "added": true
+        },
+        {
+          "from": 5,
+          "to": 54,
+          "added": true
+        },
+        {
+          "from": 5,
+          "to": 55,
+          "added": true,
+          "via": "反対側を担当 / 左 下→下・右 下→下"
+        },
+        {
+          "from": 0,
+          "to": 56,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 57,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 58,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 59,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 60,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 61,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 62,
+          "added": true
+        },
+        {
+          "from": 58,
+          "to": 63,
+          "added": true
+        },
+        {
+          "from": 56,
+          "to": 64,
+          "added": true
+        },
+        {
+          "from": 35,
+          "to": 65,
+          "added": true
+        },
+        {
+          "from": 35,
+          "to": 66,
+          "added": true
+        },
+        {
+          "from": 60,
+          "to": 67,
+          "added": true
+        },
+        {
+          "from": 59,
+          "to": 68,
+          "added": true
+        },
+        {
+          "from": 68,
+          "to": 69,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 70,
+          "added": true
+        },
+        {
+          "from": 61,
+          "to": 71,
+          "added": true
+        },
+        {
+          "from": 65,
+          "to": 72,
+          "added": true
+        },
+        {
+          "from": 72,
+          "to": 73,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 74,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 75,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 76,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 77,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 78,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 79,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 80,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 81,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 82,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 83,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 84,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 85,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 86,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 87,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 88,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 89,
+          "added": true
+        }
+      ],
+      "paths": [
+        {
+          "source": 1,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 2,
+          "out": 5,
+          "back": 7
+        },
+        {
+          "source": 3,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 4,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 5,
+          "out": 19,
+          "back": 17
+        },
+        {
+          "source": 6,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 7,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 8,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 9,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 10,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 11,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 12,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 13,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 14,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 15,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 16,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 17,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 18,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 19,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 20,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 21,
+          "out": 7,
+          "back": 7
+        },
+        {
+          "source": 22,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 23,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 24,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 25,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 26,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 27,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 28,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 29,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 30,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 31,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 32,
+          "out": 7,
+          "back": 7
+        },
+        {
+          "source": 33,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 34,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 35,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 36,
+          "out": 7,
+          "back": 9
+        },
+        {
+          "source": 37,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 38,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 39,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 40,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 41,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 42,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 43,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 44,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 45,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 46,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 47,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 48,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 49,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 50,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 51,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 52,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 53,
+          "out": 29,
+          "back": 27
+        },
+        {
+          "source": 54,
+          "out": 29,
+          "back": 27
+        },
+        {
+          "source": 55,
+          "out": 17,
+          "back": 17
+        },
+        {
+          "source": 56,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 57,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 58,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 59,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 60,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 61,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 62,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 63,
+          "out": 8,
+          "back": 8
+        },
+        {
+          "source": 64,
+          "out": 8,
+          "back": 8
+        },
+        {
+          "source": 65,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 66,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 67,
+          "out": 8,
+          "back": 8
+        },
+        {
+          "source": 68,
+          "out": 14,
+          "back": 14
+        },
+        {
+          "source": 69,
+          "out": 21,
+          "back": 19
+        },
+        {
+          "source": 70,
+          "out": 14,
+          "back": 12
+        },
+        {
+          "source": 71,
+          "out": 16,
+          "back": 16
+        },
+        {
+          "source": 72,
+          "out": 19,
+          "back": 19
+        },
+        {
+          "source": 73,
+          "out": 31,
+          "back": 29
+        },
+        {
+          "source": 74,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 75,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 76,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 77,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 78,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 79,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 80,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 81,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 82,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 83,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 84,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 85,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 86,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 87,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 88,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 89,
+          "out": 6,
+          "back": 6
+        }
+      ],
+      "cycles": [
+        {
+          "sources": [
+            0,
+            17,
+            34
+          ],
+          "sets": 26,
+          "identitySets": 26,
+          "appendMilliseconds": 37.967099999892525
+        },
+        {
+          "sources": [
+            51,
+            68,
+            85
+          ],
+          "sets": 64,
+          "identitySets": 64,
+          "appendMilliseconds": 82.76509999996051
+        },
+        {
+          "sources": [
+            12,
+            29,
+            46
+          ],
+          "sets": 48,
+          "identitySets": 48,
+          "appendMilliseconds": 78.34030000003986
+        },
+        {
+          "sources": [
+            63,
+            80,
+            7
+          ],
+          "sets": 38,
+          "identitySets": 38,
+          "appendMilliseconds": 51.51560000004247
+        },
+        {
+          "sources": [
+            24,
+            41,
+            58
+          ],
+          "sets": 46,
+          "identitySets": 46,
+          "appendMilliseconds": 75.44810000003781
+        },
+        {
+          "sources": [
+            75,
+            2,
+            19
+          ],
+          "sets": 36,
+          "identitySets": 36,
+          "appendMilliseconds": 51.35849999997299
+        },
+        {
+          "sources": [
+            36,
+            53,
+            70
+          ],
+          "sets": 102,
+          "identitySets": 102,
+          "appendMilliseconds": 99.20659999991767
+        },
+        {
+          "sources": [
+            87,
+            14,
+            31
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 67.1836000001058
+        },
+        {
+          "sources": [
+            48,
+            65,
+            82
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 88.15359999996144
+        },
+        {
+          "sources": [
+            9,
+            26,
+            43
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 69.00029999995604
+        },
+        {
+          "sources": [
+            60,
+            77,
+            4
+          ],
+          "sets": 38,
+          "identitySets": 38,
+          "appendMilliseconds": 61.69670000008773
+        },
+        {
+          "sources": [
+            21,
+            38,
+            55
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 64.58250000001863
+        },
+        {
+          "sources": [
+            72,
+            89,
+            16
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 77.65130000002682
+        },
+        {
+          "sources": [
+            33,
+            50,
+            67
+          ],
+          "sets": 56,
+          "identitySets": 56,
+          "appendMilliseconds": 86.0050999999512
+        },
+        {
+          "sources": [
+            84,
+            11,
+            28
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 64.1465999999782
+        },
+        {
+          "sources": [
+            45,
+            62,
+            79
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 68.59680000005756
+        },
+        {
+          "sources": [
+            6,
+            23,
+            40
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 58.04830000002403
+        },
+        {
+          "sources": [
+            57,
+            74,
+            1
+          ],
+          "sets": 38,
+          "identitySets": 38,
+          "appendMilliseconds": 57.667299999971874
+        },
+        {
+          "sources": [
+            18,
+            35,
+            52
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 62.959900000016205
+        },
+        {
+          "sources": [
+            69,
+            86,
+            13
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 75.99299999990035
+        },
+        {
+          "sources": [
+            30,
+            47,
+            64
+          ],
+          "sets": 58,
+          "identitySets": 58,
+          "appendMilliseconds": 88.20059999998193
+        },
+        {
+          "sources": [
+            81,
+            8,
+            25
+          ],
+          "sets": 34,
+          "identitySets": 34,
+          "appendMilliseconds": 46.90100000007078
+        },
+        {
+          "sources": [
+            42,
+            59,
+            76
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 66.47939999995288
+        },
+        {
+          "sources": [
+            3,
+            20,
+            37
+          ],
+          "sets": 28,
+          "identitySets": 28,
+          "appendMilliseconds": 38.72320000000764
+        },
+        {
+          "sources": [
+            54,
+            71,
+            88
+          ],
+          "sets": 106,
+          "identitySets": 106,
+          "appendMilliseconds": 107.07760000007693
+        },
+        {
+          "sources": [
+            15,
+            32,
+            49
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 68.686699999962
+        },
+        {
+          "sources": [
+            66,
+            83,
+            10
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 64.71630000008736
+        },
+        {
+          "sources": [
+            27,
+            44,
+            61
+          ],
+          "sets": 48,
+          "identitySets": 48,
+          "appendMilliseconds": 80.64649999991525
+        },
+        {
+          "sources": [
+            78,
+            5,
+            22
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 64.97279999998864
+        },
+        {
+          "sources": [
+            39,
+            56,
+            73
+          ],
+          "sets": 92,
+          "identitySets": 92,
+          "appendMilliseconds": 98.44790000002831
+        }
+      ],
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "batchProgressSteps": 179,
+      "batchPublishedAtomically": true,
+      "repeatedBatchAddedSources": 0,
+      "repeatedBatchAddedTransitions": 0,
+      "connectionCoverage": {
+        "anchor": 0,
+        "name": "2xの組合せ / 左 下→下・右 下→下",
+        "sources": [
+          {
+            "index": 0,
+            "name": "2xの組合せ / 左 下→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 0,
+            "returnSets": 0
+          },
+          {
+            "index": 1,
+            "name": "反対側を担当 / 左 下→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 2,
+            "name": "クロス左上 / 左 下→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 5,
+            "returnSets": 7
+          },
+          {
+            "index": 3,
+            "name": "クロス右上 / 左 下→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 4,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 5,
+            "name": "クロス上下交代 / 左 下→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 19,
+            "returnSets": 17
+          },
+          {
+            "index": 6,
+            "name": "2xの組合せ / 左 下→下・右 上→下",
+            "mirror": false,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 7,
+            "name": "2xの組合せ / 左 下→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 8,
+            "name": "2xの組合せ / 左 下→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 9,
+            "name": "2xの組合せ / 左 上→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 10,
+            "name": "2xの組合せ / 左 上→下・右 上→下",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 11,
+            "name": "2xの組合せ / 左 上→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 12,
+            "name": "2xの組合せ / 左 上→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 13,
+            "name": "2xの組合せ / 左 下→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 14,
+            "name": "2xの組合せ / 左 下→上・右 上→下",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 15,
+            "name": "2xの組合せ / 左 下→上・右 下→上",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 16,
+            "name": "2xの組合せ / 左 下→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 17,
+            "name": "2xの組合せ / 左 上→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 18,
+            "name": "2xの組合せ / 左 上→上・右 上→下",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 19,
+            "name": "2xの組合せ / 左 上→上・右 下→上",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 20,
+            "name": "2xの組合せ / 左 上→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 21,
+            "name": "反対側を担当 / 左 下→下・右 上→下",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 7
+          },
+          {
+            "index": 22,
+            "name": "反対側を担当 / 左 下→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 23,
+            "name": "反対側を担当 / 左 下→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 24,
+            "name": "反対側を担当 / 左 上→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 25,
+            "name": "反対側を担当 / 左 上→下・右 上→下",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 26,
+            "name": "反対側を担当 / 左 上→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 27,
+            "name": "反対側を担当 / 左 上→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 28,
+            "name": "反対側を担当 / 左 下→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 29,
+            "name": "反対側を担当 / 左 下→上・右 上→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 30,
+            "name": "反対側を担当 / 左 下→上・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 31,
+            "name": "反対側を担当 / 左 下→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 32,
+            "name": "反対側を担当 / 左 上→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 7
+          },
+          {
+            "index": 33,
+            "name": "反対側を担当 / 左 上→上・右 上→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 34,
+            "name": "反対側を担当 / 左 上→上・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 35,
+            "name": "反対側を担当 / 左 上→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 36,
+            "name": "クロス左上 / 左 下→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 7,
+            "returnSets": 9
+          },
+          {
+            "index": 37,
+            "name": "クロス右上 / 左 下→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 38,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 上→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 39,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 40,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 41,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 下→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 42,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 上→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 43,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 44,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 45,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 46,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 上→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 47,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 48,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 49,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 50,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 上→下",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 51,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 下→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 52,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 53,
+            "name": "クロス上下交代 / 左 下→下・右 上→上",
+            "mirror": false,
+            "forwardSets": 29,
+            "returnSets": 27
+          },
+          {
+            "index": 54,
+            "name": "クロス上下交代 / 左 上→上・右 下→下",
+            "mirror": false,
+            "forwardSets": 29,
+            "returnSets": 27
+          },
+          {
+            "index": 55,
+            "name": "クロス上下交代 / 左 上→上・右 上→上",
+            "mirror": false,
+            "forwardSets": 17,
+            "returnSets": 17
+          },
+          {
+            "index": 56,
+            "name": "中央の縦2x・上投げ",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 57,
+            "name": "中央の縦2x・下投げ",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 58,
+            "name": "反対側の縦2x・上投げ",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 59,
+            "name": "反対側の縦2x・下投げ",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 60,
+            "name": "Normal lateral",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 61,
+            "name": "Inverted lateral",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 62,
+            "name": "2xを腕の下から投げる",
+            "mirror": false,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 63,
+            "name": "外側の縦2x・上投げ",
+            "mirror": false,
+            "forwardSets": 8,
+            "returnSets": 8
+          },
+          {
+            "index": 64,
+            "name": "Switched / 外側の縦2x・上投げ",
+            "mirror": false,
+            "forwardSets": 8,
+            "returnSets": 8
+          },
+          {
+            "index": 65,
+            "name": "Switched / 中央の縦2x・上投げ",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 66,
+            "name": "Switched / 中央の縦2x・下投げ",
+            "mirror": false,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 67,
+            "name": "Reverse lateral",
+            "mirror": false,
+            "forwardSets": 8,
+            "returnSets": 8
+          },
+          {
+            "index": 68,
+            "name": "外側の縦2x・下投げ",
+            "mirror": false,
+            "forwardSets": 14,
+            "returnSets": 14
+          },
+          {
+            "index": 69,
+            "name": "Switched / 外側の縦2x・下投げ",
+            "mirror": false,
+            "forwardSets": 21,
+            "returnSets": 19
+          },
+          {
+            "index": 70,
+            "name": "2xを腕の下で捕る",
+            "mirror": false,
+            "forwardSets": 14,
+            "returnSets": 12
+          },
+          {
+            "index": 71,
+            "name": "Shuffle lateral",
+            "mirror": false,
+            "forwardSets": 16,
+            "returnSets": 16
+          },
+          {
+            "index": 72,
+            "name": "Switched / 反対側の縦2x・上投げ",
+            "mirror": false,
+            "forwardSets": 19,
+            "returnSets": 19
+          },
+          {
+            "index": 73,
+            "name": "Switched / 反対側の縦2x・下投げ",
+            "mirror": false,
+            "forwardSets": 31,
+            "returnSets": 29
+          },
+          {
+            "index": 74,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 下→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 75,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 上→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 76,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 下→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 77,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 上→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 78,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 下→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 79,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 上→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 80,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 下→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 81,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 上→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 82,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 下→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 83,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 上→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 84,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 下→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 85,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 上→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 86,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 下→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 87,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 上→下",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 88,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 下→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 89,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 上→上",
+            "mirror": false,
+            "forwardSets": 6,
+            "returnSets": 6
+          }
+        ],
+        "connected": 90,
+        "milliseconds": 45.40100000007078
+      }
+    },
+    {
+      "mirror": true,
+      "beat": 0.205,
+      "parts": [
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed-right",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "normal",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "shuffle",
+          "right": "inverted"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "reverse",
+          "right": "inverted"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "shuffle"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "reverse"
+        },
+        {
+          "columns": "normal",
+          "left": "inverted",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "shuffle",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "reverse",
+          "right": "inverted"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "shuffle"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "reverse"
+        },
+        {
+          "columns": "switched",
+          "left": "inverted",
+          "right": "inverted"
+        },
+        {
+          "columns": "crossed",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "crossed-right",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "shuffle",
+          "right": "inverted"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "reverse",
+          "right": "inverted"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "shuffle"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "reverse"
+        },
+        {
+          "columns": "underarm",
+          "left": "inverted",
+          "right": "inverted"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "normal",
+          "right": "inverted"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "inverted",
+          "right": "normal"
+        },
+        {
+          "columns": "crossed-alternate",
+          "left": "inverted",
+          "right": "inverted"
+        }
+      ],
+      "spatial": [
+        "vertical-up",
+        "vertical-down",
+        "cross-side-vertical-up",
+        "cross-side-vertical-down",
+        "lateral-normal",
+        "lateral-inverted",
+        "short-under-release",
+        "outside-vertical-up",
+        "switched-outside-vertical-up",
+        "switched-center-vertical-up",
+        "switched-center-vertical-down",
+        "lateral-reverse",
+        "outside-vertical-down",
+        "switched-outside-vertical-down",
+        "short-under-catch",
+        "lateral-shuffle",
+        "switched-cross-side-vertical-up",
+        "switched-cross-side-vertical-down"
+      ],
+      "doubles": [
+        {
+          "crossSet": "normal",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "normal",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "normal",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "normal",
+          "selfSet": "inverted"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "shuffle",
+          "selfSet": "inverted"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "reverse",
+          "selfSet": "inverted"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "normal"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "shuffle"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "reverse"
+        },
+        {
+          "crossSet": "inverted",
+          "selfSet": "inverted"
+        }
+      ],
+      "documentBytes": 697900,
+      "registeredSources": 174,
+      "registeredTransitions": 84,
+      "additions": [
+        {
+          "from": 0,
+          "to": 1,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 2,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 3,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 4,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 5,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 6,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 7,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 8,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 9,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 10,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 11,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 12,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 13,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 14,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 15,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 16,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 17,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 18,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 19,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 20,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 21,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 22,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 23,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 24,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 25,
+          "added": true,
+          "via": "2xの組合せ / 左 下→下・右 下→下"
+        },
+        {
+          "from": 1,
+          "to": 26,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 27,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 28,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 29,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 30,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 31,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 32,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 33,
+          "added": false
+        },
+        {
+          "from": 1,
+          "to": 34,
+          "added": true
+        },
+        {
+          "from": 1,
+          "to": 35,
+          "added": true,
+          "via": "2xの組合せ / 左 下→下・右 下→下"
+        },
+        {
+          "from": 2,
+          "to": 36,
+          "added": true
+        },
+        {
+          "from": 3,
+          "to": 37,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 38,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 39,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 40,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 41,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 42,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 43,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 44,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 45,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 46,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 47,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 48,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 49,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 50,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 51,
+          "added": true
+        },
+        {
+          "from": 4,
+          "to": 52,
+          "added": true
+        },
+        {
+          "from": 5,
+          "to": 53,
+          "added": true
+        },
+        {
+          "from": 5,
+          "to": 54,
+          "added": true
+        },
+        {
+          "from": 5,
+          "to": 55,
+          "added": true,
+          "via": "反対側を担当 / 左 下→下・右 下→下"
+        },
+        {
+          "from": 0,
+          "to": 56,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 57,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 58,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 59,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 60,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 61,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 62,
+          "added": true
+        },
+        {
+          "from": 58,
+          "to": 63,
+          "added": true
+        },
+        {
+          "from": 56,
+          "to": 64,
+          "added": true
+        },
+        {
+          "from": 35,
+          "to": 65,
+          "added": true
+        },
+        {
+          "from": 35,
+          "to": 66,
+          "added": true
+        },
+        {
+          "from": 60,
+          "to": 67,
+          "added": true
+        },
+        {
+          "from": 59,
+          "to": 68,
+          "added": true
+        },
+        {
+          "from": 68,
+          "to": 69,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 70,
+          "added": true
+        },
+        {
+          "from": 61,
+          "to": 71,
+          "added": true
+        },
+        {
+          "from": 65,
+          "to": 72,
+          "added": true
+        },
+        {
+          "from": 72,
+          "to": 73,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 74,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 75,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 76,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 77,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 78,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 79,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 80,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 81,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 82,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 83,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 84,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 85,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 86,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 87,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 88,
+          "added": true
+        },
+        {
+          "from": 0,
+          "to": 89,
+          "added": true
+        }
+      ],
+      "paths": [
+        {
+          "source": 1,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 2,
+          "out": 5,
+          "back": 7
+        },
+        {
+          "source": 3,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 4,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 5,
+          "out": 19,
+          "back": 17
+        },
+        {
+          "source": 6,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 7,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 8,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 9,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 10,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 11,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 12,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 13,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 14,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 15,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 16,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 17,
+          "out": 2,
+          "back": 2
+        },
+        {
+          "source": 18,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 19,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 20,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 21,
+          "out": 7,
+          "back": 7
+        },
+        {
+          "source": 22,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 23,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 24,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 25,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 26,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 27,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 28,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 29,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 30,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 31,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 32,
+          "out": 7,
+          "back": 7
+        },
+        {
+          "source": 33,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 34,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 35,
+          "out": 7,
+          "back": 5
+        },
+        {
+          "source": 36,
+          "out": 7,
+          "back": 9
+        },
+        {
+          "source": 37,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 38,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 39,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 40,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 41,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 42,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 43,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 44,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 45,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 46,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 47,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 48,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 49,
+          "out": 9,
+          "back": 7
+        },
+        {
+          "source": 50,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 51,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 52,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 53,
+          "out": 29,
+          "back": 27
+        },
+        {
+          "source": 54,
+          "out": 29,
+          "back": 27
+        },
+        {
+          "source": 55,
+          "out": 17,
+          "back": 17
+        },
+        {
+          "source": 56,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 57,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 58,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 59,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 60,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 61,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 62,
+          "out": 4,
+          "back": 4
+        },
+        {
+          "source": 63,
+          "out": 8,
+          "back": 8
+        },
+        {
+          "source": 64,
+          "out": 8,
+          "back": 8
+        },
+        {
+          "source": 65,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 66,
+          "out": 9,
+          "back": 9
+        },
+        {
+          "source": 67,
+          "out": 8,
+          "back": 8
+        },
+        {
+          "source": 68,
+          "out": 14,
+          "back": 14
+        },
+        {
+          "source": 69,
+          "out": 21,
+          "back": 19
+        },
+        {
+          "source": 70,
+          "out": 14,
+          "back": 12
+        },
+        {
+          "source": 71,
+          "out": 16,
+          "back": 16
+        },
+        {
+          "source": 72,
+          "out": 19,
+          "back": 19
+        },
+        {
+          "source": 73,
+          "out": 31,
+          "back": 29
+        },
+        {
+          "source": 74,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 75,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 76,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 77,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 78,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 79,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 80,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 81,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 82,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 83,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 84,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 85,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 86,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 87,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 88,
+          "out": 6,
+          "back": 6
+        },
+        {
+          "source": 89,
+          "out": 6,
+          "back": 6
+        }
+      ],
+      "cycles": [
+        {
+          "sources": [
+            0,
+            17,
+            34
+          ],
+          "sets": 26,
+          "identitySets": 26,
+          "appendMilliseconds": 38.26679999998305
+        },
+        {
+          "sources": [
+            51,
+            68,
+            85
+          ],
+          "sets": 64,
+          "identitySets": 64,
+          "appendMilliseconds": 84.96909999998752
+        },
+        {
+          "sources": [
+            12,
+            29,
+            46
+          ],
+          "sets": 48,
+          "identitySets": 48,
+          "appendMilliseconds": 67.61690000002272
+        },
+        {
+          "sources": [
+            63,
+            80,
+            7
+          ],
+          "sets": 38,
+          "identitySets": 38,
+          "appendMilliseconds": 55.35649999999441
+        },
+        {
+          "sources": [
+            24,
+            41,
+            58
+          ],
+          "sets": 46,
+          "identitySets": 46,
+          "appendMilliseconds": 72.8808999999892
+        },
+        {
+          "sources": [
+            75,
+            2,
+            19
+          ],
+          "sets": 36,
+          "identitySets": 36,
+          "appendMilliseconds": 60.09699999995064
+        },
+        {
+          "sources": [
+            36,
+            53,
+            70
+          ],
+          "sets": 102,
+          "identitySets": 102,
+          "appendMilliseconds": 95.10800000000745
+        },
+        {
+          "sources": [
+            87,
+            14,
+            31
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 63.02059999993071
+        },
+        {
+          "sources": [
+            48,
+            65,
+            82
+          ],
+          "sets": 54,
+          "identitySets": 54,
+          "appendMilliseconds": 77.79340000008233
+        },
+        {
+          "sources": [
+            9,
+            26,
+            43
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 65.51670000003651
+        },
+        {
+          "sources": [
+            60,
+            77,
+            4
+          ],
+          "sets": 38,
+          "identitySets": 38,
+          "appendMilliseconds": 56.39909999992233
+        },
+        {
+          "sources": [
+            21,
+            38,
+            55
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 63.60789999994449
+        },
+        {
+          "sources": [
+            72,
+            89,
+            16
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 74.88610000000335
+        },
+        {
+          "sources": [
+            33,
+            50,
+            67
+          ],
+          "sets": 56,
+          "identitySets": 56,
+          "appendMilliseconds": 91.99930000002496
+        },
+        {
+          "sources": [
+            84,
+            11,
+            28
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 59.78529999998864
+        },
+        {
+          "sources": [
+            45,
+            62,
+            79
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 68.2265999999363
+        },
+        {
+          "sources": [
+            6,
+            23,
+            40
+          ],
+          "sets": 40,
+          "identitySets": 40,
+          "appendMilliseconds": 57.05279999994673
+        },
+        {
+          "sources": [
+            57,
+            74,
+            1
+          ],
+          "sets": 38,
+          "identitySets": 38,
+          "appendMilliseconds": 54.18980000005104
+        },
+        {
+          "sources": [
+            18,
+            35,
+            52
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 67.02880000008736
+        },
+        {
+          "sources": [
+            69,
+            86,
+            13
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 73.76260000001639
+        },
+        {
+          "sources": [
+            30,
+            47,
+            64
+          ],
+          "sets": 58,
+          "identitySets": 58,
+          "appendMilliseconds": 86.64489999995567
+        },
+        {
+          "sources": [
+            81,
+            8,
+            25
+          ],
+          "sets": 34,
+          "identitySets": 34,
+          "appendMilliseconds": 43.89199999999255
+        },
+        {
+          "sources": [
+            42,
+            59,
+            76
+          ],
+          "sets": 44,
+          "identitySets": 44,
+          "appendMilliseconds": 68.25809999997728
+        },
+        {
+          "sources": [
+            3,
+            20,
+            37
+          ],
+          "sets": 28,
+          "identitySets": 28,
+          "appendMilliseconds": 36.85829999996349
+        },
+        {
+          "sources": [
+            54,
+            71,
+            88
+          ],
+          "sets": 106,
+          "identitySets": 106,
+          "appendMilliseconds": 105.94289999990724
+        },
+        {
+          "sources": [
+            15,
+            32,
+            49
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 68.33349999994971
+        },
+        {
+          "sources": [
+            66,
+            83,
+            10
+          ],
+          "sets": 42,
+          "identitySets": 42,
+          "appendMilliseconds": 65.10710000002291
+        },
+        {
+          "sources": [
+            27,
+            44,
+            61
+          ],
+          "sets": 48,
+          "identitySets": 48,
+          "appendMilliseconds": 79.2284000000218
+        },
+        {
+          "sources": [
+            78,
+            5,
+            22
+          ],
+          "sets": 62,
+          "identitySets": 62,
+          "appendMilliseconds": 62.18939999991562
+        },
+        {
+          "sources": [
+            39,
+            56,
+            73
+          ],
+          "sets": 92,
+          "identitySets": 92,
+          "appendMilliseconds": 88.23869999998715
+        }
+      ],
+      "armSearchesDuringReuse": 0,
+      "sourceDefinitionsUnchanged": true,
+      "batchProgressSteps": 179,
+      "batchPublishedAtomically": true,
+      "repeatedBatchAddedSources": 0,
+      "repeatedBatchAddedTransitions": 0,
+      "connectionCoverage": {
+        "anchor": 0,
+        "name": "2xの組合せ / 左 下→下・右 下→下",
+        "sources": [
+          {
+            "index": 0,
+            "name": "2xの組合せ / 左 下→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 0,
+            "returnSets": 0
+          },
+          {
+            "index": 1,
+            "name": "反対側を担当 / 左 下→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 2,
+            "name": "クロス左上 / 左 下→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 5,
+            "returnSets": 7
+          },
+          {
+            "index": 3,
+            "name": "クロス右上 / 左 下→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 4,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 5,
+            "name": "クロス上下交代 / 左 下→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 19,
+            "returnSets": 17
+          },
+          {
+            "index": 6,
+            "name": "2xの組合せ / 左 下→下・右 上→下",
+            "mirror": true,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 7,
+            "name": "2xの組合せ / 左 下→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 8,
+            "name": "2xの組合せ / 左 下→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 9,
+            "name": "2xの組合せ / 左 上→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 10,
+            "name": "2xの組合せ / 左 上→下・右 上→下",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 11,
+            "name": "2xの組合せ / 左 上→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 12,
+            "name": "2xの組合せ / 左 上→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 13,
+            "name": "2xの組合せ / 左 下→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 14,
+            "name": "2xの組合せ / 左 下→上・右 上→下",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 15,
+            "name": "2xの組合せ / 左 下→上・右 下→上",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 16,
+            "name": "2xの組合せ / 左 下→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 17,
+            "name": "2xの組合せ / 左 上→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 2,
+            "returnSets": 2
+          },
+          {
+            "index": 18,
+            "name": "2xの組合せ / 左 上→上・右 上→下",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 19,
+            "name": "2xの組合せ / 左 上→上・右 下→上",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 20,
+            "name": "2xの組合せ / 左 上→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 21,
+            "name": "反対側を担当 / 左 下→下・右 上→下",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 7
+          },
+          {
+            "index": 22,
+            "name": "反対側を担当 / 左 下→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 23,
+            "name": "反対側を担当 / 左 下→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 24,
+            "name": "反対側を担当 / 左 上→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 25,
+            "name": "反対側を担当 / 左 上→下・右 上→下",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 26,
+            "name": "反対側を担当 / 左 上→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 27,
+            "name": "反対側を担当 / 左 上→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 28,
+            "name": "反対側を担当 / 左 下→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 29,
+            "name": "反対側を担当 / 左 下→上・右 上→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 30,
+            "name": "反対側を担当 / 左 下→上・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 31,
+            "name": "反対側を担当 / 左 下→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 32,
+            "name": "反対側を担当 / 左 上→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 7
+          },
+          {
+            "index": 33,
+            "name": "反対側を担当 / 左 上→上・右 上→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 34,
+            "name": "反対側を担当 / 左 上→上・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 35,
+            "name": "反対側を担当 / 左 上→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 5
+          },
+          {
+            "index": 36,
+            "name": "クロス左上 / 左 下→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 7,
+            "returnSets": 9
+          },
+          {
+            "index": 37,
+            "name": "クロス右上 / 左 下→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 38,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 上→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 39,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 40,
+            "name": "コラムを腕の下で捕る / 左 下→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 41,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 下→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 42,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 上→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 43,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 44,
+            "name": "コラムを腕の下で捕る / 左 上→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 45,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 46,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 上→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 47,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 48,
+            "name": "コラムを腕の下で捕る / 左 下→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 49,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 7
+          },
+          {
+            "index": 50,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 上→下",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 51,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 下→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 52,
+            "name": "コラムを腕の下で捕る / 左 上→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 53,
+            "name": "クロス上下交代 / 左 下→下・右 上→上",
+            "mirror": true,
+            "forwardSets": 29,
+            "returnSets": 27
+          },
+          {
+            "index": 54,
+            "name": "クロス上下交代 / 左 上→上・右 下→下",
+            "mirror": true,
+            "forwardSets": 29,
+            "returnSets": 27
+          },
+          {
+            "index": 55,
+            "name": "クロス上下交代 / 左 上→上・右 上→上",
+            "mirror": true,
+            "forwardSets": 17,
+            "returnSets": 17
+          },
+          {
+            "index": 56,
+            "name": "中央の縦2x・上投げ",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 57,
+            "name": "中央の縦2x・下投げ",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 58,
+            "name": "反対側の縦2x・上投げ",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 59,
+            "name": "反対側の縦2x・下投げ",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 60,
+            "name": "Normal lateral",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 61,
+            "name": "Inverted lateral",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 62,
+            "name": "2xを腕の下から投げる",
+            "mirror": true,
+            "forwardSets": 4,
+            "returnSets": 4
+          },
+          {
+            "index": 63,
+            "name": "外側の縦2x・上投げ",
+            "mirror": true,
+            "forwardSets": 8,
+            "returnSets": 8
+          },
+          {
+            "index": 64,
+            "name": "Switched / 外側の縦2x・上投げ",
+            "mirror": true,
+            "forwardSets": 8,
+            "returnSets": 8
+          },
+          {
+            "index": 65,
+            "name": "Switched / 中央の縦2x・上投げ",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 66,
+            "name": "Switched / 中央の縦2x・下投げ",
+            "mirror": true,
+            "forwardSets": 9,
+            "returnSets": 9
+          },
+          {
+            "index": 67,
+            "name": "Reverse lateral",
+            "mirror": true,
+            "forwardSets": 8,
+            "returnSets": 8
+          },
+          {
+            "index": 68,
+            "name": "外側の縦2x・下投げ",
+            "mirror": true,
+            "forwardSets": 14,
+            "returnSets": 14
+          },
+          {
+            "index": 69,
+            "name": "Switched / 外側の縦2x・下投げ",
+            "mirror": true,
+            "forwardSets": 21,
+            "returnSets": 19
+          },
+          {
+            "index": 70,
+            "name": "2xを腕の下で捕る",
+            "mirror": true,
+            "forwardSets": 14,
+            "returnSets": 12
+          },
+          {
+            "index": 71,
+            "name": "Shuffle lateral",
+            "mirror": true,
+            "forwardSets": 16,
+            "returnSets": 16
+          },
+          {
+            "index": 72,
+            "name": "Switched / 反対側の縦2x・上投げ",
+            "mirror": true,
+            "forwardSets": 19,
+            "returnSets": 19
+          },
+          {
+            "index": 73,
+            "name": "Switched / 反対側の縦2x・下投げ",
+            "mirror": true,
+            "forwardSets": 31,
+            "returnSets": 29
+          },
+          {
+            "index": 74,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 下→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 75,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 上→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 76,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 下→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 77,
+            "name": "Double / 4xと組む2x 下→下・4と組む2x 上→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 78,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 下→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 79,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 上→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 80,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 下→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 81,
+            "name": "Double / 4xと組む2x 上→下・4と組む2x 上→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 82,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 下→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 83,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 上→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 84,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 下→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 85,
+            "name": "Double / 4xと組む2x 下→上・4と組む2x 上→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 86,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 下→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 87,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 上→下",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 88,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 下→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          },
+          {
+            "index": 89,
+            "name": "Double / 4xと組む2x 上→上・4と組む2x 上→上",
+            "mirror": true,
+            "forwardSets": 6,
+            "returnSets": 6
+          }
+        ],
+        "connected": 90,
+        "milliseconds": 46.04989999998361
+      }
+    }
+  ]
+}

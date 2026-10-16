@@ -1,0 +1,390 @@
+{
+  "date": "2026-10-14",
+  "bundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7",
+  "reviewMethod": [
+    "Read the Library of Juggling explanations and siteswaps",
+    "Inspect sampled frames from the public animated diagrams",
+    "Check event semantics, ballistic flight, held ownership, spatial constraints and actual bundled VRM cycle",
+    "Inspect selected front and diagonal browser poses"
+  ],
+  "notClaimed": [
+    "Continuous comparison against live human performance",
+    "Full mesh and clothing collision validation",
+    "Completion of every named Box or synchronous pattern"
+  ],
+  "patterns": [
+    {
+      "name": "Bizarre Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/BizarreBox.html",
+      "template": "example:10",
+      "notation": "(4,2T)(4x,2)(4x,2x)*",
+      "checked": [
+        "Same hand catches its own 2T under the other forearm",
+        "Other empty hand passes underneath the self toss",
+        "Following 2 holds and carries the same ball before 2x",
+        "Two vertical columns; alternate sides over six sets"
+      ],
+      "screenshot": "sync-compose-bizarre-weave.png",
+      "visualBundleSha256": "3F5B4D1375CCF524BF0A84A7B476A96F76D502325D5E1FCB1339A96BA4B0D60E"
+    },
+    {
+      "name": "Karas' Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/Karas%27Box.html",
+      "template": "example:12",
+      "notation": "(4,2T)(4x,2T)(4x,2x)*",
+      "sourceNotation": "(4x,2x)(2T,4)(2T,4x)*",
+      "notationRelation": "Same repeating six-set sequence with a different starting set",
+      "checked": [
+        "Replace Bizarre held return with another self toss",
+        "Two self tosses per hand in opposite directions",
+        "Underarm release and catch; opposite empty hand passes below the self toss",
+        "Six sets restore the movement and ball identities"
+      ],
+      "screenshot": "sync-compose-karas.png",
+      "visualBundleSha256": "3F5B4D1375CCF524BF0A84A7B476A96F76D502325D5E1FCB1339A96BA4B0D60E"
+    },
+    {
+      "name": "Broken Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/BrokenBox.html",
+      "template": "example:11",
+      "notation": "(4,2x)*",
+      "checked": [
+        "Both vertical columns stay on the performer right side",
+        "Opposite hand catches the outer column under the other forearm",
+        "Mirror moves both columns to the left"
+      ],
+      "screenshot": "sync-compose-broken.png",
+      "visualBundleSha256": "3F5B4D1375CCF524BF0A84A7B476A96F76D502325D5E1FCB1339A96BA4B0D60E"
+    },
+    {
+      "name": "Swap Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/SwapBox.html",
+      "template": "example:3",
+      "notation": "(6,2x)(2x,2x)*",
+      "alias": "High-Low Box",
+      "checked": [
+        "Both simultaneous short transfers pass below the airborne 6",
+        "Four sets repeat the motion; twelve sets restore ball identities"
+      ]
+    },
+    {
+      "name": "Burst Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/BurstBox.html",
+      "template": "example:13",
+      "notation": "(4,2x)(2x,4x)(2x,4x)*",
+      "checked": [
+        "Alternate Broken Box on each side using a normal Box transfer",
+        "All 4 and 4x flights remain vertical",
+        "The hand returns to its own side after the underarm throw and receives the horizontal pass",
+        "Six sets restore movement and ball identities"
+      ],
+      "screenshot": "sync-compose-burst.png",
+      "visualBundleSha256": "C3B4B1E3FABF55049CADB56EE45C6479EEBE2241E4DC9ED00A178CFE5A5D4F7F"
+    },
+    {
+      "name": "Penman's Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/Penman%27sBox.html",
+      "template": "example:14",
+      "notation": "(4x,2)(4x,2x)*",
+      "checked": [
+        "Hold the 2 throughout the flourish",
+        "Carry the held ball above the descending inner column and outside the rising outer column before releasing the 2x",
+        "Throw the outer vertical 4x under the other forearm",
+        "Four sets restore movement and ball identities",
+        "Check forearm relation at the exact release event and preserve it during elbow refinement"
+      ],
+      "screenshot": "sync-compose-penman-loop.png",
+      "otherScreenshots": [
+        "sync-compose-penman-under.png",
+        "sync-compose-waypoints.png"
+      ],
+      "visualBundleSha256": "C3B4B1E3FABF55049CADB56EE45C6479EEBE2241E4DC9ED00A178CFE5A5D4F7F"
+    },
+    {
+      "name": "Underarm Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/UnderarmBox.html",
+      "template": "example:15",
+      "notation": "(4,2x)(2x,4x)*",
+      "checked": [
+        "Keep every 4 and 4x vertical; alternate sides over four sets",
+        "Release the outer 4x below the opposite forearm, then uncross to catch the horizontal pass",
+        "No vertical underarm catch; distinguish from Burst and Threaded Box"
+      ],
+      "screenshot": "sync-compose-underarm-box.png",
+      "visualBundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7"
+    },
+    {
+      "name": "Gilligan's Box",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/Gilligan%27sBox.html",
+      "template": "example:16",
+      "notation": "(4,2x)(4,2)(2x,4x)*",
+      "checked": [
+        "All high throws move from the inside to the outside of the throwing side",
+        "Catch each 4x with the opposite hand under the forearm",
+        "Keep that ball held through the 2 and carry it back to its own side before the next throw",
+        "Six sets restore movement and ball identities"
+      ],
+      "screenshot": "sync-compose-gilligan-catch.png",
+      "visualBundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7",
+      "otherScreenshots": [
+        "sync-compose-gilligan-return.png"
+      ]
+    },
+    {
+      "name": "Four Ball Box",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallBox.html",
+      "template": "example:17",
+      "notation": "(6,2x)(6,2x)*",
+      "checked": [
+        "Pass twice in the same direction before changing sides",
+        "Throw the 6 from inside to outside with room for two airborne balls on one side",
+        "Four sets repeat the movement; eight sets restore the same ball identities"
+      ],
+      "screenshot": "sync-compose-four-ball-box.png",
+      "visualBundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7"
+    },
+    {
+      "name": "Four Ball Stacked Box",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallStackedBox.html",
+      "template": "example:18",
+      "notation": "(8,2x)(4,2x)*",
+      "checked": [
+        "Stack 8 and 4 on the same vertical line",
+        "High and low flights reach their peaks simultaneously",
+        "Four sets restore movement and ball identities"
+      ],
+      "screenshot": "sync-compose-stacked-box.png",
+      "visualBundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7"
+    },
+    {
+      "name": "Synchronous Pistons",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/SynchPistons.html",
+      "template": "example:19",
+      "notation": "(4,4)",
+      "checked": [
+        "Four distinct vertical lines; two synchronous pairs alternate across the width",
+        "Both hands move sideways together between the two pair positions",
+        "Spatial movement and ball identities repeat after two sets"
+      ],
+      "screenshot": "sync-compose-pistons.png",
+      "visualBundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7"
+    },
+    {
+      "name": "Wimpy",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/Wimpy.html",
+      "template": "example:20",
+      "notation": "(4x,4x)",
+      "checked": [
+        "Both hands throw simultaneously to the opposite hand",
+        "Separate the crossing balls vertically in one frontal plane",
+        "Movement repeats every set; ball identities repeat after four sets"
+      ],
+      "screenshot": "sync-compose-wimpy.png",
+      "visualBundleSha256": "E5DCF88B34ABD3F98034B18D5E932534451B2CCB5F5757E1B933C3060CDC0DE7"
+    },
+    {
+      "name": "Reverse Synchronous Fountain",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/ReverseSynchFountain.html",
+      "template": "example:23",
+      "notation": "(4,4)",
+      "checked": [
+        "The two hands throw at the same time, from outside toward the centre",
+        "Each ball is caught by its throwing hand; the source diagram shows two mirrored inward arcs",
+        "Movement repeats after one set and ball identities after two sets"
+      ],
+      "sourceDiagram": "https://libraryofjuggling.com/JugglingGifs/4balltricks/reversesynchfountain.gif",
+      "sampledFrames": [
+        0,
+        3,
+        7,
+        10,
+        13,
+        16,
+        20,
+        23
+      ],
+      "screenshot": "sync-compose-reverse-fountain.png",
+      "visualBundleSha256": "0E7153786B1E9E29BA2300BAD058725044734443F728A6EAC81CA0A48BBDD969"
+    },
+    {
+      "name": "Levels",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/Levels.html",
+      "template": "example:28",
+      "notation": "(4x,2x)(4,2x)*",
+      "checked": [
+        "Four sets repeat the movement and ball identities",
+        "Outer columns stay vertical and are caught at zero vertical velocity",
+        "A top-to-middle slam is followed by a gravity-driven middle-to-low transfer",
+        "The low central 4x is claw-caught by the other hand",
+        "The central flight plane is about ten centimetres forward to separate it from the short passes"
+      ],
+      "timingInterpretation": "Follows the written apex-catch instruction. The animated diagram shows an outer catch below the ballistic peak, so exact timing equivalence with that diagram is not claimed.",
+      "sourceFrames": [
+        0,
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+        35,
+        40,
+        45,
+        50,
+        55,
+        60,
+        65,
+        70,
+        75
+      ],
+      "screenshot": "sync-compose-levels-apex.png",
+      "additionalScreenshot": "sync-compose-levels-claw.png",
+      "visualBundleSha256": "D1E281BA5FF8F0ACDEFBD8ED783A1A8ABAE79E438BF86D729AB397DDBACCA687"
+    },
+    {
+      "name": "Columns",
+      "url": "https://libraryofjuggling.com/Tricks/3balltricks/Columns.html",
+      "template": "example:30",
+      "notation": "(4,4)(4,0)",
+      "checked": [
+        "Throw the two outer balls together, then the central ball with one hand",
+        "The hand marked 0 remains empty, rather than holding a fourth ball",
+        "Every ball stays on its own vertical lane throughout flight and holding",
+        "Mirror changes the hand controlling the central ball"
+      ],
+      "sourceFrames": [
+        0,
+        5,
+        10,
+        15,
+        21,
+        26,
+        31,
+        36
+      ],
+      "screenshot": "sync-compose-three-columns.png",
+      "visualBundleSha256": "C48086C0DC4771F5FD450AACE6A2749D51E3C8206008AEB311A5BC941441366B",
+      "timingScope": "Checks vertical lanes, paired throw order and hand ownership against the public animated diagram; exact human-performance timing is not claimed."
+    },
+    {
+      "name": "Four Ball Columns",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallColumns.html",
+      "template": "example:31",
+      "notation": "(4,4), alternating inner and outer pairs",
+      "checked": [
+        "Both inner balls are thrown together, followed by both outer balls",
+        "Every ball stays on its own vertical lane throughout flight and holding",
+        "Two sets restore both movement and ball identities",
+        "Distinct from the alternating left-inner/right-outer pairing of Synchronous Pistons"
+      ],
+      "sourceFrames": [
+        0,
+        5,
+        11,
+        17,
+        23,
+        29,
+        35,
+        41
+      ],
+      "screenshot": "sync-compose-four-columns.png",
+      "visualBundleSha256": "C48086C0DC4771F5FD450AACE6A2749D51E3C8206008AEB311A5BC941441366B",
+      "timingScope": "Checks vertical lanes, paired throw order and hand ownership against the public animated diagram; exact human-performance timing is not claimed."
+    },
+    {
+      "name": "HF / Crosses*",
+      "url": "https://drive.google.com/file/d/1fFPsxH-jKZ-HuEZg3YjEko07Fli0ZDkb/view",
+      "template": "example:35",
+      "notation": "(4x,2)(2,4x)",
+      "notationEvidence": "Inferred from sampled video frames, not an author-provided notation.",
+      "checked": [
+        "High ball released below the opposite forearm and caught by the opposite hand on its own side",
+        "Other ball remains held through the upper crossing and return toward its own side",
+        "White ball changes throwing hand; the model repeats the movement in two sets and each ball identity in six",
+        "Airborne high throws remain vertical, with no short 2x transfer added",
+        "Both underarm releases and the complete cycle pass the bundled VRM checks in both mirrors"
+      ],
+      "limits": [
+        "No exact frame-by-frame reconstruction of performance timing or depth",
+        "No full mesh/clothing collision certification"
+      ],
+      "videoAudit": "hf-crosses-playback-audit.json",
+      "screenshot": "sync-compose-hf-crosses.png",
+      "visualBundleSha256": "0571864ED425CBC9C6B79901D9F8C1319388234E4C6068BC770425668541985C"
+    },
+    {
+      "name": "HF / Under-Arm-Box*",
+      "url": "https://drive.google.com/file/d/1YjoNjbKNp_5xOvi3blrL7o-q5QFtMQz8/view",
+      "template": "example:36",
+      "notation": "(4,2x)(2x,4)",
+      "notationEvidence": "The source table provides (4,2x)*. Sampled performance frames support underarm self throws and a high short transfer.",
+      "checked": [
+        "Self 4 released below the opposite forearm on the opposite side of the body",
+        "The same throwing hand catches its 4 inward on its own side; no underarm catch relation is added",
+        "One ball remains the 2x transfer, while two separate balls remain the self 4s",
+        "The preceding 4 and the current 2x arrive at the same time",
+        "Full ball and bundled VRM cycles pass in both mirrors; movement and ball identities repeat after two sets"
+      ],
+      "limits": [
+        "Exact performance timing, depth and elbow angles are not reconstructed",
+        "No full mesh/clothing collision certification"
+      ],
+      "videoAudit": "hf-underarm-playback-audit.json",
+      "screenshot": "sync-compose-hf-underarm.png",
+      "visualBundleSha256": "C3F2764C000CC9EAF4CC22600122FA06CBBAC2457DFEFA3376C7364312F61AC2",
+      "connection": {
+        "template": "example:37",
+        "movementSets": 12,
+        "identitySets": 12,
+        "method": "Separate the 4 flight plane, then move halfway toward the underarm endpoints before entering the unchanged target; reverse those steps to return.",
+        "sourceSectionsPreserved": true,
+        "directAppendPasses": false,
+        "browserAudit": "sync-hf-underarm-connection-browser-audit.json"
+      }
+    },
+    {
+      "name": "HF / Reverse-Under-Arm-Box*",
+      "url": "https://drive.google.com/file/d/1viIYM9NSUUqLlPbPTsRVapxttrZZE3mb/view",
+      "template": "example:38",
+      "notation": "(4,2x)(2x,4)",
+      "notationEvidence": "The source table provides (4,2x)*. Sampled video frames support self 4s caught under the opposite arm and rising 2x transfers.",
+      "checked": [
+        "Self 4 released inward on the throwing hand own side and caught by that hand on the opposite side of the body",
+        "Underarm relation applies to the 4 catch, not its release",
+        "Short 2x rises from a low release to the high hand; its catch coincides with the preceding opposite self-4 catch",
+        "One ball remains the 2x transfer and two separate balls remain self 4s",
+        "Movement and ball identities repeat after two sets; complete bundled VRM cycle passes in both mirrors"
+      ],
+      "limits": [
+        "Exact performance timing, depth and elbow angles are not reconstructed",
+        "Hand orientation follows ball velocity; exact source finger poses are not reconstructed",
+        "No full mesh/clothing collision certification"
+      ],
+      "videoAudit": "hf-reverse-underarm-playback-audit.json",
+      "screenshot": "sync-compose-hf-reverse-underarm.png",
+      "visualBundleSha256": "0B64D90915CE3948FF40EC084BB9D8182AE2B2B4F5F2DEC93420A9B1408CEE24",
+      "connection": {
+        "template": "example:39",
+        "movementSets": 8,
+        "identitySets": 8,
+        "method": "Keep both original two-set sections. Add a two-set bridge on each side which separates the high and short flight planes before the underarm catch placement changes.",
+        "sourceSectionsPreserved": true,
+        "directAppendPasses": false,
+        "browserAudit": "sync-hf-reverse-underarm-connection-browser-audit.json"
+      }
+    }
+  ],
+  "remainingNamedBoxReferences": [],
+  "otherRemainingReferences": "HF source variations and matrix combinations, plus additional synchronous patterns, retain their individual unverified status in sync-catalog.json.",
+  "eventConstraintMethod": "Explicit per-hand underarm releases and catches are inserted at their exact phases into the arm cycle. Planning and smoothing preserve horizontal footprint and vertical gap; interpolation is checked again at those events.",
+  "sourceCorrections": [
+    {
+      "previousName": "Synchronous Takeouts",
+      "correctName": "Four Ball Takeouts",
+      "url": "https://libraryofjuggling.com/Tricks/4balltricks/FourBallTakeouts.html",
+      "notation": "[43]23",
+      "reason": "The primary page describes asynchronous multiplex throws. Do not count it as an implemented synchronous pattern."
+    }
+  ],
+  "lastAutomatedBundleSha256": "A1B198B3725F432A2DDDBA8528F058E0265F67FFDA53BD44CDB5A715C2ED1629"
+}

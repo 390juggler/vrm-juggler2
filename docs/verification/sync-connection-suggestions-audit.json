@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-15",
+  "bundleSha256": "B84BF274F64F439CCE7531DCD69C9DADEED4DFA063B3E92C4E1D3758053602B8",
+  "editorJsSha256": "03E4BFACFFBACC5CCCD972CDCECE8215132D7AA8DBD554D5DDDA148D47358B0E",
+  "editorHtmlSha256": "9E767EA38E0204B11E883B03904AB09FD107B23E118C0CFF6625D01C6DD3CED0",
+  "editorCssSha256": "C3B275A80AB4BA0D0DC4FDAA6D9F4434810DA69DC108B663394DF5AA8AE4240A",
+  "api": "VRMJuggler.findSyncConnectionExamples",
+  "registeredExampleIndices": [
+    1,
+    9,
+    22,
+    24,
+    27,
+    29,
+    32,
+    33,
+    34,
+    37,
+    39,
+    41,
+    44,
+    46,
+    48,
+    49,
+    51,
+    54,
+    57
+  ],
+  "registeredPairs": 19,
+  "automated": {
+    "testsPassed": 30,
+    "testsFailed": 0,
+    "source": "test-results.json",
+    "testFile": "test/sync-connection-examples.test.ts",
+    "typecheck": "passed",
+    "javascriptSyntax": "passed",
+    "build": "passed"
+  },
+  "matching": {
+    "fullExpandedRows": true,
+    "tempo": true,
+    "ignoreDisplayNames": true,
+    "ignoreSourceLabels": true,
+    "minimumMovementCycleAloneIsInsufficient": true,
+    "returnedSequencesAreIndependentCopies": true
+  },
+  "interaction": {
+    "trigger": "After appending a template or generated parts to the current draft.",
+    "replacement": "Only the explicit use-example button replaces the whole draft; the suggested set count and tempo are shown before choosing.",
+    "validation": "Playback still runs ball and loaded-avatar checks.",
+    "staleSuggestions": "Cleared on draft edits and template selection changes."
+  },
+  "motionValidation": {
+    "definitionsChanged": "Added Box+Reverse and Reverse+Reverse Double definitions and their eight-set connection. Original thirty-seven presets and default Double parts remain unchanged.",
+    "lastFullSuiteBundleSha256": "B84BF274F64F439CCE7531DCD69C9DADEED4DFA063B3E92C4E1D3758053602B8",
+    "lastFullSuitePassed": 1449,
+    "lastRealRigCases": 316,
+    "currentBuildFullRigRerun": true
+  },
+  "browser": {
+    "verified": false,
+    "status": "pending",
+    "reason": "The earlier local-composer browser access was rejected by the URL safety policy. No workaround was attempted.",
+    "remaining": [
+      "Append Box and HF Under-Arm-Box and inspect the suggested twelve-set program and tempo before replacement.",
+      "Choose the suggestion and verify rows, section labels, period display, playback, mirror and saved-draft restoration.",
+      "Edit a throw position or tempo before appending and verify no stale original recipe is offered.",
+      "Verify recommendations remain available after a failed raw join and clear after editing.",
+      "Inspect panel layout on the current viewport.",
+      "Offer the six-set alternating-claw / Double connection for the default-start source pair; selecting it explicitly changes the Double start to set three.",
+      "Offer the four-set Reverse-UA / Reverse-UAI connection for its exact saved source pair.",
+      "Offer the four-set / twelve-set fixed-Inverted to fixed Reverse-UAI connection and show its .6-second set tempo before explicit replacement.",
+      "Offer and select the six-set Box / Double Box connection for the exact original source pair; inspect the seam, mirror and saved-draft restoration.",
+      "Offer and select the six-set Box / low-high Double connection for the exact source pair, including a Double generated from parts.",
+      "Offer the eight-set Shuffle+Box / Box+Shuffle connection only for the matching release grips, including parts-generated documents.",
+      "Offer the eight-set Box+Reverse / Reverse+Reverse connection for the exact automatic-grip source definitions, including parts-generated documents."
+    ]
+  },
+  "initialFocusedCheck": {
+    "bundleSha256": "5D145CD42F01A31BDAA532578A962F21E78F44D1AFF2A4892684878C66493CB9",
+    "automated": {
+      "testsPassed": 22,
+      "testsFailed": 0,
+      "source": "sync-connection-suggestions-tests.json",
+      "typecheck": "passed",
+      "javascriptSyntax": "passed",
+      "build": "passed"
+    }
+  },
+  "catalogSha256": "0FDCDAC9DF7ED32894543290D940DADD76540DEB08FE4935ED17E0C86DDA4887"
+}

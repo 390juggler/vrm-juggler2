@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-16",
+  "bundleSha256": "631FF594C06B351E3AF8E337A71784B06CFFD04FB24FD09FBA63AE9C794BCF0C",
+  "editorJsSha256": "0E666AB410A2F001CA2D3EB41F2BC0AA9DE3326E5743199864DCFDA01F06BF37",
+  "editorHtmlSha256": "FAD3735727462B9216ADD63D3891EF859483DC5429EEAC0721FCCC5E90FA9D84",
+  "editorCssSha256": "D72456CC075ABAF00B552509E848C0587FA9382E0E69F347C0BED42EE3679C3F",
+  "defaultVrmSha256": "B6D253D781FE5853975A4652B0DA4A5DC0958749C77BBF7B927F972D3CBBCA81",
+  "scope": "Connect the accepted upper-short-pass In-line 3 to ordinary Box, preserving both original cycles and reusing validated transitions after restoration in both mirrors.",
+  "sourceFiles": {
+    "src/motion/juggling/sync-transitions.ts": "2686BCC3273197498DF5A5B2CD799B7746CEC64A9CCB254C8D1BD54DADD3038A",
+    "src/motion/juggling/sync-sequence.ts": "970060A636540C5A21614DC70C2DDF0143DABE43A38D540C5CB40F2CD20333A8",
+    "src/index.ts": "6D144B634857720F8AD1006D75FECEF46C8172075A6478ACCFF041CFDD48B75B",
+    "test/sync-sequence.test.ts": "604A9060812962994598CFA6587A360564C6A5792A679C994237581425598AC5",
+    "test/sync-component-graph.test.ts": "C547860D9EE058A443C9BB875F124F44D30AD0D67459A7D103B8A6CF23FE335C"
+  },
+  "baselineFullSuite": {
+    "bundleSha256": "B8D21E15CEB038FC53A45EE90805CE3DC69E0B7E112D7590AA07B8F3DD89FF4A",
+    "passed": 1550,
+    "failed": 0,
+    "testReport": "test-results.json",
+    "rigCases": 316,
+    "rigReport": "sync-rig-audit.json"
+  },
+  "previousConnectedNetwork": "sync-basic-network-81-audit.json",
+  "sourceEvidence": {
+    "documentId": "user-spatial-pdf",
+    "sha256": "06D2883457606D55DA9C719FE454DF689E517218544BCC75FBFCDAA74D868B15",
+    "overviewPages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "detailPages": [
+      16
+    ],
+    "interpretation": "The upper 2x layout already exists as a candidate preset. The user explicitly requires all three balls to remain vertically aligned while held as well as airborne. The source figure does not specify an exact transition."
+  },
+  "targetedTests": {
+    "passed": 392,
+    "reports": [
+      "inline-upper-sequence-tests.json",
+      "inline-upper-connection-tests.json"
+    ]
+  },
+  "connection": {
+    "candidateSets": 44,
+    "mirrors": [
+      {
+        "name": "inline-upper",
+        "mirror": false,
+        "beat": 0.12646476232514015,
+        "forward": 20,
+        "backward": 22,
+        "sets": 46,
+        "identitySets": 46,
+        "sourceDefinitionsUnchanged": true
+      },
+      {
+        "name": "inline-upper",
+        "mirror": true,
+        "beat": 0.12646476232514015,
+        "forward": 20,
+        "backward": 22,
+        "sets": 46,
+        "identitySets": 46,
+        "sourceDefinitionsUnchanged": true
+      }
+    ],
+    "originalDefinitionsUnchanged": true,
+    "originalFlightEndpointsVelocitiesAndGripsUnchanged": true,
+    "targetAlwaysVerticalIncludingHeldBalls": true,
+    "restoredAndReused": true,
+    "repeatedClosedRouteSets": 92,
+    "armPlannerDisabledDuringReuse": true
+  },
+  "ordinaryInlineRegression": [
+    {
+      "name": "inline",
+      "mirror": false,
+      "beat": 0.12646476232514015,
+      "forward": 14,
+      "backward": 12,
+      "sets": 30,
+      "identitySets": 30,
+      "sourceDefinitionsUnchanged": true
+    },
+    {
+      "name": "inline",
+      "mirror": true,
+      "beat": 0.12646476232514015,
+      "forward": 14,
+      "backward": 12,
+      "sets": 30,
+      "identitySets": 30,
+      "sourceDefinitionsUnchanged": true
+    }
+  ],
+  "staticChecks": {
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed",
+    "htmlIds": 119,
+    "diffWhitespace": "passed"
+  },
+  "browser": {
+    "verified": false,
+    "reason": "Previously rejected browser access remains pending authorization; no retry or workaround was attempted."
+  },
+  "limitations": [
+    "The new bridge is validated at the upper In-line preset tempo with the bundled VRM, in both mirrors.",
+    "Edited source coordinates, grip, explicit row structure and different tempos are not silently accepted as the same validated connection.",
+    "The upper In-line preset keeps its candidate label; this is a constructed transition, not a claimed reconstruction of a recorded human transition.",
+    "Continuous mesh/clothing clearance and current UI operation/rendering remain unverified."
+  ]
+}

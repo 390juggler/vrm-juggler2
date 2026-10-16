@@ -2,13 +2,14 @@ import * as THREE from 'three';
 import { VRM, VRMHumanBoneName } from '@pixiv/three-vrm';
 
 import { JugglingFrame } from '../juggling';
-import { AvatarMetrics, LEFT, RIGHT } from '../juggling/tracks';
+import { AvatarMetrics, LEFT, RIGHT, Tracks } from '../juggling/tracks';
+import { planArmCycle, armPosePenalty, armPoseCandidates, ArmCycleFrame, ArmCyclePlanInfo, ArmAnatomy, armPosture, armPoseClear, armPairClear, underarmRelationsClear, ElbowCircle } from '../inspection';
 
 /**
  * ジャグリング中の全身の動き。
  *
  * - 腕: 解析的な 2 関節 IK。ボール(クラブはハンドル、リングは縁)が手のひらに乗るように手首の位置と向きを決め、
- *       肘は「下・後ろ・少し外」に向けて安定させる。前腕のひねりは前腕と手首に分配する。
+ *       肘は体側の低い位置を基準にする。軸方向のひねりは前腕で受け、手首は投げ捕りの方向へ曲げる。
  * - 指: 持っている間は握り(クラブは握りこぶし)、投げた後は開く。
  * - 体: 投げるたびに、投げの速さに比例した勢いをばねに与える(膝の沈み込み・胸のひねり・肩・前傾)。
  *       ゆっくりした左右の重心移動と呼吸はいつも入れる。
@@ -29,7 +30,6 @@ const ELBOW_POLE_BACK = 0.35; // 肘を後ろへ向ける強さ
 // リングは肩の前で前腕を立てて持つので、肘を手首の下へ置く
 const ELBOW_POLE_BACK_BY_PROP: { [propType: string]: number } = { ring: 0 };
 const ELBOW_POLE_OUT_BASE = 0.25; // 肘を外へ向ける強さ(armAngle が加わる)
-const FOREARM_TWIST_SHARE = 0.6; // 手のひらを上に向けるひねりのうち前腕が受け持つ割合
 const FINGER_INWARD = 0.35; // 指先を体の内側へ向ける量
 const PALM_GAP = 0.012; // ボール表面と手のひらのすき間
 
@@ -146,13 +146,13 @@ function frameRotation(a1: THREE.Vector3, b1: THREE.Vector3, a2: THREE.Vector3, 
   return basis(a2, b2).multiply(basis(a1, b1).conjugate());
 }
 
-/** q の axis 周りのひねり角(swing-twist 分解) */
-function twistAngle(q: THREE.Quaternion, axis: THREE.Vector3) {
+/** Extract axial twist as a quaternion. Multiplying a wrapped angle by a partial
+ * share made the forearm jump when that angle crossed ±PI. Full axial twist
+ * belongs to the forearm; the hand keeps the remaining wrist bend. */
+export function forearmTwist(q: THREE.Quaternion, axis: THREE.Vector3) {
   const projection = q.x * axis.x + q.y * axis.y + q.z * axis.z;
-  let angle = 2 * Math.atan2(projection, q.w);
-  if (angle > Math.PI) angle -= 2 * Math.PI;
-  if (angle < -Math.PI) angle += 2 * Math.PI;
-  return angle;
+  const twist = new THREE.Quaternion(axis.x*projection,axis.y*projection,axis.z*projection,q.w);
+  return twist.lengthSq()>1e-12 ? twist.normalize() : new THREE.Quaternion();
 }
 
 export default class Body {
@@ -181,6 +181,268 @@ export default class Body {
   public armAngle = 0.3;
   /** 体の動きの大きさ(0 で止める、1 が標準、2 で大きく) */
   public motionAmount = 1;
+  private syncArmAngles: number[][] | null = null;
+  private syncElbows: THREE.Vector3[][] | null = null;
+  private syncKeyPhases: number[] | null = null;
+  private syncReplayActive=false;
+  syncPlanInfo: ArmCyclePlanInfo = {};
+
+  /** Cheap rejection at the failed instant; acceptance still requires the full cycle. */
+  inspectSyncPose(frame:JugglingFrame){
+    const info:ArmCyclePlanInfo={};
+    const sample:ArmCycleFrame={plans:this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType)),
+      balls:frame.ballPositions!.map(p=>p.clone()),upperHand:frame.armOrder,underarm:frame.underarm};
+    const ok=!!(planArmCycle([sample],frame.propRadius,info)||planArmCycle([sample],frame.propRadius,info,1,undefined,72));
+    info.phase=frame.phase;return {ok,info};
+  }
+
+  syncPosePenalty(frame:JugglingFrame){
+    return armPosePenalty({plans:this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType)),
+      balls:frame.ballPositions!,upperHand:frame.armOrder,underarm:frame.underarm},frame.propRadius);
+  }
+
+  syncReachError(frame:Pick<JugglingFrame,'hands'|'propRadius'|'propType'>){
+    return Math.max(...this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType).reachError));
+  }
+
+  syncTracksReachError(tracks:Tracks,radius:number){
+    let worst=0;
+    for(let i=0;i<tracks.numSteps;i++){
+      const hands=tracks.hands.map(t=>({position:t.positions[i],palmNormal:t.palmNormals[i],fingerDir:t.fingerDirs?.[i]||new THREE.Vector3(),holding:t.holding[i]}));
+      worst=Math.max(worst,this.syncReachError({hands,propRadius:radius,propType:'ball'}));
+    }
+    return worst;
+  }
+
+  /** Search guidance includes the transfers between poses and the cycle seam. */
+  syncCyclePenalty(sample:(phase:number)=>JugglingFrame,phases:number[],period:number){
+    const nodes=phases.map(phase=>{
+      const frame=sample(phase);
+      return armPoseCandidates({plans:this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType)),
+        balls:frame.ballPositions!,upperHand:frame.armOrder,underarm:frame.underarm},frame.propRadius,8);
+    });
+    const sq=(v:number)=>Math.max(0,v)**2;
+    const costs=nodes.map((row,t)=>{
+      const previous=nodes[(t+nodes.length-1)%nodes.length],dt=(phases[t]-phases[(t+nodes.length-1)%nodes.length]+(t===0?1:0))*period;
+      return row.map(b=>previous.map(a=>a.elbows.reduce((cost,e,h)=>{
+        const speed=e.distanceTo(b.elbows[h])/dt;
+        const angular=a.rotations&&b.rotations?Math.max(...a.rotations[h].map((q,j)=>q.angleTo(b.rotations![h][j])/dt)):0;
+        return cost+sq((speed-6)*.025)+sq((angular-65)*.002);
+      },0)));
+    });
+    let best=Infinity;
+    for(let seed=0;seed<nodes[0].length;seed++){
+      let distance=nodes[0].map((n,i)=>i===seed?n.cost:Infinity);
+      for(let t=1;t<nodes.length;t++)distance=nodes[t].map((n,j)=>n.cost+Math.min(...distance.map((d,k)=>d+costs[t][j][k])));
+      best=Math.min(best,...distance.map((d,k)=>d+costs[0][seed][k]));
+    }
+    return best/nodes.length+2*Math.max(...nodes.map(n=>n[0].cost));
+  }
+
+  prepareSyncCycle(sample: (phase: number) => JugglingFrame, period = 1) {
+    this.syncReplayActive=false;
+    this.syncArmAngles = null;
+    this.syncElbows = null;
+    this.syncKeyPhases = null;
+    this.syncPlanInfo = {};
+    const first = sample(0);
+    const eventPhases=first.constraintPhases||[];
+    this.update(first, 0);
+    // Keep accepted cycles unchanged. A longer composed cycle may need more
+    // keys before interpolation can satisfy the same posture/clearance limits.
+    // Long sequences need the same temporal resolution as a short fast cycle.
+    // Try the accepted grids first; only a failed interpolation reaches this
+    // bounded final pass (at most 4096 keys, aiming at eight milliseconds).
+    const denseCount=Math.min(4096,Math.ceil(period/.008/120)*120);
+    for (const keyCount of [...new Set([120,240,480,...(denseCount>480?[denseCount]:[])])]) {
+      this.syncPlanInfo = {};
+      const phases=Array.from({length:keyCount},(_,i)=>i/keyCount);
+      if(eventPhases.length){
+        phases.push(...eventPhases);phases.sort((a,b)=>a-b);
+        for(let i=phases.length-1;i>0;i--)if(phases[i]-phases[i-1]<1e-9)phases.splice(i,1);
+        this.syncKeyPhases=phases;
+      }
+      this.syncPlanInfo.keyCount=phases.length;
+      const frames: ArmCycleFrame[] = phases.map(phase => {
+        const frame = sample(phase);
+        return { plans: this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType)),
+          balls: frame.ballPositions!.map(p=>p.clone()), upperHand:frame.armOrder, underarm:frame.underarm };
+      });
+      this.syncArmAngles = planArmCycle(frames, first.propRadius, this.syncPlanInfo, period,this.syncKeyPhases||undefined);
+      // A coarse elbow-angle lattice can disconnect a continuous corridor.
+      // Refine angles without changing posture, separation or speed limits.
+      if(!this.syncArmAngles&&['no-feasible-pose','no-continuous-path','no-closed-path'].includes(this.syncPlanInfo.reason||''))
+        this.syncArmAngles=planArmCycle(frames,first.propRadius,this.syncPlanInfo,period,this.syncKeyPhases||undefined,72);
+      if (!this.syncArmAngles) return false;
+      this.syncElbows = this.syncArmAngles.map((angles,h) => angles.map((angle,i) => {
+        const p = frames[i].plans[h];
+        return p.center.clone().addScaledVector(p.pole.clone().applyAxisAngle(p.axis,angle),p.radius);
+      }));
+      // Validate the same interpolation used during playback, including the cycle seam.
+      // Safe key poses alone do not make the path between them safe.
+      if(this.syncElbows){
+        const count=Math.max(480,Math.ceil(period/.003));
+        for(const phase of [...Array.from({length:count},(_,i)=>i/count),...eventPhases]){
+          const frame=sample(phase);
+          const plans=this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType));
+          this.interpolateSyncElbows(plans,phase);
+          if(!this.safeSyncPose(plans,frame)){
+            this.syncPlanInfo={...this.syncPlanInfo,reason:'unsafe-interpolation',phase};
+            this.syncArmAngles=null;this.syncElbows=null;break;
+          }
+        }
+      }
+      if(this.syncArmAngles){delete this.syncPlanInfo.reason;delete this.syncPlanInfo.phase;delete this.syncPlanInfo.details;return true;}
+    }
+    return !!this.syncArmAngles;
+  }
+
+  /** Fixed-size cyclic optimisation, with soft contact costs. It always finishes
+   * after one lattice pass; no angle refinement or nested geometry search. */
+  prepareConstructiveCycle(sample:(phase:number)=>JugglingFrame,period:number){
+    this.syncReplayActive=false;this.syncArmAngles=null;this.syncElbows=null;
+    const first=sample(0),count=Math.min(2048,Math.max(120,Math.ceil(period/.016)));
+    this.update(first,0);
+    const phases=[...new Set([...Array.from({length:count},(_,i)=>i/count),...(first.constraintPhases||[])])].sort((a,b)=>a-b);
+    this.syncKeyPhases=phases;
+    const nodes=phases.map(phase=>{
+      const f=sample(phase);
+      return armPoseCandidates({plans:this.arms.map((arm,h)=>this.planArm(arm,f.hands[h],f.propRadius,f.propType)),
+        balls:f.ballPositions!,upperHand:f.armOrder,underarm:f.underarm},f.propRadius,6,12);
+    });
+    const moves=nodes.map((row,t)=>{
+      const before=(t+nodes.length-1)%nodes.length,dt=(phases[t]-phases[before]+(t===0?1:0))*period;
+      return row.map(b=>nodes[before].map(a=>a.elbows.reduce((cost,e,h)=>{
+        const speed=e.distanceTo(b.elbows[h])/Math.max(dt,.001);
+        const rotation=a.rotations&&b.rotations?Math.max(...a.rotations[h].map((q,j)=>q.angleTo(b.rotations![h][j]))):0;
+        return cost+speed*speed*.00001+Math.max(0,speed-6)**2*.001+rotation*rotation*.015;
+      },0)));
+    });
+    let best=Infinity,path:number[]=[];
+    for(let seed=0;seed<nodes[0].length;seed++){
+      let distance=nodes[0].map((n,i)=>i===seed?n.cost:Infinity);
+      const parent:number[][]=[];
+      for(let t=1;t<nodes.length;t++){
+        parent[t]=[];
+        distance=nodes[t].map((n,j)=>{
+          const costs=distance.map((d,k)=>d+moves[t][j][k]),value=Math.min(...costs);
+          parent[t][j]=costs.indexOf(value);return n.cost+value;
+        });
+      }
+      for(let end=0;end<distance.length;end++){
+        const cost=distance[end]+moves[0][seed][end];
+        if(cost>=best)continue;best=cost;path=new Array(nodes.length);path[nodes.length-1]=end;
+        for(let t=nodes.length-1;t>0;t--)path[t-1]=parent[t][path[t]];
+      }
+    }
+    if(!Number.isFinite(best))throw new Error('腕の座標を計算できませんでした。');
+    this.syncElbows=[0,1].map(h=>path.map((p,t)=>nodes[t][p].elbows[h].clone()));
+    // Contact tolerance lets us round off lattice changes instead of spinning
+    // the elbows to chase a different collision-free angle on every frame.
+    // Filtering wraps around the seam, then projects back to each exact IK circle.
+    for(let pass=0;pass<3;pass++){
+      const previous=this.syncElbows;
+      this.syncElbows=[0,1].map(h=>phases.map((phase,i)=>{
+        const average=new THREE.Vector3();let weights=0;
+        for(let delta=-6;delta<=6;delta++){
+          const j=(i+delta+phases.length)%phases.length;
+          const dt=Math.min(Math.abs(phases[j]-phase),1-Math.abs(phases[j]-phase))*period;
+          const weight=Math.exp(-dt*dt/(2*.025**2));average.addScaledVector(previous[h][j],weight);weights+=weight;
+        }
+        average.divideScalar(weights);
+        const frame=sample(phase),p=this.planArm(this.arms[h],frame.hands[h],frame.propRadius,frame.propType);
+        const direction=average.sub(p.center);direction.addScaledVector(p.axis,-direction.dot(p.axis));
+        if(direction.lengthSq()<1e-12)direction.copy(p.pole);
+        return p.center.clone().addScaledVector(direction.normalize(),p.radius);
+      }));
+    }
+    this.syncArmAngles=[new Array(nodes.length).fill(0),new Array(nodes.length).fill(0)];
+    this.syncPlanInfo={contactFallback:true,keyCount:phases.length};
+    return true;
+  }
+
+  private interpolateSyncElbows(plans:ElbowCircle[],fraction:number,elbowTracks=this.syncElbows!,keyPhases=this.syncKeyPhases) {
+    const phase=fraction*elbowTracks[0].length;
+    let k=Math.floor(phase),u=phase-k;
+    if(keyPhases){
+      const keys=keyPhases,next=keys.findIndex(t=>t>fraction+1e-10);
+      k=next<0?keys.length-1:Math.max(0,next-1);
+      const end=next<0?1:keys[next];u=THREE.MathUtils.clamp((fraction-keys[k])/(end-keys[k]),0,1);
+    }
+    plans.forEach((p,h)=>{
+      const elbows=elbowTracks[h];
+      const direction=elbows[k%elbows.length].clone().lerp(elbows[(k+1)%elbows.length],u).sub(p.center);
+      direction.addScaledVector(p.axis,-direction.dot(p.axis)).normalize();
+      p.elbow.copy(p.center).addScaledVector(direction,p.radius);
+    });
+  }
+
+  private safeSyncPose(plans:ElbowCircle[],frame:JugglingFrame) {
+    return plans.every(p=>armPoseClear(p,p.elbow,frame.ballPositions!,frame.propRadius)) &&
+      armPairClear(plans,plans[0].elbow,plans[1].elbow,frame.armOrder) &&
+      underarmRelationsClear(plans,plans.map(p=>p.elbow),frame.underarm);
+  }
+
+  get hasPlannedSyncCycle() { return !!this.syncArmAngles||this.syncReplayActive; }
+
+  captureSyncPlanRestore(){
+    const saved={syncArmAngles:this.syncArmAngles,syncElbows:this.syncElbows,syncKeyPhases:this.syncKeyPhases,
+      syncReplayActive:this.syncReplayActive,syncPlanInfo:this.syncPlanInfo,motionAmount:this.motionAmount};
+    return ()=>Object.assign(this,saved);
+  }
+
+  exportSyncPlan(){
+    if(!this.syncArmAngles||!this.syncElbows)throw new Error('腕の周期が未検査です。');
+    return {angles:structuredClone(this.syncArmAngles),elbows:this.syncElbows.map(row=>row.map(p=>p.toArray())),
+      phases:this.syncKeyPhases?.slice()||null,info:structuredClone(this.syncPlanInfo)};
+  }
+
+  applySyncPlan(plan:ReturnType<Body['exportSyncPlan']>){
+    this.syncArmAngles=structuredClone(plan.angles);
+    this.syncElbows=plan.elbows.map(row=>row.map(p=>new THREE.Vector3(...p)));
+    this.syncKeyPhases=plan.phases?.slice()||null;this.syncPlanInfo=structuredClone(plan.info);
+    this.syncReplayActive=false;this.motionAmount=0;
+  }
+
+  /** Keep the accepted plan, including its interpolation, when another cycle is prepared. */
+  captureSyncArmMotion(){
+    if(!this.syncElbows||!this.syncArmAngles||this.motionAmount!==0)throw new Error('体の揺れを止め、腕の周期検査を通してから登録してください。');
+    const elbows=this.syncElbows.map(h=>h.map(p=>p.clone())),phases=this.syncKeyPhases?.slice()||null;
+    const shoulders=this.arms.map(a=>worldPosition(a.upper)),angle=this.armAngle;
+    return (frame:JugglingFrame)=>{
+      if(this.motionAmount!==0||angle!==this.armAngle||this.arms.some((a,i)=>worldPosition(a.upper).distanceTo(shoulders[i])>1e-8))
+        throw new Error('モデルの姿勢が変わりました。接続部品を再検査してください。');
+      const plans=this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType));
+      this.interpolateSyncElbows(plans,frame.phase!,elbows,phases);
+      return plans.map(p=>p.elbow.clone());
+    };
+  }
+
+  projectSyncElbows(frame:JugglingFrame,elbows:THREE.Vector3[]){
+    return this.arms.map((arm,h)=>{
+      const p=this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType),direction=elbows[h].clone().sub(p.center);
+      direction.addScaledVector(p.axis,-direction.dot(p.axis)).normalize();
+      return p.center.clone().addScaledVector(direction,p.radius);
+    });
+  }
+
+  /** Check a newly anchored path at the planner's interpolation resolution
+   * and at every exact relation event, without solving a new elbow path. */
+  validateSyncReplay(read:(seconds:number)=>JugglingFrame,period:number,allowContact=false){
+    const first=read(0),count=Math.max(480,Math.ceil(period/.003));
+    for(const phase of [...Array.from({length:count},(_,i)=>i/count),...(first.constraintPhases||[])]){
+      const frame=read(phase*period),plans=this.arms.map((arm,h)=>this.planArm(arm,frame.hands[h],frame.propRadius,frame.propType));
+      if(!this.assignFixedElbows(plans,frame)||!allowContact&&!this.safeSyncPose(plans,frame))return false;
+    }
+    return true;
+  }
+
+  private assignFixedElbows(plans:ElbowCircle[],frame:JugglingFrame){
+    const elbows=frame.fixedElbows;
+    if(!elbows||elbows.length!==2||elbows.some((e,h)=>!Number.isFinite(e.lengthSq())||
+      Math.abs(e.distanceTo(plans[h].center)-plans[h].radius)>1e-7||Math.abs(e.clone().sub(plans[h].center).dot(plans[h].axis))>1e-7))return false;
+    plans.forEach((p,h)=>p.elbow.copy(elbows[h]));return true;
+  }
 
   set enableBodyMotion(value: boolean) {
     this.motionAmount = value ? 1 : 0;
@@ -246,6 +508,8 @@ export default class Body {
       shoulderZ: shoulder.z,
       upperArmLength: arm.upperLength,
       armLength: arm.upperLength + arm.lowerLength,
+      gripOffset:{finger:arm.palmOffset.dot(arm.restFingerDir.clone().addScaledVector(arm.restPalmNormal,-arm.restFingerDir.dot(arm.restPalmNormal)).normalize()),
+        normal:arm.palmOffset.dot(arm.restPalmNormal)+PALM_GAP},
     };
   }
 
@@ -338,8 +602,26 @@ export default class Body {
     this.updateUpperBody(frame, delta);
     this.vrm.scene.updateMatrixWorld(true);
 
+    const plans = this.arms.map((arm, h) => this.planArm(arm, frame.hands[h], frame.propRadius, frame.propType));
+    if(frame.ballPositions){
+      // Never replace a failed cyclic plan with unconstrained per-frame IK.
+      this.syncReplayActive=false;
+      if(frame.fixedElbows){
+        if(!this.assignFixedElbows(plans,frame)){
+          this.syncArmAngles=null;this.syncElbows=null;this.syncPlanInfo={reason:'unsafe-replay-pose',phase:frame.phase};return;
+        }
+      }else{
+        if(!this.syncElbows || frame.phase===undefined)return;
+        this.interpolateSyncElbows(plans,frame.phase);
+      }
+      if(!(frame.fixedElbows?frame.contactFallback:this.syncPlanInfo.contactFallback)&&!this.safeSyncPose(plans,frame)){
+        this.syncPlanInfo={...this.syncPlanInfo,reason:'unsafe-playback-pose',phase:frame.phase};
+        this.syncArmAngles=null;this.syncElbows=null;return;
+      }
+      this.syncReplayActive=!!frame.fixedElbows;
+    }
     this.arms.forEach((arm, h) => {
-      this.solveArm(arm, frame.hands[h], frame.propRadius, frame.propType);
+      this.applyArm(arm, plans[h]);
       this.updateFingers(arm, frame.hands[h].holding, frame.propType, delta);
     });
   }
@@ -435,7 +717,36 @@ export default class Body {
     this.pose(Bone.Head, pitch * (1 - NECK_SHARE), yaw * (1 - NECK_SHARE), 0);
   }
 
-  private solveArm(arm: ArmRig, hand: JugglingFrame['hands'][number], propRadius: number, propType: string) {
+  /** 実際に描画する骨の位置。目標点だけでIKの到達を判断しない。 */
+  getArmPose(radius = 0.035) {
+    return this.arms.map(arm => {
+      const delta = worldQuaternion(arm.hand).multiply(arm.restWorld.hand.clone().conjugate());
+      const grip = worldPosition(arm.hand).add(arm.palmOffset.clone().applyQuaternion(delta))
+        .addScaledVector(arm.restPalmNormal.clone().applyQuaternion(delta), radius + PALM_GAP);
+      return { shoulder: worldPosition(arm.upper).toArray(), elbow: worldPosition(arm.lower).toArray(),
+        wrist: worldPosition(arm.hand).toArray(), grip: grip.toArray(),
+        palmNormal:arm.restPalmNormal.clone().applyQuaternion(delta).toArray(),
+        // Report the heading in the palm plane, as used by frameRotation.
+        // The avatar's knuckle landmark can sit slightly above that plane.
+        fingerDir:arm.restFingerDir.clone().addScaledVector(arm.restPalmNormal,-arm.restFingerDir.dot(arm.restPalmNormal)).normalize().applyQuaternion(delta).toArray() };
+    });
+  }
+
+  private armAnatomy(arm:ArmRig,fingerDir:THREE.Vector3):ArmAnatomy {
+    const shoulders=this.arms.map(a=>worldPosition(a.upper));
+    const center=shoulders[0].clone().add(shoulders[1]).multiplyScalar(.5);
+    const width=shoulders[0].distanceTo(shoulders[1])*.5;
+    return {side:arm.side,centerX:center.x,shoulderZ:center.z,upperLength:arm.upperLength,
+      torsoCenter:center.clone().add(new THREE.Vector3(0,-arm.upperLength*.72,.015)),
+      torsoRadii:new THREE.Vector3(width*.85+arm.upperLength*.09,arm.upperLength*1.06,width*.60+arm.upperLength*.09),fingerDir};
+  }
+
+  getArmPosture() {
+    return this.getArmPose().map((p,h)=>armPosture({shoulder:new THREE.Vector3().fromArray(p.shoulder),wrist:new THREE.Vector3().fromArray(p.wrist),
+      anatomy:this.armAnatomy(this.arms[h],new THREE.Vector3().fromArray(p.fingerDir))},new THREE.Vector3().fromArray(p.elbow)));
+  }
+
+  private planArm(arm: ArmRig, hand: JugglingFrame['hands'][number], propRadius: number, propType: string) {
     const palmNormal = hand.palmNormal;
 
     // 指先の向き: 指定があればそれ(クラブのハンドルに巻き付く向きなど)。
@@ -467,39 +778,51 @@ export default class Body {
     const hgt = Math.sqrt(Math.max(L1 * L1 - a * a, 0));
 
     const poleBack = ELBOW_POLE_BACK_BY_PROP[propType] ?? ELBOW_POLE_BACK;
-    const pole = new THREE.Vector3(arm.side * (ELBOW_POLE_OUT_BASE + this.armAngle), -1, poleBack).normalize();
+    const pole = hand.elbowPole?.clone() || new THREE.Vector3(arm.side * (ELBOW_POLE_OUT_BASE + this.armAngle), -1, poleBack).normalize();
     const polePerp = pole.clone().addScaledVector(dir, -pole.dot(dir));
     if (polePerp.lengthSq() < 1e-8) polePerp.set(0, -1, 0);
     polePerp.normalize();
 
     const elbow = shoulder.clone().addScaledVector(dir, a).addScaledVector(polePerp, hgt);
     const wrist = shoulder.clone().addScaledVector(dir, d);
+    const preferredElbow = new THREE.Vector3(shoulder.x*.75,shoulder.y-L1*.92,shoulder.z-.025);
+    return { handDelta, shoulder, elbow, wrist, reachError:wrist.distanceTo(wristTarget), preferredElbow, anatomy:this.armAnatomy(arm,fingerDir), pole: polePerp, axis: dir,
+      rotationsAt:(e:THREE.Vector3)=>this.armRotations(arm,{shoulder,elbow:e,wrist,handDelta,pole:polePerp}),
+      center: shoulder.clone().addScaledVector(dir, a), radius: hgt };
+  }
+
+  private armRotations(arm:ArmRig,plan:{shoulder:THREE.Vector3;elbow:THREE.Vector3;wrist:THREE.Vector3;handDelta:THREE.Quaternion;pole:THREE.Vector3}) {
+    const { shoulder, elbow, wrist, handDelta, pole: polePerp } = plan;
 
     const upperDir = elbow.clone().sub(shoulder).normalize();
     const lowerDir = wrist.clone().sub(elbow).normalize();
     const hinge = new THREE.Vector3().crossVectors(upperDir, lowerDir);
     if (hinge.lengthSq() < 1e-8) hinge.crossVectors(upperDir, polePerp);
     hinge.normalize();
-    arm.lastForearmDir.copy(lowerDir);
 
     const restUpperHinge = new THREE.Vector3().crossVectors(arm.restUpperDir, FORWARD).normalize();
     const restLowerHinge = new THREE.Vector3().crossVectors(arm.restLowerDir, FORWARD).normalize();
 
     // 上腕
     const upperWorld = frameRotation(arm.restUpperDir, restUpperHinge, upperDir, hinge).multiply(arm.restWorld.upper);
-    const parentWorld = worldQuaternion(arm.upper.parent!);
-    arm.upper.quaternion.copy(parentWorld.clone().conjugate().multiply(upperWorld));
 
-    // 前腕: 肘の曲げ + 手のひらを返すひねりの一部
+    // 前腕: 肘の曲げ + 手のひらを返す軸方向のひねり
     const lowerDelta = frameRotation(arm.restLowerDir, restLowerHinge, lowerDir, hinge);
     const relative = lowerDelta.clone().conjugate().multiply(handDelta);
-    const twist = twistAngle(relative, arm.restLowerDir) * FOREARM_TWIST_SHARE;
-    lowerDelta.multiply(new THREE.Quaternion().setFromAxisAngle(arm.restLowerDir, twist));
+    lowerDelta.multiply(forearmTwist(relative,arm.restLowerDir));
     const lowerWorld = lowerDelta.multiply(arm.restWorld.lower);
-    arm.lower.quaternion.copy(upperWorld.clone().conjugate().multiply(lowerWorld));
 
     // 手
-    const handWorld = handDelta.multiply(arm.restWorld.hand);
+    const handWorld = handDelta.clone().multiply(arm.restWorld.hand);
+    return [upperWorld,lowerWorld,handWorld];
+  }
+
+  private applyArm(arm: ArmRig, plan: ReturnType<Body['planArm']>) {
+    const [upperWorld,lowerWorld,handWorld]=this.armRotations(arm,plan);
+    arm.lastForearmDir.copy(plan.wrist).sub(plan.elbow).normalize();
+    const parentWorld=worldQuaternion(arm.upper.parent!);
+    arm.upper.quaternion.copy(parentWorld.conjugate().multiply(upperWorld));
+    arm.lower.quaternion.copy(upperWorld.clone().conjugate().multiply(lowerWorld));
     arm.hand.quaternion.copy(lowerWorld.clone().conjugate().multiply(handWorld));
   }
 

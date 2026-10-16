@@ -24,6 +24,8 @@ export interface AvatarMetrics {
   shoulderZ: number;
   upperArmLength: number;
   armLength: number;
+  /** Wrist-to-grip displacement in the hand frame, excluding the ball radius. */
+  gripOffset?: { finger:number; normal:number };
 }
 
 // 変換が恒等になる体格(gunswap の元の体格)
@@ -45,6 +47,8 @@ export interface SpaceTransform {
   /** 左右の肩の位置(ワールド座標)と、肩から手(ボールの中心)までの届く距離 */
   shoulders: THREE.Vector3[];
   reach: number;
+  wristReach: number;
+  gripOffset: { finger:number; normal:number };
 }
 
 // 肩から手(ボールの中心)までの距離の上限(腕の長さに対する割合)。伸び切ると手首の向きが不自然になる
@@ -59,7 +63,8 @@ export function makeTransform(metrics: AvatarMetrics): SpaceTransform {
   const horizontalScale = THREE.MathUtils.clamp(metrics.armLength / GUNSWAP_ARM_LENGTH, 0.7, 1.2);
   const offsetY = handBaseY(metrics) - GUNSWAP_HAND_Y;
   const shoulders = [-1, 1].map((side) => new THREE.Vector3(side * metrics.shoulderX, metrics.shoulderY, metrics.shoulderZ));
-  return { horizontalScale, offsetY, shoulders, reach: metrics.armLength * REACH_SHARE };
+  return { horizontalScale, offsetY, shoulders, reach: metrics.armLength * REACH_SHARE,
+    wristReach:metrics.armLength-.001,gripOffset:metrics.gripOffset || {finger:metrics.armLength*.075,normal:metrics.armLength*.052} };
 }
 
 /** 手の位置を肩から届く範囲に収める */
@@ -80,6 +85,8 @@ export interface HandTrack {
   holding: boolean[];
   /** 指先の向き(クラブのハンドルを握る時など)。なければ体の側で決める */
   fingerDirs?: THREE.Vector3[];
+  /** 動作が指定する肘の曲げ方向(ワールド座標)。 */
+  elbowPoles?: THREE.Vector3[];
 }
 
 export interface ThrowEvent {

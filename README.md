@@ -11,6 +11,12 @@ gunswap を流用して VRM 形式の 3D モデルにジャグリングをさせ
 
 https://390juggler.github.io/vrm-juggler2/ (GitHub Pages。master ブランチの `dist/` を表示します)
 
+## 同期パターンを組んでつなぐ
+
+[つなぐモード](https://390juggler.github.io/vrm-juggler2/sync-compose.html)で、Box・High-Low・Shower・Double Boxと2xを組み合わせて再生できます。技を並べると、境目の投球を次の技の投球位置へ合わせます。[使い方と定義](docs/sync-compose.md)。
+
+ローカルでは依存関係のインストール後に `start-sync-box.cmd` を実行し、表示されたURLを開きます。基本のサイトスワップ・リングなどの小道具は [ベース画面](https://390juggler.github.io/vrm-juggler2/) で選べます。
+
 ## パッケージのインストール
 
 事前に node.js (20.19 以上。22 推奨) をインストールしてください。
