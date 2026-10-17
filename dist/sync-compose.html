@@ -31,7 +31,18 @@
       <button id="mode-connect" role="tab" aria-selected="false" aria-controls="connect-panel" tabindex="-1">つなぐモード<small>他のベース・技の並び</small></button>
     </nav>
     <section id="basic-panel" role="tabpanel" aria-labelledby="mode-basic">
-      <p class="intro">Boxのコラムと、左右の2xを選びます。左右は演者から見た向きです。</p><p id="box-route-context" class="context-note" hidden></p>
+      <div class="basic-start">
+        <button id="basic-box" type="button">普通のBox</button>
+        <details id="template-picker"><summary>ほかの技を選ぶ</summary>
+          <div class="template-bar"><label>技の名前<select id="template"></select></label><button id="load-template">選んで再生</button></div>
+          <details class="template-start-options"><summary>開始セット・動きの内訳</summary>
+            <label>見本の開始セット<select id="template-start" aria-describedby="template-start-hint"></select></label>
+            <p id="template-start-hint" class="hint">選んだセットから一周分を読み込みます。投げ方と一周の順番は保ちます。</p>
+            <div id="template-description" class="motion-description"></div>
+          </details>
+        </details>
+      </div>
+      <p class="intro">下の項目で、選んだ技のコラムと左右の2xを編集できます。左右は演者から見た向きです。</p><p id="box-route-context" class="context-note" hidden></p>
       <div id="planning-state" role="status" hidden><p id="planning-detail"></p><button id="planning-cancel" type="button">生成を中止</button></div>
     <details id="parts-builder" open><summary>コラム × 2x</summary>
       <div class="parts-options">
@@ -71,12 +82,6 @@
       <label><input id="allow-ball-contact" type="checkbox">球同士の接触を許可する</label>
       <p class="hint">腕の動きを優先します。2xの上下の通過順と、手・腕・体の間隔は引き続き確認します。変更後は「再生」で反映します。</p>
 </details>
-      <details id="template-picker"><summary>見本の技から始める</summary>
-    <div class="template-bar"><label>技の名前から選ぶ<select id="template"></select></label><button id="load-template">この技を選ぶ</button></div>
-    <label>見本の開始セット<select id="template-start" aria-describedby="template-start-hint"></select></label>
-    <p id="template-start-hint" class="hint">選んだセットから一周分を読み込みます。投げ方と一周の順番は保ちます。</p>
-        <div id="template-description" class="motion-description"></div>
-      </details>
       <details id="cycle-details"><summary id="cycle-brief">周期・速さ</summary>
       <ol id="basic-set-outline" class="basic-set-outline" aria-label="左右の動作の順番"></ol>
     <div class="stats" aria-live="polite"><div><strong id="balls">—</strong><span>球</span></div><div><strong id="movement">—</strong><span>動きの周期 / セット</span></div><div><strong id="identity">—</strong><span>同じ球まで / セット</span></div></div>

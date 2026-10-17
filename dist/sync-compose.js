@@ -358,7 +358,13 @@
   refreshTemplateStart();
   $('template').onchange=()=>{refreshTemplateStart();clearConnectionSuggestions();};
   $('template-start').onchange=clearConnectionSuggestions;
-  $('load-template').onclick=()=>{try{draft=selectedTemplate();modified(true);$('append-status').textContent=`見本のセット${Number($('template-start').value)+1}から一周分を読み込みました。`;}catch(e){$('append-status').textContent=e.message;}};
+  function playSelectedTemplate(){
+    if(busy||!initialized)return;
+    try{draft=selectedTemplate();modified(true);$('template-picker').open=false;$('basic-panel').scrollTop=0;apply();}
+    catch(e){$('error').textContent=e.message;$('diagnostics').open=true;}
+  }
+  $('load-template').onclick=playSelectedTemplate;
+  $('basic-box').onclick=()=>{if(busy||!initialized)return;$('template').value='preset:box';refreshTemplateStart();playSelectedTemplate();};
   function appendToDraft(next){
     const suggestions=VRMJuggler.findSyncConnectionExamples(draft,next);
     const connect=$('bridge-transfers').checked&&analysis.ok&&VRMJuggler.analyzeSyncSequence(next).ok;

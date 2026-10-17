@@ -68,7 +68,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     $('route-picker-title').textContent=adding?'次に追加する技を選ぶ':'ベースを変更';
     $('route-picker-hint').textContent=adding?`${doc.blocks.length+1}番目の技として、並びの末尾に追加します。`:`${selected+1}番目の${names[doc.blocks[selected].parts.base]}を変更します。`;
     $('route-base-choices').replaceChildren();
-    for(const base of ['high-low','shower','double','box']){
+    for(const base of ['box','high-low','shower','double']){
       const name=names[base];
       const info=baseInfo[base],current=!adding&&doc.blocks[selected].parts.base===base;
       const b=button('',()=>chooseBase(base));b.dataset.base=base;b.className='base-choice';

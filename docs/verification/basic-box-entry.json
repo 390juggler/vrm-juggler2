@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-17",
+  "problem": "The plain Box preset remained available only inside a low, collapsed template picker. The visible Normal column button changed only the column, retaining previous left/right 2x choices.",
+  "change": "Add a plain Box shortcut and move the named-pattern picker to the top of basic mode. Both preset actions start playback. List Box first in the route base picker.",
+  "browserChecks": [
+    "At 390x844, plain Box switches roles to alternate, columns to normal, and both 2x choices to normal; playing-name becomes ボックス with no error.",
+    "Selecting preset:switched using the named picker closes the picker and starts スイッチド.",
+    "Pressing plain Box again restores and plays ボックス.",
+    "The route base picker shows Box, High-Low, Shower, Double Box in that order.",
+    "At 320x568, the two preset entry controls are visible within the editor and the document has no horizontal overflow.",
+    "No browser console errors were recorded."
+  ],
+  "syntaxChecks": ["dist/sync-compose.js", "dist/sync-route-builder.js"],
+  "screenshot": "basic-box-entry-mobile.png",
+  "limits": "Browser viewport validation, not physical phone testing. No trajectory code changed."
+}

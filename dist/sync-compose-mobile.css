@@ -4,6 +4,20 @@ button,select,input[type=number],input[type=text],summary{min-height:44px}
 input,select,textarea{font-size:16px;max-width:100%}
 fieldset{min-width:0}
 .simulator-links{display:flex;gap:12px;align-items:center}
+.basic-start{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.basic-start>button,.basic-start>details{margin:0;border:1px solid #c7dcda;border-radius:9px;background:#edf5f4;color:#24575d}
+.basic-start>button{font-size:14px;font-weight:650;min-height:46px}
+.basic-start>details{padding:0 10px;min-width:0}
+.basic-start>details>summary{display:flex;align-items:center;justify-content:center;min-height:46px;font-size:14px;font-weight:650;list-style:none}
+.basic-start>details>summary::-webkit-details-marker{display:none}
+.basic-start>details>summary:after{content:'▾';margin-left:8px}
+.basic-start>details[open]{grid-column:1/-1;padding-bottom:10px}
+.basic-start>details[open]>summary{justify-content:flex-start}
+.basic-start>details[open]>summary:after{content:'▴'}
+.basic-start .template-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin:0}
+.basic-start .template-bar label{flex:1;min-width:170px;margin:0}
+.basic-start .template-bar button{flex-shrink:0;min-height:46px}
+.template-start-options{margin:8px 0 0!important;font-size:12px}
 .editor,.editor>[role=tabpanel],.line>*,.parts-options>*{min-width:0}
 .transport #transport-extra{display:none;max-height:50dvh;overflow:auto;overscroll-behavior:contain;padding-top:12px}
 .transport.settings-open #transport-extra{display:block}
