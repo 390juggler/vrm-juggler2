@@ -13,6 +13,7 @@
   let draft=clone(examples[0]),applied=null,analysis=null,busy=false,initialized=false,dirty=true,saveTimer,lastImportTemplate='example:0';
   let planningAbort=null;
   const ui=globalThis.SyncComposeUI;
+  const bases=globalThis.SyncBasicPatterns;
   let routeBuilder;
   let mode='basic',basicCheck=null,previewKind=null,routeDocument=null,partsApplying=false,connectionState={sources:0,count:0,closed:false,canClose:false};
   const templateItems=examples.map((s,i)=>({value:`example:${i}`,name:s.name,group:s.name.includes(' → ')?'接続の見本':VRMJuggler.analyzeSyncSequence(s).balls===4?'4球の見本':'3球の見本'}));
@@ -50,7 +51,8 @@
   $('preview-size').onclick=()=>{const expanded=document.body.classList.toggle('preview-expanded');$('preview-size').setAttribute('aria-expanded',String(expanded));$('preview-size').textContent=expanded?'縮小':'拡大';$('preview-size').setAttribute('aria-label',expanded?'プレビューを小さくする':'プレビューを大きくする');};
   function refreshModeAction(){
     const action=$('mode-action');action.disabled=busy||!initialized;
-    $('quick-connect').hidden=mode!=='basic'||$('parts-roles').value!=='alternate';
+    $('basic-pattern').disabled=busy||!initialized;
+    $('quick-connect').hidden=mode!=='basic'||$('basic-pattern').value!=='box';
     const editIndex=routeBuilder?.boxEditIndex()??-1;
     $('quick-connect').textContent=editIndex>=0?'並びのBoxを更新':'＋ 並びへ追加';
     $('box-route-context').hidden=editIndex<0;$('box-route-context').textContent=editIndex<0?'':`${editIndex+1}番目のBoxを編集中。下の「並びのBoxを更新」で反映します。`;$('quick-connect').disabled=busy||!initialized;
@@ -364,7 +366,10 @@
     catch(e){$('error').textContent=e.message;$('diagnostics').open=true;}
   }
   $('load-template').onclick=playSelectedTemplate;
-  $('basic-box').onclick=()=>{if(busy||!initialized)return;$('template').value='preset:box';refreshTemplateStart();playSelectedTemplate();};
+  $('basic-pattern').onchange=()=>{
+    if(busy||!initialized)return;
+    draft=bases.create(VRMJuggler,$('basic-pattern').value);$('template-picker').open=false;modified(true);$('basic-panel').scrollTop=0;apply();
+  };
   function appendToDraft(next){
     const suggestions=VRMJuggler.findSyncConnectionExamples(draft,next);
     const connect=$('bridge-transfers').checked&&analysis.ok&&VRMJuggler.analyzeSyncSequence(next).ok;
@@ -377,8 +382,13 @@
   const partsCheckKey=canonical=>`${$('mirror').checked?'mirror:':'normal:'}${canonical}`;
   const partsKnownNames=new Map([...presets.map(p=>VRMJuggler.syncSequenceFromPreset(p.id)),...examples].map(s=>[VRMJuggler.analyzeSyncSequence(s).canonical,s.name]));
   for(const id of ['parts-double-cross','parts-double-self'])basicStyles.forEach(([value,label])=>$(id).add(new Option(label,value)));
-  for(const id of ['parts-left','parts-right']){
+  for(const id of ['parts-left','parts-right','parts-high-low-pass']){
     for(const group of [...new Set(ui.shortChoices.map(c=>c.group))]){const optgroup=el('optgroup');optgroup.label=group;ui.shortChoices.filter(c=>c.group===group).forEach(c=>optgroup.append(new Option(c.name,c.id)));$(id).append(optgroup);}
+  }
+  for(let i=0;i<4;i++){
+    const label=el('label',`${i+1}セット目 · ${i%2?'右':'左'}手の2x`),pick=el('select'),hint=el('small');pick.id='parts-four-'+i;pick.setAttribute('aria-label',label.textContent);
+    for(const group of [...new Set(ui.shortChoices.map(c=>c.group))]){const optgroup=el('optgroup');optgroup.label=group;ui.shortChoices.filter(c=>c.group===group).forEach(c=>optgroup.append(new Option(c.name,c.id)));pick.append(optgroup);}
+    hint.id='parts-four-hint-'+i;pick.onchange=chooseParts;label.append(pick,hint);$('parts-four-passes').append(label);
   }
   for(const [value,name,hint] of [['normal','Normal','同じ側のコラム'],['switched','Switched','反対側のコラム'],['crossed','Cross','腕を交差する'],['underarm','Underarm','反対の腕の下で捕る']]){
     const pick=button('',()=>{$('parts-columns').value=value==='crossed'?$('parts-cross-order').value:value;chooseParts();});pick.dataset.column=value;pick.append(el('strong',name),el('small',hint));$('column-choices').append(pick);
@@ -394,13 +404,25 @@
     });$('parts-matrix').tBodies[0].append(row);
   });
   function basicParts(){
+    const base=$('basic-pattern').value;
+    if(base==='box-four'){
+      const s=bases.fourParts(VRMJuggler,ui,draft,$('parts-columns').value,Array.from({length:4},(_,i)=>$('parts-four-'+i).value));s.allowBallContact=$('allow-ball-contact').checked;return s;
+    }
+    if(base==='high-low'||base==='shower'){
+      const s=VRMJuggler.syncSequenceFromBaseParts({...bases.defaults,base,columns:$('parts-columns').value,
+        passes:[base==='high-low'?$('parts-high-low-pass').value:$(Number($('parts-hand').value)?'parts-right':'parts-left').value],
+        highHand:base==='high-low'?Number($('parts-high-hand').value):1-Number($('parts-hand').value),alternateHigh:$('parts-alternate').value==='true',swap:$('parts-swap').value},draft.beatDuration);
+      s.editorBase=base;s.allowBallContact=$('allow-ball-contact').checked;return s;
+    }
     const doubleSource=$('parts-roles').value==='double'&&draft.sets.length===4&&draft.sets.some(row=>row.throws.includes('4x'))&&draft.sets.some(row=>row.throws.includes('4'))&&draft.sets.every(row=>{const h=row.throws.indexOf('2x');return h>=0&&['4','4x'].includes(row.throws[1-h]);})?draft:undefined;
     const doubleParts={crossSet:$('parts-double-cross').value,selfSet:$('parts-double-self').value,crossReleaseGrip:$('parts-double-cross-grip').value||undefined,selfReleaseGrip:$('parts-double-self-grip').value||undefined,crossCatchGrip:$('parts-double-cross-catch').value||undefined,selfCatchGrip:$('parts-double-self-catch').value||undefined};
     const s=$('parts-roles').value==='double'?(doubleSource?VRMJuggler.syncSequenceWithDoubleParts(doubleSource,doubleParts):VRMJuggler.syncSequenceFromDoubleParts(doubleParts)):ui.namedParts(VRMJuggler,{roles:$('parts-roles').value,left:$('parts-left').value,right:$('parts-right').value,shortHand:Number($('parts-hand').value),columns:$('parts-roles').value==='fixed'?'normal':$('parts-columns').value});
     const known=partsKnownNames.get(VRMJuggler.analyzeSyncSequence(s).canonical);
-    s.name=(known||(doubleSource?s.name:($('parts-roles').value==='double'?'Double｜':'')+ui.describeSequence(s).title)).slice(0,100);s.allowBallContact=$('allow-ball-contact').checked;return s;
+    s.name=(known||(doubleSource?s.name:($('parts-roles').value==='double'?'Double｜':'')+ui.describeSequence(s).title)).slice(0,100);s.allowBallContact=$('allow-ball-contact').checked;s.editorBase=base;return s;
   }
   function refreshParts(){
+    const base=$('basic-pattern').value,four=base==='box-four',highLow=base==='high-low';
+    $('parts-builder').classList.toggle('four-period',four);$('parts-pass-heading').textContent=four?'4セットの2x':'2　2xのパターン';
     const fixed=$('parts-roles').value==='fixed',double=$('parts-roles').value==='double',hand=Number($('parts-hand').value),s=basicParts(),a=VRMJuggler.analyzeSyncSequence(s);
     $('parts-hand-label').hidden=!fixed;$('parts-hand').disabled=!fixed;
     $('parts-column-label').hidden=true;$('parts-columns').disabled=fixed||double;
@@ -408,7 +430,10 @@
     $('column-choices').parentElement.hidden=fixed||double;
     for(const pick of $('column-choices').children)pick.setAttribute('aria-pressed',String(pick.dataset.column===(crossed?'crossed':$('parts-columns').value)));
     for(const side of ['left','right'])$('parts-'+side+'-hint').textContent=ui.shortChoices.find(c=>c.id===$('parts-'+side).value)?.hint||'';
-    $('parts-left-label').hidden=double||fixed&&hand!==0;$('parts-right-label').hidden=double||fixed&&hand!==1;$('parts-matrix').hidden=fixed||double;
+    $('parts-left-label').hidden=four||highLow||double||fixed&&hand!==0;$('parts-right-label').hidden=four||highLow||double||fixed&&hand!==1;$('parts-matrix').hidden=four||highLow||fixed||double;$('parts-matrix').closest('details').hidden=four||highLow||fixed||double;
+    $('parts-four-passes').hidden=!four;$('parts-high-low-settings').hidden=!highLow;$('parts-high-low-pass-label').hidden=!highLow;
+    for(let i=0;i<4;i++){$('parts-four-hint-'+i).textContent=ui.shortChoices.find(c=>c.id===$('parts-four-'+i).value)?.hint||'';if(four){const label=`${i+1}セット目 · ${draft.sets[i].throws.indexOf('2x')?'右':'左'}手の2x`;$('parts-four-'+i).parentElement.firstChild.textContent=label;$('parts-four-'+i).setAttribute('aria-label',label);}}
+    $('basic-pattern-hint').textContent=({box:'コラムと、左右それぞれの2xを選びます。左右は演者から見た向きです。',shower:'短い2xと高い球を、同じ両端で一方向に回します。','double-fixed':'中央のコラムを固定し、4x側・4側の2xを選びます。','double-shower':'4xはシャワーの弧で渡し、4は縦に投げます。','high-low':'ハイ＋2xと、両手のスワップを交互に行います。','box-four':'左 → 右 → 左 → 右。4セットそれぞれの2xを選びます。'})[base]||'選んだ技の各セットを編集できます。';
     for(const part of ['cross','self','cross-grip','self-grip','cross-catch','self-catch']){$(`parts-double-${part}-label`).hidden=!double;$(`parts-double-${part}`).disabled=!double;}
     $('parts-check-legend').hidden=fixed||double;
     partsCells.forEach(({left,right,pick})=>{const selected=left===$('parts-left').value&&right===$('parts-right').value;
@@ -419,10 +444,11 @@
     const gripText=id=>({underhand:'下から',overhand:'クロー'})[$(id).value]||'標準';
     const columnText=double?`左が4x→4、右が4x→4。2xの手向き（4x側／4側）：投げ ${gripText('parts-double-cross-grip')}／${gripText('parts-double-self-grip')}、捕り ${gripText('parts-double-cross-catch')}／${gripText('parts-double-self-catch')}。`:fixed?'4xも2xも反対の手へ渡します。':`${$('parts-columns').selectedOptions[0].textContent}。4は同じ手、2xは反対の手へ。`;
     const d=ui.describeSequence(s),c=d.fields[0][1],l=ui.shortChoices.find(c=>c.id===$('parts-left').value)?.name,r=ui.shortChoices.find(c=>c.id===$('parts-right').value)?.name;
-    $('parts-preview').textContent=double?`Double × ${$('parts-double-cross').selectedOptions[0].text} / ${$('parts-double-self').selectedOptions[0].text}`:fixed?`4x固定 × ${hand? r:l}`:`${c} × ${l===r?l:'左 '+l+' / 右 '+r}`;
+    $('parts-preview').textContent=four?'左 → 右 → 左 → 右の4セット':highLow?'ハイ＋2x → スワップ → ハイ＋2x → スワップ':double?`Double × ${$('parts-double-cross').selectedOptions[0].text} / ${$('parts-double-self').selectedOptions[0].text}`:fixed?`シャワー × ${hand? r:l}`:`${c} × ${l===r?l:'左 '+l+' / 右 '+r}`;
   }
   function chooseParts(){if(busy)return;draft=basicParts();partsApplying=true;try{modified(true);}finally{partsApplying=false;}$('parts-origin').hidden=true;refreshParts();}
   function syncPartsFromDraft(){
+    $('basic-pattern').value=bases.kind(VRMJuggler,draft);
     const rows=draft.sets,c=rows[0]?.motion.columns||'normal',order=rows[0]?.motion.armOrder;
     $('parts-columns').value=c==='crossed'?order==='right-over'?'crossed-right':order==='alternate'?'crossed-alternate':'crossed':c;
     if(c==='crossed')$('parts-cross-order').value=$('parts-columns').value;
@@ -431,11 +457,19 @@
     for(const h of [0,1]){const row=rows.find(r=>r.throws[h]==='2x');if(row&&ui.shortChoices.some(c=>c.id===ui.shortKey(row,h)))$('parts-'+(h?'right':'left')).value=ui.shortKey(row,h);}
     if($('parts-roles').value==='fixed')$('parts-hand').value=String(rows[0].throws.indexOf('2x'));
     if(isDouble)for(const [high,key] of [['4x','cross'],['4','self']]){const row=rows.find(r=>r.throws.includes(high)),h=row.throws.indexOf('2x');$('parts-double-'+key).value=row.motion.hands?.[h]?.style||row.motion.short?.[0]||'normal';$('parts-double-'+key+'-grip').value=row.motion.hands?.[h]?.releaseGrip||'';$('parts-double-'+key+'-catch').value=row.motion.hands?.[h]?.catchGrip||'';}
+    if($('basic-pattern').value==='box-four')rows.forEach((row,i)=>$('parts-four-'+i).value=ui.shortKey(row,row.throws.indexOf('2x')));
+    if($('basic-pattern').value==='high-low'){
+      const highs=rows.filter(r=>r.throws.some(t=>/^6x?$/.test(t))),first=highs[0],h=first.throws.findIndex(t=>/^6x?$/.test(t));
+      $('parts-high-hand').value=String(h);$('parts-alternate').value=String(first.throws[h]==='6');$('parts-high-low-pass').value=ui.shortKey(first,1-h);
+      const swaps=rows.filter(r=>r.throws.every(t=>t==='2x')),upper=r=>(r.motion.hands?.[0]?.heightOffset||0)>(r.motion.hands?.[1]?.heightOffset||0)?0:1;
+      $('parts-swap').value=upper(swaps[0])!==upper(swaps[1])?'alternate':upper(swaps[0])===0?'left-over':'right-over';
+    }
     refreshParts();
     const differs=VRMJuggler.analyzeSyncSequence(basicParts()).canonical!==VRMJuggler.analyzeSyncSequence(draft).canonical;
     $('parts-origin').hidden=!differs;$('parts-origin').textContent='セットごとの指定も含む技です。上で選び直すと、その組合せで作り直します。';
   }
-  ['parts-roles','parts-hand','parts-left','parts-right','parts-columns','parts-double-cross','parts-double-self','parts-double-cross-grip','parts-double-self-grip','parts-double-cross-catch','parts-double-self-catch'].forEach(id=>{$(id).onchange=chooseParts;});refreshParts();
+  ['parts-roles','parts-hand','parts-left','parts-right','parts-columns','parts-double-cross','parts-double-self','parts-double-cross-grip','parts-double-self-grip','parts-double-cross-catch','parts-double-self-catch','parts-high-hand','parts-alternate','parts-swap','parts-high-low-pass'].forEach(id=>{$(id).onchange=chooseParts;});refreshParts();
+  $('parts-roles').onchange=()=>{$('basic-pattern').value=({'alternate':'box','fixed':'shower','double':'double-shower'})[$('parts-roles').value];chooseParts();};
   $('parts-replace').onclick=()=>{draft=basicParts();modified(true);};
   $('manual-append-parts').onclick=()=>appendToDraft(basicParts());
   $('use-description-name').onclick=()=>{draft.name=ui.describeSequence(draft).title.slice(0,100);$('name').value=draft.name;modified();};
@@ -885,6 +919,7 @@
   }
   $('route-cancel').onclick=()=>planningAbort?.abort();
   routeBuilder=createSyncRouteBuilder({onPlay:applyBaseRoute,onEditBox:parts=>{
+    $('basic-pattern').value='box';
     $('parts-roles').value='alternate';$('parts-columns').value=parts.columns;
     if(parts.columns.startsWith('crossed'))$('parts-cross-order').value=parts.columns;
     $('parts-left').value=parts.passes[0];$('parts-right').value=parts.passes[1];chooseParts();switchMode('basic');

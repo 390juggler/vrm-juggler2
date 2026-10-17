@@ -5,7 +5,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Box Simulator — VRM Juggler</title>
   <link rel="stylesheet" href="./sync-compose.css"><link rel="stylesheet" href="./sync-compose-mobile.css">
-  <script src="./vrm-juggler.min.js"></script><script src="./sync-compose-ui.js"></script><script src="./sync-route-builder.js"></script><script src="./sync-compose.js" defer></script>
+  <script src="./vrm-juggler.min.js"></script><script src="./sync-compose-ui.js"></script><script src="./sync-basic-patterns.js"></script><script src="./sync-route-builder.js"></script><script src="./sync-compose.js" defer></script>
 </head>
 <body>
   <main class="preview">
@@ -27,12 +27,12 @@
   <aside class="editor" aria-label="パターンの作成">
     <header><div><span class="eyebrow">VRM JUGGLER</span><h2>Box Simulator</h2></div><nav class="simulator-links"><a href="./">通常版</a><a href="./sync-box.html">技の一覧 ↗</a></nav></header>
     <nav class="mode-tabs" role="tablist" aria-label="作業モード">
-      <button id="mode-basic" role="tab" aria-selected="true" aria-controls="basic-panel" tabindex="0">基本モード<small>Boxを作る</small></button>
+      <button id="mode-basic" role="tab" aria-selected="true" aria-controls="basic-panel" tabindex="0">基本モード<small>基礎パターンを選ぶ</small></button>
       <button id="mode-connect" role="tab" aria-selected="false" aria-controls="connect-panel" tabindex="-1">つなぐモード<small>他のベース・技の並び</small></button>
     </nav>
     <section id="basic-panel" role="tabpanel" aria-labelledby="mode-basic">
       <div class="basic-start">
-        <button id="basic-box" type="button">普通のBox</button>
+        <label class="basic-pattern-label">基礎パターン<select id="basic-pattern"><option value="box">ボックス</option><option value="shower">シャワー</option><option value="double-fixed">固定のダブルボックス</option><option value="double-shower">シャワー型のダブルボックス</option><option value="high-low">ハイロー</option><option value="box-four">4周期</option><option value="custom" hidden disabled>ほかの技・個別編集</option></select></label>
         <details id="template-picker"><summary>ほかの技を選ぶ</summary>
           <div class="template-bar"><label>技の名前<select id="template"></select></label><button id="load-template">選んで再生</button></div>
           <details class="template-start-options"><summary>開始セット・動きの内訳</summary>
@@ -42,14 +42,17 @@
           </details>
         </details>
       </div>
-      <p class="intro">下の項目で、選んだ技のコラムと左右の2xを編集できます。左右は演者から見た向きです。</p><p id="box-route-context" class="context-note" hidden></p>
+      <p id="basic-pattern-hint" class="intro">下の項目で、選んだ技のコラムと左右の2xを編集できます。左右は演者から見た向きです。</p><p id="box-route-context" class="context-note" hidden></p>
       <div id="planning-state" role="status" hidden><p id="planning-detail"></p><button id="planning-cancel" type="button">生成を中止</button></div>
     <details id="parts-builder" open><summary>コラム × 2x</summary>
       <div class="parts-options">
 
         <div class="parts-roles column-family"><h3>1　コラム</h3><div id="column-choices" class="named-choices"></div><label id="parts-cross-label" hidden>Crossの上下<select id="parts-cross-order"><option value="crossed">左腕が上</option><option value="crossed-right">右腕が上</option><option value="crossed-alternate">左上・右上を交代</option></select></label></div><label id="parts-column-label" class="parts-roles" hidden>コラム側の動き<select id="parts-columns"><option value="normal">通常 / 同じ側を担当</option><option value="switched">Switched / 反対側を担当</option><option value="crossed">クロス / 左腕が上</option><option value="crossed-right">クロス / 右腕が上</option><option value="crossed-alternate">クロス / 上下を交代</option><option value="underarm">コラムを腕の下で捕る</option></select></label>
         <label id="parts-hand-label" hidden>2xを投げ続ける手<select id="parts-hand"><option value="1">右手</option><option value="0">左手</option></select></label>
-        <h3 class="parts-roles">2　2xのパターン</h3><label id="parts-left-label">左手の2x<select id="parts-left"></select><span id="parts-left-hint" class="choice-hint"></span></label>
+        <div id="parts-high-low-settings" hidden><label>最初にハイを投げる手<select id="parts-high-hand"><option value="0">左手</option><option value="1">右手</option></select></label><label>ハイの担当<select id="parts-alternate"><option value="true">左右交代</option><option value="false">同じ手に固定</option></select></label><label>スワップの上下<select id="parts-swap"><option value="alternate">左右交代</option><option value="left-over">左手が上</option><option value="right-over">右手が上</option></select></label></div>
+        <h3 id="parts-pass-heading" class="parts-roles">2　2xのパターン</h3><label id="parts-left-label">左手の2x<select id="parts-left"></select><span id="parts-left-hint" class="choice-hint"></span></label>
+        <label id="parts-high-low-pass-label" hidden>ハイと同時に投げる2x<select id="parts-high-low-pass"></select></label>
+        <div id="parts-four-passes" hidden></div>
         <label id="parts-right-label">右手の2x<select id="parts-right"></select><span id="parts-right-hint" class="choice-hint"></span></label>
         <label id="parts-double-cross-label" hidden>4xと同時に投げる2x<select id="parts-double-cross"></select></label>
         <label id="parts-double-self-label" hidden>コラム4と同時に投げる2x<select id="parts-double-self"></select></label>

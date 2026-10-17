@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-17",
+  "request": "Replace the plain Box shortcut with a basic-pattern dropdown. Four-cycle means four independent Box 2x choices, left/right/left/right.",
+  "choices": ["ボックス", "シャワー", "固定のダブルボックス", "シャワー型のダブルボックス", "ハイロー", "4周期"],
+  "definitions": {
+    "fixedDouble": "The existing Extended Box centre-column layout.",
+    "showerDouble": "4x travels in a Shower arc; 4 is vertical.",
+    "fourCycle": "Four Box sets beginning with the performer's left 2x; each pass can be selected independently."
+  },
+  "automated": {
+    "tests": ["sync-basic-patterns-ui", "sync-compose-ui"],
+    "passed": 21,
+    "coverage": "All six recipes remain valid and identifiable after JSON serialization; fixed versus Shower Double high-flight definitions differ; four independent passes preserve hand order in Normal, Switched and alternating Cross; imported right-first cycles retain their start; source objects remain unchanged.",
+    "typecheck": "passed",
+    "javascriptSyntax": "passed"
+  },
+  "browser": {
+    "checks": [
+      "Each of the six dropdown choices starts playback without errors.",
+      "Four-cycle Normal / Shuffle / Reverse Shuffle / Inverted plays and restores all four values after reload.",
+      "High-Low with right fixed high hand, right-over swap and Shuffle keeps the 6x-plus-2x / swap schedule and plays.",
+      "Shower with Normal Lateral remains Shower and plays.",
+      "The dropdown is disabled during model loading and motion generation, then re-enabled.",
+      "Four-cycle pass controls precede column controls; 390px-wide phones show two cards per row.",
+      "No horizontal overflow at 390x844 or 320x568; no console errors."
+    ],
+    "screenshot": "basic-pattern-dropdown-mobile.png",
+    "screenshotViewport": "390x1024",
+    "limits": "Browser viewport testing, not a physical phone."
+  }
+}
