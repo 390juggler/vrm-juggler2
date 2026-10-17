@@ -231,7 +231,8 @@ it('腕下捕球の移行は元の周期を保ち、明示した捕球位置も�
   expect(underarmCatchTransition(b,a)).toEqual(joined);
   const original=build(compileSequence(b).config),tracks=build(compileSequence(joined).config);
   const catches=tracks.flights.filter(f=>f.motion.catch.relation==='underarm');
-  expect(tracks.underarmEvents.length).toBe(4);expect(catches.length).toBeGreaterThan(4);
+  // The preset catches and the explicit bridge catches all constrain the other forearm.
+  expect(tracks.underarmEvents.length).toBe(catches.length);expect(catches.length).toBeGreaterThan(4);
   for(const f of catches){
     const accepted=original.flights.find(g=>g.value===2&&g.throwHand===f.throwHand)!;
     expect(f.start.distanceTo(accepted.start)).toBeLessThan(1e-12);

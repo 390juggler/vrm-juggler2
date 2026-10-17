@@ -4,8 +4,12 @@ import {SYNC_DWELL} from './sync-box';
 
 function matches(s:SyncSequence,id:string){
   const template=sequenceFromPreset(id);
-  return !s.mirrorRepeat&&s.sets.length===2&&s.sets.every(r=>r.repeat===1)&&
-    analyzeSequence({...s,allowBallContact:undefined,beatDuration:template.beatDuration}).canonical===analyzeSequence(template).canonical;
+  if(s.mirrorRepeat||s.sets.length!==2||s.sets.some(r=>r.repeat!==1))return false;
+  // A basic part states the same preset's 2x passes relative to the other balls.
+  const relative=structuredClone(template);
+  for(const row of relative.sets)row.motion.shortMotions=(row.motion.shortMotions||[{}]).map(o=>({...o,ballOrder:'style' as const}));
+  const canonical=analyzeSequence({...s,allowBallContact:undefined,beatDuration:template.beatDuration}).canonical;
+  return [template,relative].some(t=>analyzeSequence(t).canonical===canonical);
 }
 
 function matchesMixedCross(s:SyncSequence,left:'normal'|'inverted',right:'normal'|'inverted'){
