@@ -90,7 +90,9 @@ function definition(row:SyncSequenceSet,h:number):MotionDefinition {
   const d=sequenceHandDefinition(row,h);
   if(row.motion.columns==='underarm'||row.motion.columns==='switched'){
     d.release.y+=.025;d.catch.y+=.025;
-    if(row.motion.columns==='underarm'&&row.throws[h]==='2x'){d.release.y+=.24;d.catch.y+=.24;d.catch.x=-.025;}
+    if(row.motion.columns==='underarm'&&row.throws[h]==='2x'&&!(row.motion.hands?.[h]?.style||row.motion.short?.[0]||'normal').startsWith('vertical-')){
+      d.release.y+=.24;d.catch.y+=.24;d.catch.x=-.025;
+    }
   }
   if(row.motion.columns==='crossed'){
     const phase=row.motion.armPhase??(row.throws[0]==='4'?0:1),order=row.motion.armOrder||'left-over';

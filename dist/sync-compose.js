@@ -415,7 +415,7 @@
       s.editorBase=base;s.allowBallContact=$('allow-ball-contact').checked;return s;
     }
     const doubleSource=$('parts-roles').value==='double'&&draft.sets.length===4&&draft.sets.some(row=>row.throws.includes('4x'))&&draft.sets.some(row=>row.throws.includes('4'))&&draft.sets.every(row=>{const h=row.throws.indexOf('2x');return h>=0&&['4','4x'].includes(row.throws[1-h]);})?draft:undefined;
-    const doubleParts={crossSet:$('parts-double-cross').value,selfSet:$('parts-double-self').value,crossReleaseGrip:$('parts-double-cross-grip').value||undefined,selfReleaseGrip:$('parts-double-self-grip').value||undefined,crossCatchGrip:$('parts-double-cross-catch').value||undefined,selfCatchGrip:$('parts-double-self-catch').value||undefined};
+    const doubleParts={columns:$('parts-columns').value,crossSet:$('parts-double-cross').value,selfSet:$('parts-double-self').value,crossReleaseGrip:$('parts-double-cross-grip').value||undefined,selfReleaseGrip:$('parts-double-self-grip').value||undefined,crossCatchGrip:$('parts-double-cross-catch').value||undefined,selfCatchGrip:$('parts-double-self-catch').value||undefined};
     const s=$('parts-roles').value==='double'?(doubleSource?VRMJuggler.syncSequenceWithDoubleParts(doubleSource,doubleParts):VRMJuggler.syncSequenceFromDoubleParts(doubleParts)):ui.namedParts(VRMJuggler,{roles:$('parts-roles').value,left:$('parts-left').value,right:$('parts-right').value,shortHand:Number($('parts-hand').value),columns:$('parts-roles').value==='fixed'?'normal':$('parts-columns').value});
     const known=partsKnownNames.get(VRMJuggler.analyzeSyncSequence(s).canonical);
     s.name=(known||(doubleSource?s.name:($('parts-roles').value==='double'?'Double｜':'')+ui.describeSequence(s).title)).slice(0,100);s.allowBallContact=$('allow-ball-contact').checked;s.editorBase=base;return s;
@@ -425,15 +425,15 @@
     $('parts-builder').classList.toggle('four-period',four);$('parts-pass-heading').textContent=four?'4セットの2x':'2　2xのパターン';
     const fixed=$('parts-roles').value==='fixed',double=$('parts-roles').value==='double',hand=Number($('parts-hand').value),s=basicParts(),a=VRMJuggler.analyzeSyncSequence(s);
     $('parts-hand-label').hidden=!fixed;$('parts-hand').disabled=!fixed;
-    $('parts-column-label').hidden=true;$('parts-columns').disabled=fixed||double;
-    const crossed=$('parts-columns').value.startsWith('crossed');$('parts-cross-label').hidden=!crossed||fixed||double;
-    $('column-choices').parentElement.hidden=fixed||double;
+    $('parts-column-label').hidden=true;$('parts-columns').disabled=fixed;
+    const crossed=$('parts-columns').value.startsWith('crossed');$('parts-cross-label').hidden=!crossed||fixed;
+    $('column-choices').parentElement.hidden=fixed;
     for(const pick of $('column-choices').children)pick.setAttribute('aria-pressed',String(pick.dataset.column===(crossed?'crossed':$('parts-columns').value)));
     for(const side of ['left','right'])$('parts-'+side+'-hint').textContent=ui.shortChoices.find(c=>c.id===$('parts-'+side).value)?.hint||'';
     $('parts-left-label').hidden=four||highLow||double||fixed&&hand!==0;$('parts-right-label').hidden=four||highLow||double||fixed&&hand!==1;$('parts-matrix').hidden=four||highLow||fixed||double;$('parts-matrix').closest('details').hidden=four||highLow||fixed||double;
     $('parts-four-passes').hidden=!four;$('parts-high-low-settings').hidden=!highLow;$('parts-high-low-pass-label').hidden=!highLow;
     for(let i=0;i<4;i++){$('parts-four-hint-'+i).textContent=ui.shortChoices.find(c=>c.id===$('parts-four-'+i).value)?.hint||'';if(four){const label=`${i+1}セット目 · ${draft.sets[i].throws.indexOf('2x')?'右':'左'}手の2x`;$('parts-four-'+i).parentElement.firstChild.textContent=label;$('parts-four-'+i).setAttribute('aria-label',label);}}
-    $('basic-pattern-hint').textContent=({box:'コラムと、左右それぞれの2xを選びます。左右は演者から見た向きです。',shower:'短い2xと高い球を、同じ両端で一方向に回します。','double-fixed':'中央のコラムを固定し、4x側・4側の2xを選びます。','double-shower':'4xはシャワーの弧で渡し、4は縦に投げます。','high-low':'ハイ＋2xと、両手のスワップを交互に行います。','box-four':'左 → 右 → 左 → 右。4セットそれぞれの2xを選びます。'})[base]||'選んだ技の各セットを編集できます。';
+    $('basic-pattern-hint').textContent=({box:'コラムと、左右それぞれの2xを選びます。左右は演者から見た向きです。',shower:'短い2xと高い球を、同じ両端で一方向に回します。','double-fixed':'中央の4xは縦のまま。コラムの担当・Crossの上下と、2xを選びます。','double-shower':'4xは弧で渡し、4は縦に。コラムの担当・Crossの上下と、2xを選びます。','high-low':'ハイ＋2xと、両手のスワップを交互に行います。','box-four':'左 → 右 → 左 → 右。4セットそれぞれの2xを選びます。'})[base]||'選んだ技の各セットを編集できます。';
     for(const part of ['cross','self','cross-grip','self-grip','cross-catch','self-catch']){$(`parts-double-${part}-label`).hidden=!double;$(`parts-double-${part}`).disabled=!double;}
     $('parts-check-legend').hidden=fixed||double;
     partsCells.forEach(({left,right,pick})=>{const selected=left===$('parts-left').value&&right===$('parts-right').value;
@@ -444,7 +444,7 @@
     const gripText=id=>({underhand:'下から',overhand:'クロー'})[$(id).value]||'標準';
     const columnText=double?`左が4x→4、右が4x→4。2xの手向き（4x側／4側）：投げ ${gripText('parts-double-cross-grip')}／${gripText('parts-double-self-grip')}、捕り ${gripText('parts-double-cross-catch')}／${gripText('parts-double-self-catch')}。`:fixed?'4xも2xも反対の手へ渡します。':`${$('parts-columns').selectedOptions[0].textContent}。4は同じ手、2xは反対の手へ。`;
     const d=ui.describeSequence(s),c=d.fields[0][1],l=ui.shortChoices.find(c=>c.id===$('parts-left').value)?.name,r=ui.shortChoices.find(c=>c.id===$('parts-right').value)?.name;
-    $('parts-preview').textContent=four?'左 → 右 → 左 → 右の4セット':highLow?'ハイ＋2x → スワップ → ハイ＋2x → スワップ':double?`Double × ${$('parts-double-cross').selectedOptions[0].text} / ${$('parts-double-self').selectedOptions[0].text}`:fixed?`シャワー × ${hand? r:l}`:`${c} × ${l===r?l:'左 '+l+' / 右 '+r}`;
+    $('parts-preview').textContent=four?'左 → 右 → 左 → 右の4セット':highLow?'ハイ＋2x → スワップ → ハイ＋2x → スワップ':double?`Double / ${$('parts-columns').selectedOptions[0].textContent} × ${$('parts-double-cross').selectedOptions[0].text} / ${$('parts-double-self').selectedOptions[0].text}`:fixed?`シャワー × ${hand? r:l}`:`${c} × ${l===r?l:'左 '+l+' / 右 '+r}`;
   }
   function chooseParts(){if(busy)return;draft=basicParts();partsApplying=true;try{modified(true);}finally{partsApplying=false;}$('parts-origin').hidden=true;refreshParts();}
   function syncPartsFromDraft(){

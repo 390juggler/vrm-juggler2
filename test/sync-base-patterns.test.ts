@@ -2,7 +2,7 @@ import {it,expect} from 'vitest';
 import {readFileSync} from 'node:fs';
 import VRMJuggler from '../src/index';
 import {sequenceFromBaseParts,compileBaseRoute,BasePatternParts} from '../src/motion/juggling/sync-base-patterns';
-import {analyzeSequence,compileSequence} from '../src/motion/juggling/sync-sequence';
+import {analyzeSequence,compileSequence,sequenceFromPreset,sequenceWithDoubleParts,SEQUENCE_EXAMPLES} from '../src/motion/juggling/sync-sequence';
 import {buildSyncBoxTracks,syncDwell,syncBeat,SYNC_RADIUS} from '../src/motion/juggling/sync-box';
 import {CreateSiteswap} from '../src/motion/juggling/Siteswap';
 import Options from '../src/options';
@@ -14,6 +14,62 @@ function build(s:any,t=transform,mirror=false){const config={...compileSequence(
  const source=CreateSiteswap(config.siteswap,{...new Options().siteswap,beatDuration:syncBeat(config),dwellRatio:syncDwell(config),props:[{type:'ball',color:'red',radius:SYNC_RADIUS,C:.9}]});
  return buildSyncBoxTracks(source,t,config);
 }
+it('plays both Double layouts with Switched, Underarm and every Cross order, including mirrored direct routes',async()=>{
+ const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
+ api.syncPlanningMode='constructive';
+ const sources=[sequenceFromPreset('double-box'),SEQUENCE_EXAMPLES.find(s=>s.name.startsWith('Extended Box /'))!];
+ try{
+  for(const columns of ['switched','crossed','crossed-right','crossed-alternate','underarm'] as const)for(const mirror of [false,true]){
+   for(const source of sources){
+    const s=sequenceWithDoubleParts(source,{columns,crossSet:'shuffle',selfSet:'inverted'});s.allowBallContact=true;
+    const result=api.setSyncSequence(s,mirror);
+    expect(result.ok,`${source.name} ${columns} ${mirror}: ${result.message}`).toBe(true);
+    const report=api.inspectSyncCycle()!;expect(report.playbackOK,`${source.name} ${columns} ${mirror}: ${JSON.stringify(report)}`).toBe(true);expect(report.maxGripError).toBeLessThan(.012);
+   }
+   for(const highPath of ['vertical','shower'] as const)for(const passes of [
+    ['normal','shuffle','reverse','inverted'],['lateral-normal','lateral-shuffle','lateral-reverse','lateral-inverted'],
+    ['outside-vertical-up','outside-vertical-down','center-vertical-up','center-vertical-down'],
+    ['cross-side-vertical-up','cross-side-vertical-down','normal','inverted']]){
+    const s=sequenceFromBaseParts({...defaults,base:'double',columns,highPath,passes});
+    const raw=build(s);
+    for(const flight of raw.flights.filter(f=>f.value===2&&f.style!.startsWith('vertical-'))){
+     expect(flight.start.x).toBeCloseTo(flight.end.x,9);expect(flight.start.z).toBeCloseTo(flight.end.z,9);
+    }
+    const prepared=api.prepareDirectSyncSequence(s,mirror),t=build(prepared.sequence,(api as any).juggling.getSyncTransform(),mirror);
+    expect(prepared.sequence.sets).toHaveLength(4);
+    for(const flight of t.flights.filter(f=>f.value===4)){
+     expect(Math.abs(flight.start.z-flight.end.z)).toBeLessThan(1e-7);
+     if(highPath==='vertical'||flight.throwHand===flight.catchHand)expect(Math.abs(flight.start.x-flight.end.x)).toBeLessThan(1e-7);
+     else expect(Math.abs(flight.start.x-flight.end.x)).toBeGreaterThan(.05);
+    }
+    expect(api.setSyncSequence(prepared.sequence,mirror).ok).toBe(true);
+    expect(api.inspectSyncCycle()!.maxGripError,`${columns} ${highPath} ${passes.join(',')} ${mirror}`).toBeLessThan(.012);
+    if(columns==='switched')expect(prepared.sequence.sets.every(r=>r.motion.columns==='switched')).toBe(true);
+   }
+  }
+ }finally{(api as any).juggling.dispose();}
+},120000);
+it('keeps named vertical 2x lanes under Underarm in Box and Double',async()=>{
+ const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
+ api.syncPlanningMode='constructive';
+ try{
+  for(const parts of [{...defaults,columns:'underarm',passes:['center-vertical-up','normal']},{...defaults,columns:'underarm',passes:['outside-vertical-up','center-vertical-down']},
+   {...defaults,base:'double',columns:'underarm',passes:['outside-vertical-up','outside-vertical-down','center-vertical-up','center-vertical-down']}] as BasePatternParts[]){
+   const s=sequenceFromBaseParts(parts);
+   for(const flight of build(s).flights.filter(f=>f.value===2)){
+    // Only an arcing 2x is raised and caught centrally, as in Threaded Box.
+    if(flight.style!.startsWith('vertical-')){expect(flight.start.x).toBeCloseTo(flight.end.x,9);expect(flight.start.z).toBeCloseTo(flight.end.z,9);}
+    else expect(Math.abs(flight.end.x)).toBeCloseTo(.025*transform.horizontalScale,9);
+   }
+   for(const mirror of [false,true]){
+    expect(api.setSyncSequence(s,mirror).ok).toBe(true);
+    const report=api.inspectSyncCycle()!;expect(report.playbackOK,`${parts.passes} ${mirror}`).toBe(true);expect(report.maxGripError).toBeLessThan(.012);
+    const prepared=api.prepareDirectSyncSequence(s,mirror);
+    expect(api.setSyncSequence(prepared.sequence,mirror).ok).toBe(true);expect(api.inspectSyncCycle()!.maxGripError).toBeLessThan(.012);
+   }
+  }
+ }finally{(api as any).juggling.dispose();}
+},120000);
 it('keeps High-Low swap order independent of high-hand scheduling',()=>{
  for(const highHand of [0,1] as const)for(const alternateHigh of [false,true])for(const swap of ['left-over','right-over','alternate'] as const){
   const s=sequenceFromBaseParts({...defaults,base:'high-low',passes:['shuffle'],highHand,alternateHigh,swap});

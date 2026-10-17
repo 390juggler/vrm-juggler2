@@ -15,6 +15,44 @@ function build(config:any){
 }
 const basicStyles:BasicShortStyle[]=['normal','shuffle','reverse','inverted'];
 const extraColumns:BasicColumnStyle[]=['switched','crossed','crossed-right','crossed-alternate','underarm'];
+it('Double columns reassign lanes, preserve vertical 4x and survive repeated edits',()=>{
+  for(const source of [sequenceFromPreset('double-box'),SEQUENCE_EXAMPLES.find(s=>s.name.startsWith('Extended Box /'))!]){
+    const before=structuredClone(source),original=build(compileSequence(source).config);
+    for(const columns of ['switched','crossed','crossed-right','crossed-alternate','underarm'] as const){
+      const changed=sequenceWithDoubleParts(source,{columns,crossSet:'normal',selfSet:'normal'});
+      expect(analyzeSequence(changed)).toMatchObject({ok:true,balls:3,expandedSets:4});
+      const tracks=build(compileSequence(changed).config);
+      tracks.flights.forEach((f,i)=>{
+        const old=original.flights[i],crossed=columns.startsWith('crossed'),scale=transform.horizontalScale;
+        expect(f.start.x).toBeCloseTo(old.start.x*(f.value===4||crossed?-.6:1),9);
+        if(columns==='underarm'&&f.value===2){
+          // As in Threaded Box, the 2x passes over the under arm and is caught centrally.
+          expect(f.end.x).toBeCloseTo((f.catchHand===0?-1:1)*.025*scale,9);
+          expect(f.start.y-old.start.y).toBeCloseTo(.265*scale,9);expect(f.end.y-old.end.y).toBeCloseTo(.265*scale,9);
+        }else expect(f.end.x).toBeCloseTo(old.end.x*(f.value===4||crossed?-.6:1),9);
+        if(f.value===4)expect(f.end.z-f.start.z).toBeCloseTo(old.end.z-old.start.z,9);
+      });
+      if(columns==='crossed-alternate')expect(new Set(tracks.armOrderEvents!.map(e=>e.upperHand)).size).toBe(2);
+      else if(columns.startsWith('crossed'))expect(new Set(tracks.armOrders)).toEqual(new Set([columns==='crossed-right'?1:0]));
+      const again=sequenceWithDoubleParts(changed,{columns,crossSet:'normal',selfSet:'normal'});
+      expect(again.sets).toEqual(changed.sets);
+      const restored=sequenceWithDoubleParts(changed,{columns:'normal',crossSet:'normal',selfSet:'normal'});
+      build(compileSequence(restored).config).flights.forEach((f,i)=>{
+        expect(f.start.distanceTo(original.flights[i].start)).toBeLessThan(1e-8);
+        expect(f.end.distanceTo(original.flights[i].end)).toBeLessThan(1e-8);
+      });
+      for(const crossSet of basicStyles)for(const selfSet of basicStyles){
+        const edited=sequenceWithDoubleParts(changed,{columns,crossSet,selfSet});
+        const flights=build(compileSequence(edited).config).flights;
+        flights.forEach((f,i)=>{
+          if(f.value===4){expect(f.start.distanceTo(tracks.flights[i].start)).toBeLessThan(1e-8);expect(f.end.distanceTo(tracks.flights[i].end)).toBeLessThan(1e-8);}
+          else{const row=edited.sets[Math.floor(f.release/(2*edited.beatDuration))%4];expect(f.style).toBe(row.throws.includes('4x')?crossSet:selfSet);}
+        });
+      }
+    }
+    expect(source).toEqual(before);
+  }
+},30000);
 it('editing Double 2x preserves authored columns and changes the selected passage, including rotated sets',()=>{
   const source=structuredClone(SEQUENCE_EXAMPLES.find(s=>s.name.startsWith('Extended Box /'))!);
   const original=structuredClone(source);

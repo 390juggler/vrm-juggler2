@@ -371,6 +371,7 @@ export type BasicShortStyle='normal'|'shuffle'|'reverse'|'inverted';
 export type BasicColumnStyle='normal'|'switched'|'crossed'|'crossed-right'|'crossed-alternate'|'underarm';
 export interface DoubleSequenceParts {
   crossSet:BasicShortStyle;selfSet:BasicShortStyle;
+  columns?:BasicColumnStyle;
   crossReleaseGrip?:HandGrip;selfReleaseGrip?:HandGrip;
   crossCatchGrip?:HandGrip;selfCatchGrip?:HandGrip;
 }
@@ -415,7 +416,9 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
       row.motion.hands[hand]={...row.motion.hands[hand],...(releaseGrip?{releaseGrip}:{}),...(catchGrip?{catchGrip}:{})};
     }
   });
-  s.name=`${source?source.name.split('｜2x ')[0]+'｜2x ':'Double / '}4xと組む2x ${labels[parts.crossSet]}・4と組む2x ${labels[parts.selfSet]}`;
+  const columnLabel={normal:'Normal',switched:'Switched',crossed:'Cross 左上','crossed-right':'Cross 右上','crossed-alternate':'Cross 上下交代',underarm:'Underarm'};
+  const layout=parts.columns&&parts.columns!=='normal'?`｜配置 ${columnLabel[parts.columns]}`:'';
+  s.name=`${source?source.name.split('｜配置 ')[0].split('｜2x ')[0]+layout+'｜2x ':'Double'+layout+' / '}4xと組む2x ${labels[parts.crossSet]}・4と組む2x ${labels[parts.selfSet]}`;
   if(parts.crossReleaseGrip||parts.selfReleaseGrip){
     const gripLabel=(g?:HandGrip)=>g==='underhand'?'下から':g==='overhand'?'クロー':'標準';
     s.name+=` / 手向き ${gripLabel(parts.crossReleaseGrip)}・${gripLabel(parts.selfReleaseGrip)}`;
@@ -424,6 +427,55 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
     const gripLabel=(g?:HandGrip)=>g==='underhand'?'下から':g==='overhand'?'クロー':'標準';
     s.name+=` / 捕り ${gripLabel(parts.crossCatchGrip)}・${gripLabel(parts.selfCatchGrip)}`;
   }
+  return parts.columns===undefined?s:sequenceWithDoubleColumns(s,parts.columns);
+}
+/** Reassign the authored Double lanes without changing its throw schedule.
+ * Switched moves the high throws across the body; Cross also crosses the 2x.
+ * Underarm places the high throws as Switched does, with that arm beneath the
+ * 2x arm; the layout then raises each crossing 2x as in Threaded Box.
+ * Work relative to the current assignment so repeated edits do not accumulate. */
+export function sequenceWithDoubleColumns(source:SyncSequence,columns:BasicColumnStyle):SyncSequence{
+  if(!['normal','switched','crossed','crossed-right','crossed-alternate','underarm'].includes(columns))
+    throw new Error('Doubleのコラム配置を選んでください。');
+  const s=structuredClone(source),crossed=columns.startsWith('crossed');
+  const order=crossed?(columns==='crossed-right'?'right-over':columns==='crossed-alternate'?'alternate':'left-over'):'none';
+  s.sets.forEach((row,index)=>{
+    const m=row.motion,oldCross=m.columns==='crossed',oldOrder=m.armOrder||(oldCross?'left-over':'none');
+    const nextColumns=crossed?'crossed':columns as SyncSetMotion['columns'];
+    if(m.columns===nextColumns&&oldOrder===order)return;
+    const phase=m.armPhase??index%2;
+    const sign=(o:string,h:number,step:number)=>o==='none'?0:h===(o==='right-over'?1:o==='alternate'?step%2:0)?1:-1;
+    const oldSwitched=m.columns!=='normal',newSwitched=columns!=='normal';
+    for(const hand of [0,1]){
+      const short=row.throws[hand]==='2x',h=m.hands?.[hand],d=sequenceHandDefinition(row,hand);
+      const vertical=short&&(h?.style||m.short?.[0]||'normal').startsWith('vertical-');
+      // Across-body lanes use a narrower span, shared by both Double bases.
+      // The centre stays at zero and undoing the assignment restores the span.
+      const span=(across:boolean)=>across?-.6:1;
+      // Named vertical 2x lanes (Outside/Center/Cross side) are anatomical.
+      const ratio=vertical?1:span(short?crossed:newSwitched)/span(short?oldCross:oldSwitched);
+      if(ratio!==1){
+        d.release.x*=ratio;d.catch.x*=ratio;
+        if(d.passage.point)d.passage.point[0]*=ratio;
+      }
+      // A 4x caught by the other arm must stay in its original depth plane.
+      // Compensate only the receiver offset, retaining the chosen upper arm.
+      if(!short||vertical){
+        const receiver=row.throws[hand].endsWith('x')?1-hand:hand,steps=short?1:2;
+        const correction=(o:string)=>(sign(o,receiver,phase+steps)-sign(o,hand,phase))*.02;
+        d.catch.z+=correction(order)-correction(oldOrder);
+      }
+      m.hands||=[];
+      if(short){
+        const inherited=m.shortMotions?.[0]||{};
+        const options=h?.shortMotion||(h?.style?{...inherited,definition:undefined}:inherited);
+        m.hands[hand]={...h,shortMotion:{...structuredClone(options),definition:d}};
+        delete m.hands[hand]!.definition;
+      }else m.hands[hand]={...h,definition:d};
+    }
+    m.columns=nextColumns;m.armOrder=order;
+    if(order==='alternate')m.armPhase=phase as 0|1;else delete m.armPhase;
+  });
   return s;
 }
 export interface BasicSequenceParts {

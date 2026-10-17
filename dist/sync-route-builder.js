@@ -7,7 +7,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     box:{ja:'ボックス',detail:'左右のコラムと短い2x',fields:'2xは左右に1つずつ · 基本モードで編集'},
     'high-low':{ja:'ハイロー',detail:'ハイ＋2xと、両手のスワップを交互に',fields:'2xは1種類 · ハイの担当とスワップを指定'},
     shower:{ja:'シャワー',detail:'高い弧と短い2xを一方向に回す',fields:'2xは1種類 · 高い球を投げる手を指定'},
-    double:{ja:'ダブルボックス',detail:'Showerを挟む型 ／ 4xも縦に投げる型',fields:'4xの軌道と、4セットそれぞれの2xを選ぶ'}
+    double:{ja:'ダブルボックス',detail:'Showerを挟む型 ／ 4xも縦に投げる型',fields:'4xの軌道・コラムの配置・4つの2xを選ぶ'}
   };
   const columns={normal:'Normal',switched:'Switched',crossed:'Cross 左上','crossed-right':'Cross 右上','crossed-alternate':'Cross 上下交代',underarm:'Underarm'};
   const defaults={base:'box',columns:'normal',passes:['normal','normal'],highHand:0,alternateHigh:true,swap:'alternate',highPath:'vertical'};
@@ -18,7 +18,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
   const descriptions={box:'左右のコラムと、左・右それぞれの2xを組み合わせます。2セットが基本です。',
     'high-low':'ハイ＋2x → 両手の2xスワップを繰り返します。ハイの左右と、スワップの上下は別々に指定します。',
     shower:'2xの到着位置から高い球を投げ、2xを投げる位置へ戻します。Lateralも同じ位置関係で組みます。',
-    double:'4xは反対の手で捕る投げです。「Showerを挟む」は4xを弧で渡し、4でコラムに戻ります。「4xも縦に投げる」は4も4xも真上に投げ、4xだけ反対の手が球の下へ移動して捕ります。どちらも4セットの2xを個別に選べます。'};
+    double:'Normal・Switched・Cross・Underarmでコラムの担当を選びます。Crossの上下も指定できます。4xは反対の手で捕る投げです。「Showerを挟む」は4xを弧で渡し、4でコラムに戻ります。「4xも縦に投げる」は4も4xも真上に投げ、4xだけ反対の手が球の下へ移動して捕ります。どちらも4セットの2xを個別に選べます。'};
   function persist(){hasSaved=true;try{localStorage.setItem(key,JSON.stringify(doc));}catch{};onChange?.(true);}
   function summary(){try{const r=VRMJuggler.compileSyncBaseRoute(doc);return `${doc.blocks.length}技・${r.requestedSets}セット${r.addedSets?`＋受け渡し${r.addedSets}セット`:'・追加セットなし'}`;}catch(e){return e.message;}}
   function update(){
@@ -28,7 +28,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     for(const b of $('route-double-paths').children)b.setAttribute('aria-pressed',String(b.dataset.path===p.highPath));
     $('route-repeats').value=String(doc.blocks[selected].repeats);$('route-tempo').value=String(doc.beatDuration*2);$('route-mirror').checked=doc.mirror;
     $('route-settings').hidden=p.base==='box';$('route-box-note').hidden=p.base!=='box';
-    $('route-columns-label').hidden=p.base!=='high-low';
+    $('route-columns-label').hidden=!['high-low','double'].includes(p.base);
     $('route-high-settings').hidden=!['high-low','shower'].includes(p.base);
     $('route-swap-section').hidden=p.base!=='high-low';$('route-alternate-label').hidden=p.base!=='high-low';$('route-swap-label').hidden=p.base!=='high-low';$('route-high-path-label').hidden=p.base!=='double';
     $('route-definition').textContent=descriptions[p.base];

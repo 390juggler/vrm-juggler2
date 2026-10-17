@@ -379,7 +379,9 @@ export function buildSyncBoxTracks(source: any, transform: SpaceTransform, confi
         end.x = side(ch) * lane;
       }
     }
-    if (short && config.columns === 'underarm') { start.y+=.24*scale;end.y+=.24*scale;end.x=side(ch)*.025*scale; }
+    // A named vertical 2x keeps its lane and height. Only an arcing 2x rises
+    // over the under arm to a central catch.
+    if (short && config.columns === 'underarm' && !style.startsWith('vertical-')) { start.y+=.24*scale;end.y+=.24*scale;end.x=side(ch)*.025*scale; }
     // Underarm is an event constraint: it can apply to release, catch, or both.
     if (short && motion.release.relation==='underarm' && !handMotion?.definition) { start.x=-side(th)*.18*scale;start.y-=.16*scale;start.z=-.18*scale+placement[1]; }
     if (short && motion.catch.relation==='underarm' && !handMotion?.definition) { end.x=-side(ch)*.18*scale;end.y-=.16*scale;end.z=-.18*scale+placement[1]; }

@@ -1,4 +1,4 @@
-import {sequenceFromBasicParts,sequenceFromPreset,analyzeSequence,connectSequenceList,
+import {sequenceFromBasicParts,sequenceFromPreset,sequenceWithDoubleColumns,analyzeSequence,connectSequenceList,
   type SyncSequence,type SyncSequenceSet,type BasicColumnStyle,type BasicShortStyle} from './sync-sequence';
 import {shortDefinition,type ShortStyle,type ShortMotionOptions} from './sync-motion';
 import type {SyncBoxTracks} from './sync-box';
@@ -90,7 +90,8 @@ export function sequenceFromBaseParts(parts:BasePatternParts,beatDuration=.205):
       row.motion.hands![high]={definition:{release:{x,y:0,z:-.30},catch:{x:end,y:0,z:-.30},passage:{at:.5},
         carry:{route:'direct',amount:0},emptyReturn:{route:'direct',amount:0}}};
     });
-    s.name=`Double Box / ${parts.highPath==='vertical'?'4xも縦に投げる':'Showerを挟む'} / ${passes.map(p=>p.name).join('・')}`;
+    s=sequenceWithDoubleColumns(s,parts.columns);
+    s.name=`Double Box / ${parts.highPath==='vertical'?'4xも縦に投げる':'Showerを挟む'} / ${columnName[parts.columns]} / ${passes.map(p=>p.name).join('・')}`;
   }
   s.beatDuration=beatDuration;s.allowBallContact=true;s.name=s.name.slice(0,100);
   const a=analyzeSequence(s);if(!a.ok)throw new Error(a.issues.map(i=>i.message).join('\n'));
@@ -121,7 +122,8 @@ export function directBoundarySequence(sequence:SyncSequence,tracks:SyncBoxTrack
     const armPhase=order==='alternate'?row.motion.armPhase??index%2:undefined;
     const upper=(i:number)=>order==='right-over'?1:order==='alternate'?mod(i,2):0;
     const under=flights.some(f=>f!.motion.release.relation==='underarm'||f!.motion.catch.relation==='underarm');
-    const base=1.15+transform.offsetY+(under?.085:order!=='none'?.08:0)*scale;
+    const columns=order==='none'?(row.motion.columns==='switched'?'switched':'normal'):'crossed';
+    const base=1.15+transform.offsetY+(under?.085:order!=='none'?.08:columns==='switched'?.025:0)*scale;
     const hands=flights.map((flight,h)=>{
       const f=flight!,d=structuredClone(f.motion),target=rows[(index+f.value/2)%rows.length];
       const nextTime=mod(f.release+f.value*beat,tracks.period);
@@ -142,7 +144,7 @@ export function directBoundarySequence(sequence:SyncSequence,tracks:SyncBoxTrack
       if(style==='vertical-down')delete d.flightFraction;
       return {definition:d,...(f.value===2?{style:style as ShortStyle}:{}),releaseGrip:f.releaseGrip,catchGrip:redirect?next!.releaseGrip:f.catchGrip};
     });
-    row.motion={columns:order==='none'?'normal':'crossed',armOrder:order,short:row.motion.short,
+    row.motion={columns,armOrder:order,short:row.motion.short,
       ...(armPhase===undefined?{}:{armPhase:armPhase as 0|1}),hands:hands as SyncSequenceSet['motion']['hands']};
   });
   return {sequence:s,redirectedThrows:changed};
