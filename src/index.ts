@@ -17,7 +17,7 @@ import Facial from './motion/facial';
 import Options from './options/index';
 import { PATTERN_PRESETS } from './presets';
 import { SYNC_BOX_PRESETS, SyncBoxConfig, syncDwell, SYNC_RADIUS } from './motion/juggling/sync-box';
-import { analyzeSequence, compileSequence, sequenceFromPreset, sequenceFromBasicParts, sequenceFromDoubleParts, sequenceHandDefinition, extractSequenceSet, rotateSequenceStart, expandSequence, addInlineTransitions, appendSequence, connectSequenceCycles, findConnectionExamples, connectionReplayCandidates, SEQUENCE_EXAMPLES, SyncSequence } from './motion/juggling/sync-sequence';
+import { analyzeSequence, compileSequence, sequenceFromPreset, sequenceFromBasicParts, sequenceFromDoubleParts, sequenceWithDoubleParts, sequenceHandDefinition, extractSequenceSet, rotateSequenceStart, expandSequence, addInlineTransitions, appendSequence, connectSequenceCycles, findConnectionExamples, connectionReplayCandidates, SEQUENCE_EXAMPLES, SyncSequence } from './motion/juggling/sync-sequence';
 import {movementStateTransition,rankedMovementStateTransitions,columnReceiverHandoff,alternatingCrossTransition,mixedAlternatingCrossTransition,spatialLaneTransition,underarmCatchTransition,lateralShuffleTransition,upperInlineTransition,fixedUnderarmInvertedTransition} from './motion/juggling/sync-transitions';
 import {planSyncMovement,MovementCheck} from './motion/juggling/sync-movement-planner';
 import {constructiveMovements} from './motion/juggling/sync-constructive-planner';
@@ -65,6 +65,7 @@ export default class VRMJuggler {
   static syncSequenceFromBaseParts = sequenceFromBaseParts;
   static compileSyncBaseRoute = compileBaseRoute;
   static syncSequenceFromDoubleParts = sequenceFromDoubleParts;
+  static syncSequenceWithDoubleParts = sequenceWithDoubleParts;
   static syncSequenceHandDefinition = sequenceHandDefinition;
   static extractSyncSequenceSet = extractSequenceSet;
   static rotateSyncSequenceStart = rotateSequenceStart;

@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import * as THREE from 'three';
-import {analyzeSequence,compileSequence,sequenceFromPreset,sequenceFromBasicParts,sequenceFromDoubleParts,sequenceHandDefinition,extractSequenceSet,addInlineTransitions,appendSequence,connectSequenceCycles,expandSequence,SEQUENCE_EXAMPLES,SyncSequence,BasicShortStyle,BasicColumnStyle} from '../src/motion/juggling/sync-sequence';
+import {analyzeSequence,compileSequence,sequenceFromPreset,sequenceFromBasicParts,sequenceFromDoubleParts,sequenceWithDoubleParts,sequenceHandDefinition,extractSequenceSet,addInlineTransitions,appendSequence,connectSequenceCycles,expandSequence,SEQUENCE_EXAMPLES,SyncSequence,BasicShortStyle,BasicColumnStyle} from '../src/motion/juggling/sync-sequence';
 import {SYNC_BOX_PRESETS,SYNC_RADIUS,syncBeat,syncDwell,buildSyncBoxTracks,inspectSyncBox,syncFlightAt} from '../src/motion/juggling/sync-box';
 import {CreateSiteswap} from '../src/motion/juggling/Siteswap';
 import Options from '../src/options';
@@ -15,6 +15,30 @@ function build(config:any){
 }
 const basicStyles:BasicShortStyle[]=['normal','shuffle','reverse','inverted'];
 const extraColumns:BasicColumnStyle[]=['switched','crossed','crossed-right','crossed-alternate','underarm'];
+it('editing Double 2x preserves authored columns and changes the selected passage, including rotated sets',()=>{
+  const source=structuredClone(SEQUENCE_EXAMPLES.find(s=>s.name.startsWith('Extended Box /'))!);
+  const original=structuredClone(source);
+  for(const crossSet of basicStyles)for(const selfSet of basicStyles){
+    const edited=sequenceWithDoubleParts(source,{crossSet,selfSet}),before=build(compileSequence(source).config),after=build(compileSequence(edited).config);
+    expect(edited.sets.map(r=>r.motion.columnMotion)).toEqual(source.sets.map(r=>r.motion.columnMotion));
+    expect(edited.sets.map(r=>r.throws)).toEqual(source.sets.map(r=>r.throws));
+    expect(edited.beatDuration).toBe(source.beatDuration);
+    after.flights.forEach((f,i)=>{
+      const old=before.flights[i];
+      if(f.value===4){expect(f.start.distanceTo(old.start)).toBeLessThan(1e-9);expect(f.end.distanceTo(old.end)).toBeLessThan(1e-9);return;}
+      const high=after.flights.find(g=>g.value===4&&Math.abs(g.release-f.release)<1e-9)!;
+      expect(f.style).toBe(high.throwHand!==high.catchHand?crossSet:selfSet);
+      expect(f.start.x).toBeCloseTo(old.start.x,9);expect(f.end.x).toBeCloseTo(old.end.x,9);
+      if(f.style!=='normal')expect(Math.abs(f.start.y-old.start.y)+Math.abs(f.end.y-old.end.y)).toBeGreaterThan(.01);
+    });
+  }
+  const rotated=structuredClone(source);rotated.sets.push(rotated.sets.shift()!);
+  const changed=sequenceWithDoubleParts(rotated,{crossSet:'shuffle',selfSet:'inverted'});
+  changed.sets.forEach(row=>{const h=row.throws.indexOf('2x');expect(row.motion.hands![h]!.style).toBe(row.throws[1-h]==='4x'?'shuffle':'inverted');});
+  expect(source).toEqual(original);
+  const box=sequenceFromPreset('box');box.sets.push(...structuredClone(box.sets));
+  expect(()=>sequenceWithDoubleParts(box,{crossSet:'normal',selfSet:'normal'})).toThrow();
+});
 it('上側In-lineの往復でも元の2周期と、保持中を含む縦一列を保つ',()=>{
   const a=sequenceFromPreset('box'),b=sequenceFromPreset('inline-inverted');a.beatDuration=b.beatDuration;
   const before=structuredClone([a,b]),joined=upperInlineTransition(a,b)!;

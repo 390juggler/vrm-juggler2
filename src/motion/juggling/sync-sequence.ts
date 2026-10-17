@@ -375,21 +375,47 @@ export interface DoubleSequenceParts {
   crossCatchGrip?:HandGrip;selfCatchGrip?:HandGrip;
 }
 /** Double has two successive high throws per hand; styles belong to set phases. */
-export function sequenceFromDoubleParts(parts:DoubleSequenceParts):SyncSequence{
+export function sequenceFromDoubleParts(parts:DoubleSequenceParts):SyncSequence{return applyDoubleParts(parts);}
+/** Edit a Double's passes without replacing its authored high-ball layout. */
+export function sequenceWithDoubleParts(source:SyncSequence,parts:DoubleSequenceParts):SyncSequence{return applyDoubleParts(parts,source);}
+function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSequence{
   const labels={normal:'下→下',shuffle:'上→下',reverse:'下→上',inverted:'上→上'};
   if(!parts||!Object.prototype.hasOwnProperty.call(labels,parts.crossSet)||!Object.prototype.hasOwnProperty.call(labels,parts.selfSet)||
     [parts.crossReleaseGrip,parts.selfReleaseGrip,parts.crossCatchGrip,parts.selfCatchGrip].some(g=>g!==undefined&&g!=='underhand'&&g!=='overhand'))
     throw new Error('Doubleの4x側とコラム4側の2xを確認してください。');
-  const s=sequenceFromPreset('double-box');
-  s.sets.forEach((row,i)=>{
-    row.motion.short=[i%2?parts.selfSet:parts.crossSet];
-    const releaseGrip=i%2?parts.selfReleaseGrip:parts.crossReleaseGrip,catchGrip=i%2?parts.selfCatchGrip:parts.crossCatchGrip;
+  if(source&&(source.sets.length!==4||!source.sets.some(row=>row.throws.includes('4x'))||!source.sets.some(row=>row.throws.includes('4'))||source.sets.some(row=>{
+    const h=row.throws.indexOf('2x');return h<0||!['4','4x'].includes(row.throws[1-h]);
+  })))throw new Error('編集元のDoubleは4または4xと2xの4セットで指定してください。');
+  const s=source?structuredClone(source):sequenceFromPreset('double-box');
+  s.sets.forEach(row=>{
+    const hand=row.throws.indexOf('2x'),self=row.throws[1-hand]==='4',style=self?parts.selfSet:parts.crossSet;
+    const releaseGrip=self?parts.selfReleaseGrip:parts.crossReleaseGrip,catchGrip=self?parts.selfCatchGrip:parts.crossCatchGrip;
+    if(source){
+      const current=row.motion.hands?.[hand],oldStyle=current?.style||row.motion.short?.[0]||'normal';
+      if(style!==oldStyle){
+        const options=structuredClone(current?.shortMotion||row.motion.shortMotions?.[0]||{});
+        const authored=current?.definition||options.definition;
+        if(authored){
+          // A new height family must retain authored lanes (e.g. a centre
+          // column). Replace its height/passage rule, not the whole base.
+          const d=sequenceHandDefinition(row,hand),shape=shortDefinition(style,{},false,false);
+          d.release.y=shape.release.y;d.catch.y=shape.catch.y;d.passage={at:.5};
+          delete d.catchAtApex;delete d.flightFraction;
+          options.definition=d;
+        }
+        options.ballOrder='style';
+        row.motion.hands||=[];row.motion.hands[hand]={...current,style,shortMotion:options};
+        delete row.motion.hands[hand]!.definition;
+      }
+      // Clearing a grip selection returns only this 2x to its automatic grip.
+      if(row.motion.hands?.[hand]){delete row.motion.hands[hand]!.releaseGrip;delete row.motion.hands[hand]!.catchGrip;}
+    }else row.motion.short=[style];
     if(releaseGrip||catchGrip){
-      const hand=row.throws.indexOf('2x');row.motion.hands||=[];
+      row.motion.hands||=[];
       row.motion.hands[hand]={...row.motion.hands[hand],...(releaseGrip?{releaseGrip}:{}),...(catchGrip?{catchGrip}:{})};
     }
   });
-  s.name=`Double / 4xと組む2x ${labels[parts.crossSet]}・4と組む2x ${labels[parts.selfSet]}`;
+  s.name=`${source?source.name.split('｜2x ')[0]+'｜2x ':'Double / '}4xと組む2x ${labels[parts.crossSet]}・4と組む2x ${labels[parts.selfSet]}`;
   if(parts.crossReleaseGrip||parts.selfReleaseGrip){
     const gripLabel=(g?:HandGrip)=>g==='underhand'?'下から':g==='overhand'?'クロー':'標準';
     s.name+=` / 手向き ${gripLabel(parts.crossReleaseGrip)}・${gripLabel(parts.selfReleaseGrip)}`;

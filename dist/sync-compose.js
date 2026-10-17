@@ -394,9 +394,11 @@
     });$('parts-matrix').tBodies[0].append(row);
   });
   function basicParts(){
-    const s=$('parts-roles').value==='double'?VRMJuggler.syncSequenceFromDoubleParts({crossSet:$('parts-double-cross').value,selfSet:$('parts-double-self').value,crossReleaseGrip:$('parts-double-cross-grip').value||undefined,selfReleaseGrip:$('parts-double-self-grip').value||undefined,crossCatchGrip:$('parts-double-cross-catch').value||undefined,selfCatchGrip:$('parts-double-self-catch').value||undefined}):ui.namedParts(VRMJuggler,{roles:$('parts-roles').value,left:$('parts-left').value,right:$('parts-right').value,shortHand:Number($('parts-hand').value),columns:$('parts-roles').value==='fixed'?'normal':$('parts-columns').value});
+    const doubleSource=$('parts-roles').value==='double'&&draft.sets.length===4&&draft.sets.some(row=>row.throws.includes('4x'))&&draft.sets.some(row=>row.throws.includes('4'))&&draft.sets.every(row=>{const h=row.throws.indexOf('2x');return h>=0&&['4','4x'].includes(row.throws[1-h]);})?draft:undefined;
+    const doubleParts={crossSet:$('parts-double-cross').value,selfSet:$('parts-double-self').value,crossReleaseGrip:$('parts-double-cross-grip').value||undefined,selfReleaseGrip:$('parts-double-self-grip').value||undefined,crossCatchGrip:$('parts-double-cross-catch').value||undefined,selfCatchGrip:$('parts-double-self-catch').value||undefined};
+    const s=$('parts-roles').value==='double'?(doubleSource?VRMJuggler.syncSequenceWithDoubleParts(doubleSource,doubleParts):VRMJuggler.syncSequenceFromDoubleParts(doubleParts)):ui.namedParts(VRMJuggler,{roles:$('parts-roles').value,left:$('parts-left').value,right:$('parts-right').value,shortHand:Number($('parts-hand').value),columns:$('parts-roles').value==='fixed'?'normal':$('parts-columns').value});
     const known=partsKnownNames.get(VRMJuggler.analyzeSyncSequence(s).canonical);
-    s.name=(known||($('parts-roles').value==='double'?'Double｜':'')+ui.describeSequence(s).title).slice(0,100);s.allowBallContact=$('allow-ball-contact').checked;return s;
+    s.name=(known||(doubleSource?s.name:($('parts-roles').value==='double'?'Double｜':'')+ui.describeSequence(s).title)).slice(0,100);s.allowBallContact=$('allow-ball-contact').checked;return s;
   }
   function refreshParts(){
     const fixed=$('parts-roles').value==='fixed',double=$('parts-roles').value==='double',hand=Number($('parts-hand').value),s=basicParts(),a=VRMJuggler.analyzeSyncSequence(s);
@@ -428,7 +430,7 @@
     $('parts-roles').value=isDouble?'double':rows.every(r=>r.throws.includes('4x'))?'fixed':'alternate';
     for(const h of [0,1]){const row=rows.find(r=>r.throws[h]==='2x');if(row&&ui.shortChoices.some(c=>c.id===ui.shortKey(row,h)))$('parts-'+(h?'right':'left')).value=ui.shortKey(row,h);}
     if($('parts-roles').value==='fixed')$('parts-hand').value=String(rows[0].throws.indexOf('2x'));
-    if(isDouble)for(const [index,key] of [[0,'cross'],[1,'self']]){$('parts-double-'+key).value=rows[index].motion.short?.[0]||'normal';const h=rows[index].throws.indexOf('2x');$('parts-double-'+key+'-grip').value=rows[index].motion.hands?.[h]?.releaseGrip||'';$('parts-double-'+key+'-catch').value=rows[index].motion.hands?.[h]?.catchGrip||'';}
+    if(isDouble)for(const [high,key] of [['4x','cross'],['4','self']]){const row=rows.find(r=>r.throws.includes(high)),h=row.throws.indexOf('2x');$('parts-double-'+key).value=row.motion.hands?.[h]?.style||row.motion.short?.[0]||'normal';$('parts-double-'+key+'-grip').value=row.motion.hands?.[h]?.releaseGrip||'';$('parts-double-'+key+'-catch').value=row.motion.hands?.[h]?.catchGrip||'';}
     refreshParts();
     const differs=VRMJuggler.analyzeSyncSequence(basicParts()).canonical!==VRMJuggler.analyzeSyncSequence(draft).canonical;
     $('parts-origin').hidden=!differs;$('parts-origin').textContent='セットごとの指定も含む技です。上で選び直すと、その組合せで作り直します。';

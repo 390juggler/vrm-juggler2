@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-17",
+  "reproduction": "Load Extended Box / 中央コラムを保つDouble Box, then change the 4x-side 2x to Shuffle. Before the fix, the editor rebuilt a standard Double and all four authored columnMotion definitions disappeared.",
+  "fix": "Edit an existing Double sequence by cloning its layout and changing only the selected 2x style and grip. Retain authored short-pass lanes and high-ball definitions; resolve above/below passage order against the balls. Identify 4x/self phases by throws rather than row parity. Restore per-hand styles to controls after reload.",
+  "regression": {
+    "before": "The new test failed because authored columns became undefined.",
+    "after": "All 16 Normal/Shuffle/Reverse/Inverted pairs preserve high flights and short-pass X lanes; non-Normal styles change short-pass heights. Rotating the starting set retains correct 4x/self style assignment. Source data is unchanged.",
+    "suites": ["sync-sequence", "sync-compose-ui", "sync-base-patterns"],
+    "passed": 410,
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": "passed"
+  },
+  "browser": {
+    "viewport": "390x844",
+    "checks": [
+      "Load the centre-column preset; choose Shuffle for 4x and Inverted for 4.",
+      "The four authored column X coordinates remain [0, 0.3, 0, 0.3].",
+      "Each short hand stores its selected style and relative ball-order rule.",
+      "The edited pattern plays successfully with an empty error field.",
+      "Reload restores both style choices, the centre-column layout, and successful playback."
+    ],
+    "screenshot": "center-column-2x-edit-mobile.png",
+    "limits": "Browser viewport validation, not physical phone testing."
+  }
+}
