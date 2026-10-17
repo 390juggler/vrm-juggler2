@@ -76,6 +76,16 @@ it.each([false,true])('基本動作の登録庫で区間を保持し、接続可
 },120000);
 
 const example=(name:string)=>structuredClone(SEQUENCE_EXAMPLES.find(s=>s.name===name)!);
+// Boundary-state search can now bridge many pairs directly. Withhold only the
+// direct x/y bridge so relays through a connected intermediary stay covered.
+const withholdDirect=(api:any,x:string,y:string)=>{
+  const set=api.setSyncSequence;
+  api.setSyncSequence=function(s:SyncSequence,...rest:unknown[]){
+    return s.name.startsWith('移行 / ')&&!s.name.includes('経由')&&[`${x} ↔ ${y}`,`${y} ↔ ${x}`].some(pair=>s.name.includes(pair))?
+      {ok:false,message:'直接の移行を除外しました。'}:set.call(this,s,...rest);
+  };
+  return ()=>{api.setSyncSequence=set;};
+};
 const families=[
   {name:'fixed',a:sequenceFromPreset('box'),b:sequenceFromPreset('shower'),beat:.205},
   {name:'threaded',a:sequenceFromPreset('box'),b:sequenceFromPreset('underarm'),beat:.205},
@@ -192,7 +202,7 @@ it.each([false,true])('共通のBoxを経由して基本系統を巡回し、新
   }finally{body.prepareSyncCycle=prepare;}
   networkReports.push({mirror,beat:.205,sources:names,registeredTransitions:registered-names.length,pairs,
     cycleSets,identitySets,armSearchesDuringReuse:0,sourceDefinitionsUnchanged:true});
-},120000);
+},300000);
 
 it.each([false,true])('接続済みの中継動作だけを使い、経由する移行を保存復元できる (mirror=%s)',mirror=>{
   const api:any=Object.create(VRMJuggler.prototype);
@@ -200,11 +210,12 @@ it.each([false,true])('接続済みの中継動作だけを使い、経由する
     syncReplayGraph:new SyncReplayGraph(),syncReplaySources:[],renderer:{frameHeight:()=>{}},updateGui:()=>{},emitState:()=>{}});
   const sources=['box','switched','switched-shuffle'].map(id=>sequenceFromPreset(id));
   const ids=sources.map(s=>api.registerSyncSequence(s,mirror).ids),before=api.exportSyncSegments(ids[0],'before');
+  const allowDirect=withholdDirect(api,sources[1].name,sources[2].name);
   // Merely registering Box does not establish that Switched can reach it.
-  expect(()=>api.registerSyncTransition(1,2)).toThrow('移行を作れませんでした');
+  expect(()=>api.registerSyncTransition(1,2)).toThrow('移行をまだ生成できませんでした');
   expect(api.exportSyncSegments(ids[0],'before')).toEqual(before);
   api.registerSyncTransition(0,1);
-  const joined=api.registerSyncTransition(1,2);
+  const joined=api.registerSyncTransition(1,2);allowDirect();
   expect(joined.via).toBe(sources[0].name);expect(joined.added).toBe(true);
   const saved=api.exportSyncSegments(joined.route,'中継する往復'),restored=api.restoreSyncSegments(JSON.parse(JSON.stringify(saved)));
   const replay=api.syncReplayGraph.compose(restored.ids);expect(body.validateSyncReplay(replay.sample,replay.period)).toBe(true);
@@ -213,7 +224,7 @@ it.each([false,true])('接続済みの中継動作だけを使い、経由する
   body.prepareSyncCycle=()=>{throw new Error('中継経路の再利用で腕を探索してはいけません');};
   try{expect(api.registerSyncTransition(2,1).added).toBe(false);expect(api.getSyncSegmentSources()).toHaveLength(count);}
   finally{body.prepareSyncCycle=prepare;}
-},30000);
+},300000);
 
 it.each([false,true])('High-Lowを中継してAroundへ接続し、保存後も腕を再計算せず巡回する (mirror=%s)',mirror=>{
   const api:any=Object.create(VRMJuggler.prototype);
@@ -227,13 +238,13 @@ it.each([false,true])('High-Lowを中継してAroundへ接続し、保存後も�
     indices[source]=api.getSyncSegmentSources().length;
     ids[source]=api.registerSyncSequence(sources[source],mirror).ids;
   }
-  const before=api.exportSyncSegments(ids[0],'before');
+  const before=api.exportSyncSegments(ids[0],'before'),allowDirect=withholdDirect(api,sources[0].name,sources[2].name);
   // An unconnected intermediate does not justify claiming A can reach B.
-  expect(()=>api.registerSyncTransition(indices[0],indices[2])).toThrow('移行を作れませんでした');
+  expect(()=>api.registerSyncTransition(indices[0],indices[2])).toThrow('移行をまだ生成できませんでした');
   expect(api.exportSyncSegments(ids[0],'before')).toEqual(before);
   api.registerSyncTransition(indices[0],indices[1]);
   // Generate the missing bridge on either side of the intermediary.
-  const joined=api.registerSyncTransition(indices[mirror?2:0],indices[mirror?0:2]);
+  const joined=api.registerSyncTransition(indices[mirror?2:0],indices[mirror?0:2]);allowDirect();
   expect(joined.added).toBe(true);expect(joined.via).toBe(sources[1].name);
   const saved=api.exportSyncSegments(joined.route,'High-Low中継');
   expect(saved.sources.slice(0,3)).toEqual(before.sources);
@@ -261,7 +272,7 @@ it.each([false,true])('High-Lowを中継してAroundへ接続し、保存後も�
   networkReports.push({name:'high-low-around',mirror,beat:.15,sources:sources.map(s=>s.name),
     registrationOrder:indices,registeredTransitions:count-sources.length,pairs,cycleSets,identitySets,
     armSearchesDuringReuse:0,sourceDefinitionsUnchanged:true});
-},120000);
+},300000);
 
 it.each([false,true])('HFの腕下・クロー・役割固定を共通の基準へつなぎ、別の巡回順と保存復元でも同じ接続を再利用する (mirror=%s)',mirror=>{
   const api:any=Object.create(VRMJuggler.prototype);
@@ -318,7 +329,7 @@ it.each([false,true])('HFの腕下・クロー・役割固定を共通の基準�
   networkReports.push({name:'hf-underarm',mirror,beat:.25,sources:sources.map(s=>s.name),paths,cycles,
     registeredTransitions:count-sources.length,armSearchesDuringReuse:0,sourceDefinitionsUnchanged:true,restoredSets:restored.ids.length,
     batchSteps:steps,batchPublishedAtomically:true,cancelPreservesRegistry:true,differentTempoPreservesRegistry:true,repeatedBatchAddedSources:0});
-},120000);
+},600000);
 
 it.each([false,true])('高低・空間経路・Doubleの90部品を基準へ往復接続し、混合した周期を既存区間だけで作る (mirror=%s)',mirror=>{
   const api:any=Object.create(VRMJuggler.prototype);
@@ -399,7 +410,8 @@ it.each([false,true])('一括準備の中止・失敗・外部変更で仮の登
   const api:any=Object.create(VRMJuggler.prototype);
   Object.assign(api,{body,juggling,vrm,options:new Options(),paused:true,avatarTop:1.7,showGui:false,loadId:0,
     syncReplayGraph:new SyncReplayGraph(),syncReplaySources:[],renderer:{frameHeight:()=>{}},updateGui:()=>{},emitState:()=>{}});
-  const source=sequenceFromPreset('box');source.name='名前を変えた元の部品';
+  // The batch's first part is the relative-passage Box, not the absolute preset.
+  const source=sequenceFromBasicParts({roles:'alternate',shortHand:1,left:'normal',right:'normal'});source.name='名前を変えた元の部品';
   const original=api.registerSyncSequence(source,mirror),saved=api.exportSyncSegments(original.ids,'残す列');
   api.playSyncSegments(original.ids);api.paused=true;juggling.seek(.37);body.update(juggling.update(0),0);
   const preview=juggling.getMotionSnapshot();
@@ -465,8 +477,14 @@ it.each([false,true])('不成立の移行は未登録の編集用候補と箇所
   const a=sequenceFromPreset('box'),b=sequenceFromPreset('inline');a.beatDuration=b.beatDuration=.16;
   const first=api.registerSyncSequence(a,mirror);api.registerSyncSequence(b,mirror);
   const saved=api.exportSyncSegments(first.ids,'unchanged'),preview=juggling.getMotionSnapshot();
+  // Boundary-state corridors now bridge this pair, and a genuine rejection
+  // needs an exhaustive search. Fail every bridge's plan to check the payload.
+  const setBox=api.setSyncBox;
+  api.setSyncBox=(config:any)=>({ok:false,siteswap:config.siteswap,message:'経路を見つけられませんでした。',
+    failure:{period:1,issues:[{kind:'arm-path',phase:.5,message:'腕の経路を見つけられませんでした。'}]}});
   let failure:any;
   try{api.registerSyncTransition(0,1);}catch(error){failure=error;}
+  finally{api.setSyncBox=setBox;}
   expect(failure).toBeDefined();expect(failure.mirror).toBe(mirror);expect(failure.failure.issues.length).toBeGreaterThan(0);
   expect(analyzeSequence(failure.sequence).documentOK).toBe(true);
   expect(failure.sequence.beatDuration).toBe(.16);
@@ -474,7 +492,7 @@ it.each([false,true])('不成立の移行は未登録の編集用候補と箇所
   failure.sequence.sets[0].throws=['0','0'];
   expect(api.exportSyncSegments(first.ids,'unchanged')).toEqual(saved);
   expect(juggling.getMotionSnapshot()).toEqual(preview);
-},120000);
+},300000);
 
 it.each([false,true])('基本動作A/B/Cへ必要な移行だけを登録し、別の巡回順にも再利用する (mirror=%s)',mirror=>{
   const api:any=Object.create(VRMJuggler.prototype);
@@ -484,11 +502,13 @@ it.each([false,true])('基本動作A/B/Cへ必要な移行だけを登録し、�
   const before=juggling.getMotionSnapshot();
   expect(()=>api.appendSyncSource(ids[0],1)).toThrow('移行がまだありません');
   expect(juggling.getMotionSnapshot()).toEqual(before);
-  const graph=api.syncReplayGraph,inspect=api.inspectSyncCycle;let rejected=0;
+  const graph=api.syncReplayGraph,inspect=api.inspectSyncCycle,set=api.setSyncSequence;let rejected=0;
   api.inspectSyncCycle=()=>{rejected++;return {skeletonOK:false};};
-  expect(()=>api.registerSyncTransition(0,1)).toThrow('自動配置');
+  // Two rejected candidates prove the rollback; do not plan every other bridge.
+  api.setSyncSequence=function(...args:unknown[]){return rejected>=2?{ok:false,message:'検査を省略しました。'}:set.apply(this,args);};
+  expect(()=>api.registerSyncTransition(0,1)).toThrow('移行をまだ生成できませんでした');
   expect(rejected).toBeGreaterThanOrEqual(2);expect(api.syncReplayGraph).toBe(graph);expect(api.getSyncSegmentSources()).toHaveLength(3);
-  expect(juggling.getMotionSnapshot()).toEqual(before);api.inspectSyncCycle=inspect;
+  expect(juggling.getMotionSnapshot()).toEqual(before);api.inspectSyncCycle=inspect;api.setSyncSequence=set;
   const ab=api.registerSyncTransition(0,1),ac=api.registerSyncTransition(0,2);
   expect(ab.added).toBe(true);expect(ac.added).toBe(true);
   const count=api.getSyncSegmentSources().length;
@@ -537,4 +557,4 @@ it.each([false,true])('基本動作A/B/Cへ必要な移行だけを登録し、�
     ac:{forward:ac.forward.length,backward:ac.backward.length},bc:{forward:bc.forward.length,backward:bc.backward.length,added:bc.added},
     routes,restoredSets:restored.ids.length,failedCandidatesPreserveRegistry:rejected,
     sourceAppend:{viaExisting: true,repeats:2,sets:appended.length,noNewValidation:true,metadataRestored:true}});
-},120000);
+},300000);

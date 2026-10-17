@@ -451,10 +451,8 @@ export function buildSyncBoxTracks(source: any, transform: SpaceTransform, confi
     finishFlights.push(()=>{
     // Endpoint velocities and frames must follow the resolved ball trajectory.
     if(!handMotion?.catchGrip)flight.catchGrip=velocity.y-GRAVITY*duration>.1?'overhand':'underhand';
-    if(handMotion){
-      if(motion.release.relation==='underarm')underarmEvents.push({time:release,hand:th,position:start});
-      if(motion.catch.relation==='underarm')underarmEvents.push({time:mod(release+duration,period),hand:ch,position:end});
-    }
+    if(motion.release.relation==='underarm')underarmEvents.push({time:release,hand:th,position:start});
+    if(motion.catch.relation==='underarm')underarmEvents.push({time:mod(release+duration,period),hand:ch,position:end});
     const catchVelocity = velocity.clone().add(new THREE.Vector3(0, -GRAVITY * duration, 0));
     const reachHeading=(p:THREE.Vector3,h:number)=>{
       const shoulder=transform.shoulders[h];

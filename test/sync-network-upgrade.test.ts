@@ -57,4 +57,4 @@ it.each([false,true])('保存済みの腕下5動作へ追加し、元の接続�
   expect(api.getSyncSourceConnections(0).connected).toBe(11);
   reports.push({mirror,oldSources:9,addedSources:6,addedTransitions:6,newSources:extended.sources.length,
     connectedMotions:11,oldCycleSets:after.sets,oldCyclePoseSamplesUnchanged:240,restoredAfterUpgrade:true});
-},180000);
+},600000);

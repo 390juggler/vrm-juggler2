@@ -800,6 +800,10 @@ export default class VRMJuggler {
           return connected.sequence;
       }}));
       const builders:{build:()=>SyncSequence;via?:string}[]=scheduled(a.sequence!,b.sequence!);
+      // Generic boundary-state corridors. Solved sources try them before the
+      // legacy recipes; otherwise they follow the fitted recipes and relays,
+      // because each failed corridor can take a minute.
+      const corridors:typeof builders=a.resolved||b.resolved?builders:[];
       for(const [stages,separation,lift,stagger,travelDepth=0,anticipate=0] of [[2,0,0,0],[4,0,0,0],
         [2,0,0,1],[2,0,0,-1],[4,.12,0,0],[4,-.12,0,0],[4,0,.12,0],[4,0,-.12,0]]){
         try{
@@ -807,7 +811,7 @@ export default class VRMJuggler {
           const first=resolvedSequence(a.sequence!,this.syncReplayGraph.sourceTracks(a.ids[0]),transform,a.mirror);
           const second=resolvedSequence(b.sequence!,this.syncReplayGraph.sourceTracks(b.ids[0]),transform,b.mirror);
           const sequence=movementStateTransition(first,second,stages,separation,lift,stagger,travelDepth,!!anticipate);
-          if(sequence)builders.push({build:()=>sequence});
+          if(sequence)corridors.push({build:()=>sequence});
         }catch{ /* Holds and vertical stacks keep their existing state constructors. */ }
       }
       const spatial=(x:SyncSequence,y:SyncSequence)=>[columnReceiverHandoff,alternatingCrossTransition,mixedAlternatingCrossTransition,spatialLaneTransition,underarmCatchTransition,lateralShuffleTransition,upperInlineTransition]
@@ -883,7 +887,7 @@ export default class VRMJuggler {
             yield* fromA;
           }
         }
-        if(!a.resolved&&!b.resolved)for(const sequence of rankCorridors())yield {build:()=>sequence};
+        if(!a.resolved&&!b.resolved){yield* corridors;for(const sequence of rankCorridors())yield {build:()=>sequence};}
       }
       for(const refineBridge of a.resolved||b.resolved?[true,false]:[false,true])for(const {build,via} of candidates()){
         try{
