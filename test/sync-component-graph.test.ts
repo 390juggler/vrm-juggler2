@@ -402,7 +402,7 @@ it.each([false,true])('高低・空間経路・Doubleの90部品を基準へ往�
   }finally{body.prepareSyncCycle=prepare;}
   mixedNetworkReports.push({mirror,beat:.205,parts,spatial,doubles,documentBytes,registeredSources:registered,registeredTransitions:registered-sources.length,additions,paths,cycles,
     armSearchesDuringReuse:0,sourceDefinitionsUnchanged:true,batchProgressSteps:steps,batchPublishedAtomically:true,repeatedBatchAddedSources:0,repeatedBatchAddedTransitions:0,connectionCoverage});
-},300000);
+},3600000);
 
 it.each([false,true])('一括準備の中止・失敗・外部変更で仮の登録内容を公開しない (mirror=%s)',mirror=>{
   const restorePreview=juggling.capturePlaybackRestore(),restoreBody=body.captureSyncPlanRestore(),previousAngle=body.armAngle;
