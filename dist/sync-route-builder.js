@@ -7,7 +7,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     box:{ja:'ボックス',detail:'左右のコラムと短い2x',fields:'2xは左右に1つずつ · 基本モードで編集'},
     'high-low':{ja:'ハイロー',detail:'ハイ＋2xと、両手のスワップを交互に',fields:'2xは1種類 · ハイの担当とスワップを指定'},
     shower:{ja:'シャワー',detail:'高い弧と短い2xを一方向に回す',fields:'2xは1種類 · 高い球を投げる手を指定'},
-    double:{ja:'ダブルボックス',detail:'右・右・左・左の4セットを繰り返す',fields:'2xは4つ · コラムの軌道を指定'}
+    double:{ja:'ダブルボックス',detail:'Showerを挟む型 ／ 4xも縦に投げる型',fields:'4xの軌道と、4セットそれぞれの2xを選ぶ'}
   };
   const columns={normal:'Normal',switched:'Switched',crossed:'Cross 左上','crossed-right':'Cross 右上','crossed-alternate':'Cross 上下交代',underarm:'Underarm'};
   const defaults={base:'box',columns:'normal',passes:['normal','normal'],highHand:0,alternateHigh:true,swap:'alternate',highPath:'vertical'};
@@ -18,13 +18,14 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
   const descriptions={box:'左右のコラムと、左・右それぞれの2xを組み合わせます。2セットが基本です。',
     'high-low':'ハイ＋2x → 両手の2xスワップを繰り返します。ハイの左右と、スワップの上下は別々に指定します。',
     shower:'2xの到着位置から高い球を投げ、2xを投げる位置へ戻します。Lateralも同じ位置関係で組みます。',
-    double:'4セットの2xを1つずつ選びます。高い球は全て縦にするか、手を替える4xでShowerの軌道を使います。'};
+    double:'4xは反対の手で捕る投げです。「Showerを挟む」は4xを弧で渡し、4でコラムに戻ります。「4xも縦に投げる」は4も4xも真上に投げ、4xだけ反対の手が球の下へ移動して捕ります。どちらも4セットの2xを個別に選べます。'};
   function persist(){hasSaved=true;try{localStorage.setItem(key,JSON.stringify(doc));}catch{};onChange?.(true);}
   function summary(){try{const r=VRMJuggler.compileSyncBaseRoute(doc);return `${doc.blocks.length}技・${r.requestedSets}セット${r.addedSets?`＋受け渡し${r.addedSets}セット`:'・追加セットなし'}`;}catch(e){return e.message;}}
   function update(){
     const p=doc.blocks[selected].parts;
     $('route-columns').value=p.columns;$('route-high-hand').value=String(p.highHand);
     $('route-alternate').value=String(p.alternateHigh);$('route-swap').value=p.swap;$('route-high-path').value=p.highPath;
+    for(const b of $('route-double-paths').children)b.setAttribute('aria-pressed',String(b.dataset.path===p.highPath));
     $('route-repeats').value=String(doc.blocks[selected].repeats);$('route-tempo').value=String(doc.beatDuration*2);$('route-mirror').checked=doc.mirror;
     $('route-settings').hidden=p.base==='box';$('route-box-note').hidden=p.base!=='box';
     $('route-columns-label').hidden=p.base!=='high-low';
@@ -33,13 +34,13 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     $('route-definition').textContent=descriptions[p.base];
     $('route-phase-guide').textContent=({box:'コラム4と2xを左右交代', 'high-low':'① ハイ＋2x → ② スワップ → 繰り返し',shower:'高い弧と短い2xを、同じ両端でつなぐ',double:'① 右2x → ② 右2x → ③ 左2x → ④ 左2x'})[p.base];
     $('route-hand-caption').textContent=p.base==='shower'?'高い球を投げる手':p.alternateHigh?'最初にハイを投げる手':'ハイを投げる手';
-    $('route-layout-heading').textContent=p.base==='double'?'1　コラムの軌道':'1　高い球の担当';
+    $('route-layout-heading').textContent=p.base==='double'?'1　4xの軌道':'1　高い球の担当';
     $('route-box-summary').textContent=columns[p.columns]+' / '+p.passes.map((id,i)=>(i?'右 ':'左 ')+(SyncComposeUI.shortChoices.find(c=>c.id===id)?.name||id)).join('・');
     $('route-base-name').textContent=names[p.base];$('route-base-hint').textContent=baseInfo[p.base].fields;$('route-edit-heading').textContent=`${selected+1}番目の技を編集`;
     $('route-passes').replaceChildren();p.passes.forEach((value,i)=>{
       const title=p.base==='box'?`${i?'右':'左'}手の2x`:p.base==='double'?`${i+1}セット目 · ${i<2?'右':'左'}手の2x`:p.base==='shower'?'短い2xの投げ方':'ハイと同時に投げる2x';
       const label=el('label',title),select=el('select');label.className='pass-card';label.dataset.hand=p.base==='double'?(i<2?'right':'left'):p.base==='box'?(i?'right':'left'):'either';
-      if(p.base==='double')label.append(el('small',`${i<2?'左':'右'}手は ${i%2===0?'4x / 反対の手へ':'4 / 同じ手へ'}`));
+      if(p.base==='double')label.append(el('small',i%2===0?`4x：${p.highPath==='vertical'?'真上に投げ、反対の手で捕る':'Showerの弧で反対の手へ'}`:'4：真上に投げ、同じ手で捕る'));
       select.setAttribute('aria-label',title);let group;
       for(const choice of SyncComposeUI.shortChoices){if(group?.label!==choice.group){group=el('optgroup');group.label=choice.group;select.append(group);}group.append(new Option(choice.name,choice.id));}
       select.value=value;const hint=el('small',SyncComposeUI.shortChoices.find(c=>c.id===value)?.hint);
@@ -48,7 +49,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     $('route-blocks').replaceChildren();doc.blocks.forEach((b,i)=>{
       const li=el('li');li.className=i===selected?'selected':'';
       const pick=button(`${i+1}. ${names[b.parts.base]} × ${b.repeats}`,()=>{selected=i;update();showEditor();});pick.setAttribute('aria-pressed',String(i===selected));
-      const p=b.parts,layout=['box','high-low'].includes(p.base)?columns[p.columns]:p.base==='double'?(p.highPath==='vertical'?'全コラム縦':'Showerを挟む'):p.highHand?'ハイ右手':'ハイ左手';
+      const p=b.parts,layout=['box','high-low'].includes(p.base)?columns[p.columns]:p.base==='double'?(p.highPath==='vertical'?'4xも縦に投げる':'Showerを挟む'):p.highHand?'ハイ右手':'ハイ左手';
       const detail=el('small',layout+' · '+p.passes.map(id=>SyncComposeUI.shortChoices.find(c=>c.id===id)?.name).join(' / '));
       if(p.base==='high-low')detail.textContent+=` · ハイ${p.alternateHigh?'左右交代':p.highHand?'右固定':'左固定'} · スワップ${p.swap==='alternate'?'上下交代':p.swap==='left-over'?'左上':'右上'}`;
       const up=button('↑',()=>{[doc.blocks[i-1],doc.blocks[i]]=[doc.blocks[i],doc.blocks[i-1]];selected=i-1;persist();update();});up.disabled=i===0;up.setAttribute('aria-label',`${i+1}番目の技を前へ`);
@@ -89,6 +90,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     $('route-selection-status').textContent=`${selected+1}番目の技：${names[base]}`;
   }
   $('route-change-base').onclick=()=>openPicker('change');
+  for(const b of $('route-double-paths').children)b.onclick=()=>{if(isBusy())return;doc.blocks[selected].parts.highPath=b.dataset.path;persist();update();};
   $('route-box-edit').onclick=()=>{if(isBusy())return;editingBox=doc.blocks[selected];onEditBox(clone(editingBox.parts));};
   function showEditor(){if(compact()){$('route-list').open=false;$('connect-panel').scrollTop=0;}}
   for(const [id,prop,convert] of [['columns','columns',String],['high-hand','highHand',Number],['alternate','alternateHigh',v=>v==='true'],['swap','swap',String],['high-path','highPath',String]])

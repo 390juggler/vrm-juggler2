@@ -6,6 +6,7 @@
     <meta name="robots" content="noindex,nofollow" />
     <title>VRM Juggler</title>
     <link rel="stylesheet" href="./demo.css" />
+    <link rel="stylesheet" href="./demo-layout.css" />
     <script src="./vrm-juggler.min.js"></script>
     <script src="./demo.js" defer></script>
   </head>
@@ -15,42 +16,40 @@
 
     <aside class="panel" id="panel" aria-label="操作パネル">
       <header class="panel-header">
-        <h1>VRM Juggler</h1>
+        <div><span class="eyebrow">SIMULATOR</span><h1>VRM Juggler</h1></div>
         <button type="button" class="icon" id="collapse" aria-expanded="true" title="パネルをたたむ">
           <span aria-hidden="true">▾</span>
         </button>
       </header>
+      <nav class="app-nav" aria-label="シミュレーター"><a href="./" aria-current="page">通常</a><a href="./sync-compose.html">Box Simulator <span aria-hidden="true">↗</span></a></nav>
 
+      <div class="pattern-entry">
       <form id="siteswap-form" class="siteswap-row">
         <label for="siteswap">サイトスワップ</label>
         <input id="siteswap" type="text" value="3" autocomplete="off" autocapitalize="off" spellcheck="false" />
-        <button type="submit" class="primary">投げる</button>
+        <button type="submit" class="primary">反映</button>
       </form>
+      <p id="pattern-description" class="description"></p>
+      </div>
 
       <div class="panel-body">
-        <p><a href="./sync-compose.html">Box・High-Low・Shower・Doubleを組んでつなぐ</a> / <a href="./sync-box.html">技の見本</a></p>
-        <section>
-          <h2>パターン</h2>
+        <details class="preset-library">
+          <summary>パターン一覧から選ぶ</summary>
           <div id="presets" class="presets"></div>
-          <p id="pattern-description" class="description"></p>
-        </section>
+        </details>
 
         <section>
           <h2>小道具</h2>
           <div class="segmented" id="prop" role="group" aria-label="小道具">
-            <button type="button" data-value="ball">ボール</button>
-            <button type="button" data-value="club">クラブ</button>
-            <button type="button" data-value="ring">リング</button>
-            <button type="button" data-value="pancake" title="リングを水平に持ち、縦に回して投げる">パンケーキ</button>
+            <button type="button" data-value="ball"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="8"/></svg>ボール</button>
+            <button type="button" data-value="club"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 5q8 1 5 9l-6 7-4 6-3-2 5-7 1-9q0-3 2-4Z"/></svg>クラブ</button>
+            <button type="button" data-value="ring"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="6"/></svg>リング</button>
+            <button type="button" data-value="pancake" title="リングを水平に持ち、縦に回して投げる"><svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="16" rx="12" ry="5"/><ellipse cx="16" cy="16" rx="7" ry="2.5"/></svg>パンケーキ</button>
           </div>
         </section>
 
         <section>
-          <h2>再生・動き</h2>
-          <div class="buttons">
-            <button type="button" id="play">一時停止</button>
-            <button type="button" id="step" title="一時停止して少しずつ進める">コマ送り</button>
-          </div>
+          <h2>動き</h2>
           <label class="slider">
             <span>スピード</span>
             <input id="speed" type="range" min="0.1" max="2" step="0.05" value="1" />
@@ -73,14 +72,15 @@
           </div>
         </section>
 
-        <section class="buttons">
+        <details class="more-tools"><summary>モデル・保存</summary><div class="buttons">
           <label class="button">VRM を読み込む<input type="file" id="vrm-file" accept=".vrm" class="visually-hidden" /></label>
           <button type="button" id="share">リンクをコピー</button>
           <button type="button" id="record">録画</button>
-        </section>
+        </div><a class="reference-link" href="./sync-box.html">Boxの技の見本 ↗</a></details>
 
         <p class="hint">Space: 一時停止 ／ →: コマ送り ／ Esc: 詳細設定</p>
       </div>
+      <div class="player-bar"><button type="button" id="play" class="primary">一時停止</button><button type="button" id="step" title="一時停止して少しずつ進める">コマ送り</button></div>
     </aside>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

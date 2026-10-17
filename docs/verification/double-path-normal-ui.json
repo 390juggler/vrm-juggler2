@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-17",
+  "scope": "Double Box trajectory selection and normal simulator responsive UI",
+  "definition": {
+    "shower": "4x travels in a lateral Shower arc to the opposite hand; 4 returns to a vertical column.",
+    "vertical": "4 and 4x are spatially vertical; for 4x the opposite hand moves under the ball to catch.",
+    "independentControl": "Four 2x selections remain unchanged when switching the high-ball trajectory."
+  },
+  "automated": {
+    "typecheck": "passed",
+    "build": "passed",
+    "javascriptSyntax": ["dist/demo.js", "dist/sync-route-builder.js"],
+    "testFiles": ["test/sync-base-patterns.test.ts", "test/sync-compose-ui.test.ts"],
+    "testsPassed": 26,
+    "trajectoryCheck": "Both variants, mirrored and unmirrored, preserve their intended high-flight endpoints after preparation for playback. Vertical flights have equal start/end X and Z; Shower 4x changes X and catching hand. Playback accepts each cycle and maximum grip error remains below 0.012."
+  },
+  "browser": {
+    "environment": "Local in-app browser viewport checks, not physical phone testing",
+    "viewports": ["1280x800", "390x844", "320x568", "844x390"],
+    "normal": [
+      "Preview and controls occupy separate space; playback controls stay at the bottom.",
+      "No horizontal overflow at 320x568; scrolling control area is 153px high.",
+      "Collapsed panel can be reopened after switching to landscape.",
+      "Prop and camera selection, preset 51, typed siteswap 3, and pause/resume work.",
+      "Space on the preset summary opens/closes it without toggling playback.",
+      "ui=0&bg=transparent hides the panel and retains a transparent 390x844 stage.",
+      "Box Simulator navigation opens sync-compose.html in basic mode."
+    ],
+    "double": [
+      "Selecting the vertical card updates its pressed state and all four per-set high-throw descriptions.",
+      "The mixed five-block route generates and plays with 13 requested sets and 2 handover sets.",
+      "Reload restores the vertical variant and the four passes: normal, shuffle, lateral-reverse, inverted.",
+      "The composer remains within the 390px viewport."
+    ]
+  },
+  "screenshots": ["normal-ui-mobile.png", "double-path-mobile.png"],
+  "motionChanges": "None; trajectory variants already existed. This change exposes their distinction, updates naming, and adds regression coverage."
+}

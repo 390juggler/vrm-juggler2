@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>Boxとパターンの接続 — VRM Juggler</title>
+  <title>Box Simulator — VRM Juggler</title>
   <link rel="stylesheet" href="./sync-compose.css"><link rel="stylesheet" href="./sync-compose-mobile.css">
   <script src="./vrm-juggler.min.js"></script><script src="./sync-compose-ui.js"></script><script src="./sync-route-builder.js"></script><script src="./sync-compose.js" defer></script>
 </head>
@@ -25,7 +25,7 @@
     </div>
   </main>
   <aside class="editor" aria-label="パターンの作成">
-    <header><div><span class="eyebrow">VRM JUGGLER</span><h2>Boxとパターンの接続</h2></div><a href="./sync-box.html">技の一覧 ↗</a></header>
+    <header><div><span class="eyebrow">VRM JUGGLER</span><h2>Box Simulator</h2></div><nav class="simulator-links"><a href="./">通常版</a><a href="./sync-box.html">技の一覧 ↗</a></nav></header>
     <nav class="mode-tabs" role="tablist" aria-label="作業モード">
       <button id="mode-basic" role="tab" aria-selected="true" aria-controls="basic-panel" tabindex="0">基本モード<small>Boxを作る</small></button>
       <button id="mode-connect" role="tab" aria-selected="false" aria-controls="connect-panel" tabindex="-1">つなぐモード<small>他のベース・技の並び</small></button>
@@ -50,7 +50,7 @@
       <details class="parts-table"><summary>基本2xの組合せを表で選ぶ</summary><table id="parts-matrix"><caption>左の2x × 右の2xで選ぶ</caption><thead></thead><tbody></tbody></table>
       <p id="parts-check-legend" class="hint">○ 未再生 · ✓ 再生確認済み · ! 動作の生成が未対応。技の可否を示す表ではありません。</p></details>
       <p id="parts-preview" class="combination-formula" role="status"></p>
-      <button id="parts-replace" hidden>選んだ組合せに戻す</button><p id="parts-origin" class="hint" hidden></p><details><summary>4x・Doubleに切り替える</summary>        <label class="parts-roles">4側と2側の役割<select id="parts-roles"><option value="alternate">左右で交代 / コラム4と2x</option><option value="fixed">同じ役割を続ける / 4xと2x</option><option value="double">Double / 4x→4を続けてから左右交代</option></select></label></details>
+      <button id="parts-replace" hidden>選んだ組合せに戻す</button><p id="parts-origin" class="hint" hidden></p><details><summary>旧方式の4x・手向き編集</summary><p class="hint">Shower・Double Boxの軌道は「つなぐモード」で選べます。</p><label class="parts-roles">4側と2側の役割<select id="parts-roles"><option value="alternate">左右で交代 / コラム4と2x</option><option value="fixed">同じ役割を続ける / 4xと2x</option><option value="double">Double / 4x→4を続けてから左右交代</option></select></label></details>
     </details>
       <section class="pattern-overview" aria-label="編集中の動作">
         <span class="eyebrow">この組合せの名前</span><h3 id="basic-title"></h3>
@@ -114,7 +114,13 @@
           <h3 id="route-layout-heading" class="form-step">1　高い球の動き</h3><label id="route-columns-label">コラムの配置<select id="route-columns"><option value="normal">Normal</option><option value="switched">Switched</option><option value="crossed">Cross / 左腕が上</option><option value="crossed-right">Cross / 右腕が上</option><option value="crossed-alternate">Cross / 上下交代</option><option value="underarm">Underarm</option></select></label>
           <div id="route-high-settings"><label><span id="route-hand-caption">ハイを投げる手</span><select id="route-high-hand"><option value="0">左手</option><option value="1">右手</option></select></label><label id="route-alternate-label">ハイの担当<select id="route-alternate"><option value="true">左右交代</option><option value="false">選んだ手に固定</option></select></label></div>
 
-          <label id="route-high-path-label">高い球の軌道<select id="route-high-path"><option value="vertical">全て縦に上げる</option><option value="shower">4xでShowerの軌道を挟む</option></select></label>
+          <section id="route-high-path-label">
+            <div id="route-double-paths" class="double-path-choices" role="group" aria-label="Double Boxの4xの軌道">
+              <button type="button" data-path="shower" aria-pressed="false"><svg viewBox="0 0 70 64" aria-hidden="true"><path d="M12 51 Q35 -20 58 51"/><path d="m51 46 7 5 2-9"/><circle cx="12" cy="51" r="3"/></svg><span><strong>Showerを挟む</strong><small>4xを弧で渡し、4でコラムに戻る</small></span></button>
+              <button type="button" data-path="vertical" aria-pressed="true"><svg viewBox="0 0 70 64" aria-hidden="true"><path d="M35 51 V10"/><path d="m30 17 5-7 5 7 M30 44l5 7 5-7"/></svg><span><strong>4xも縦に投げる</strong><small>球は真上へ。反対の手が捕りに行く</small></span></button>
+            </div><p class="hint">4xの「x」は反対の手で捕る意味です。球が横に移動するかどうかは、ここで選びます。</p>
+            <label hidden>4xの軌道<select id="route-high-path"><option value="vertical">4xも縦に投げる</option><option value="shower">Showerを挟む</option></select></label>
+          </section>
           <h3 class="form-step" id="route-pass-heading">2　2xの投げ方</h3><div id="route-passes"></div><div id="route-swap-section"><h3 class="form-step">3　スワップ</h3>          <label id="route-swap-label">スワップで上を通る2x<select id="route-swap"><option value="left-over">左の2xが上</option><option value="right-over">右の2xが上</option><option value="alternate">左上・右上を交代</option></select><small>両手が同時に2xを渡すときの上下です。</small></label></div></div><label class="repeat-label">この技を繰り返す回数<input id="route-repeats" type="number" min="1" max="8" step="1" value="1"></label>
         </fieldset>
         <details><summary>このベースの動き方</summary><p id="route-definition" class="hint"></p></details>

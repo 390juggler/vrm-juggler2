@@ -17,6 +17,8 @@ https://390juggler.github.io/vrm-juggler2/ (GitHub Pages)
 
 ローカルでは依存関係のインストール後に `start-sync-box.cmd` を実行し、表示されたURLを開きます。基本のサイトスワップ・リングなどの小道具は [ベース画面](https://390juggler.github.io/vrm-juggler2/) で選べます。
 
+通常版の **Box Simulator** タブから同期パターン編集へ移動できます。Double Boxでは **Showerを挟む** 型と **4xも縦に投げる** 型を、球の軌道図から選びます。
+
 ## パッケージのインストール
 
 事前に node.js (20.19 以上。22 推奨) をインストールしてください。

@@ -97,10 +97,11 @@
       .forEach((preset) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.textContent = preset.siteswap;
+        const code=document.createElement('strong');code.textContent=preset.siteswap;button.append(code);
+        if(preset.name!==preset.siteswap){const name=document.createElement('span');name.textContent=preset.name;button.append(name);}
         button.dataset.value = preset.siteswap;
         button.title = `${preset.name}: ${preset.description}`;
-        button.addEventListener('click', () => juggler.setSiteswap(preset.siteswap));
+        button.addEventListener('click', () => {juggler.setSiteswap(preset.siteswap);document.querySelector('.preset-library').open=false;});
         chips.appendChild(button);
         presetButtons.push(button);
       });
@@ -258,7 +259,7 @@
 
   document.addEventListener('keydown', (e) => {
     const target = e.target;
-    if (target instanceof HTMLElement && (target.closest('input, textarea, select') || target.isContentEditable)) return;
+    if (target instanceof HTMLElement && (target.closest('input, textarea, select, summary') || target.isContentEditable)) return;
     if (e.key === ' ') {
       // ボタンにフォーカスがあっても、そのボタンを押さずに一時停止する
       e.preventDefault();

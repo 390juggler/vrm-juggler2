@@ -39,6 +39,27 @@ it('Shower high flights reverse the 2x lanes including lateral',()=>{
  expect(high.start.distanceTo(low.end)).toBeLessThan(1e-8);expect(high.end.distanceTo(low.start)).toBeLessThan(1e-8);
  }
 });
+it('keeps Double 4x vertical or in a Shower arc after preparing playback, including mirroring',async()=>{
+ const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
+ api.syncPlanningMode='constructive';
+ try{
+  for(const highPath of ['vertical','shower'] as const)for(const mirror of [false,true]){
+   const route=compileBaseRoute({kind:'sync-base-route',version:1,beatDuration:.205,mirror,
+    blocks:[{parts:{...defaults,base:'double',passes:['normal','normal','normal','normal'],highPath},repeats:1}]});
+   const prepared=api.prepareDirectSyncSequence(route.sequence,mirror);
+   const high=build(prepared.sequence,(api as any).juggling.getSyncTransform(),mirror).flights.filter(f=>f.value===4);
+   const crossing=high.filter(f=>f.throwHand!==f.catchHand);
+   expect(crossing.length).toBeGreaterThan(0);
+   for(const flight of high){
+    expect(Math.abs(flight.start.z-flight.end.z)).toBeLessThan(1e-7);
+    if(highPath==='vertical'||flight.throwHand===flight.catchHand)expect(Math.abs(flight.start.x-flight.end.x)).toBeLessThan(1e-7);
+    else expect(Math.abs(flight.start.x-flight.end.x)).toBeGreaterThan(.05);
+   }
+   expect(api.setSyncSequence(prepared.sequence,mirror).ok).toBe(true);
+   expect(api.inspectSyncCycle()!.maxGripError).toBeLessThan(.012);
+  }
+ }finally{(api as any).juggling.dispose();}
+},120000);
 it('redirects Box boundaries at fixed tempo without extra sets and transfers the plan',async()=>{
  const f=readFileSync('dist/models/default.vrm'),bytes=f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength);
  const api=await VRMJuggler.createSyncPlanner(bytes),display=await VRMJuggler.createSyncPlanner(bytes);

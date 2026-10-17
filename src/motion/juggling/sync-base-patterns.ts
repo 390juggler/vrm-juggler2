@@ -90,7 +90,7 @@ export function sequenceFromBaseParts(parts:BasePatternParts,beatDuration=.205):
       row.motion.hands![high]={definition:{release:{x,y:0,z:-.30},catch:{x:end,y:0,z:-.30},passage:{at:.5},
         carry:{route:'direct',amount:0},emptyReturn:{route:'direct',amount:0}}};
     });
-    s.name=`Double Box / ${parts.highPath==='vertical'?'全コラム縦':'Showerを挟む'} / ${passes.map(p=>p.name).join('・')}`;
+    s.name=`Double Box / ${parts.highPath==='vertical'?'4xも縦に投げる':'Showerを挟む'} / ${passes.map(p=>p.name).join('・')}`;
   }
   s.beatDuration=beatDuration;s.allowBallContact=true;s.name=s.name.slice(0,100);
   const a=analyzeSequence(s);if(!a.ok)throw new Error(a.issues.map(i=>i.message).join('\n'));
