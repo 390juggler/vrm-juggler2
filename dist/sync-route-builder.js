@@ -3,9 +3,15 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
   const $=id=>document.getElementById(id),clone=structuredClone,key='vrm-sync-base-route-v1';
   const compact=()=>matchMedia('(max-width:730px), (max-width:950px) and (max-height:500px) and (orientation:landscape)').matches;
   const names={box:'Box','high-low':'High-Low',shower:'Shower',double:'Double Box'};
+  const baseInfo={
+    box:{ja:'ボックス',detail:'左右のコラムと短い2x',fields:'2xは左右に1つずつ · 基本モードで編集'},
+    'high-low':{ja:'ハイロー',detail:'ハイ＋2xと、両手のスワップを交互に',fields:'2xは1種類 · ハイの担当とスワップを指定'},
+    shower:{ja:'シャワー',detail:'高い弧と短い2xを一方向に回す',fields:'2xは1種類 · 高い球を投げる手を指定'},
+    double:{ja:'ダブルボックス',detail:'右・右・左・左の4セットを繰り返す',fields:'2xは4つ · コラムの軌道を指定'}
+  };
   const columns={normal:'Normal',switched:'Switched',crossed:'Cross 左上','crossed-right':'Cross 右上','crossed-alternate':'Cross 上下交代',underarm:'Underarm'};
   const defaults={base:'box',columns:'normal',passes:['normal','normal'],highHand:0,alternateHigh:true,swap:'alternate',highPath:'vertical'};
-  let doc={kind:'sync-base-route',version:1,beatDuration:.205,mirror:false,blocks:[{parts:clone(defaults),repeats:1}]},selected=0,editingBox=null,hasSaved=false;
+  let doc={kind:'sync-base-route',version:1,beatDuration:.205,mirror:false,blocks:[{parts:clone(defaults),repeats:1}]},selected=0,editingBox=null,hasSaved=false,pickerAction='change';
   try{const saved=JSON.parse(localStorage.getItem(key));VRMJuggler.compileSyncBaseRoute(saved);doc=saved;hasSaved=true;}catch{}
   const el=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
   const button=(text,fn)=>{const b=el('button',text);b.type='button';b.onclick=fn;return b;};
@@ -17,7 +23,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
   function summary(){try{const r=VRMJuggler.compileSyncBaseRoute(doc);return `${doc.blocks.length}技・${r.requestedSets}セット${r.addedSets?`＋受け渡し${r.addedSets}セット`:'・追加セットなし'}`;}catch(e){return e.message;}}
   function update(){
     const p=doc.blocks[selected].parts;
-    $('route-base').value=p.base;$('route-columns').value=p.columns;$('route-high-hand').value=String(p.highHand);
+    $('route-columns').value=p.columns;$('route-high-hand').value=String(p.highHand);
     $('route-alternate').value=String(p.alternateHigh);$('route-swap').value=p.swap;$('route-high-path').value=p.highPath;
     $('route-repeats').value=String(doc.blocks[selected].repeats);$('route-tempo').value=String(doc.beatDuration*2);$('route-mirror').checked=doc.mirror;
     $('route-settings').hidden=p.base==='box';$('route-box-note').hidden=p.base!=='box';
@@ -29,7 +35,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
     $('route-hand-caption').textContent=p.base==='shower'?'高い球を投げる手':p.alternateHigh?'最初にハイを投げる手':'ハイを投げる手';
     $('route-layout-heading').textContent=p.base==='double'?'1　コラムの軌道':'1　高い球の担当';
     $('route-box-summary').textContent=columns[p.columns]+' / '+p.passes.map((id,i)=>(i?'右 ':'左 ')+(SyncComposeUI.shortChoices.find(c=>c.id===id)?.name||id)).join('・');
-    for(const b of $('route-base-choices').children)b.setAttribute('aria-pressed',String(b.dataset.base===p.base));$('route-edit-heading').textContent=`${selected+1}番目の技を編集`;
+    $('route-base-name').textContent=names[p.base];$('route-base-hint').textContent=baseInfo[p.base].fields;$('route-edit-heading').textContent=`${selected+1}番目の技を編集`;
     $('route-passes').replaceChildren();p.passes.forEach((value,i)=>{
       const title=p.base==='box'?`${i?'右':'左'}手の2x`:p.base==='double'?`${i+1}セット目 · ${i<2?'右':'左'}手の2x`:p.base==='shower'?'短い2xの投げ方':'ハイと同時に投げる2x';
       const label=el('label',title),select=el('select');label.className='pass-card';label.dataset.hand=p.base==='double'?(i<2?'right':'left'):p.base==='box'?(i?'right':'left'):'either';
@@ -51,12 +57,38 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
       const remove=button('削除',()=>{if(editingBox===b)editingBox=null;doc.blocks.splice(i,1);selected=Math.min(selected,doc.blocks.length-1);persist();update();});remove.disabled=doc.blocks.length===1;remove.setAttribute('aria-label',`${i+1}番目の技を削除`);
       const actions=el('div');actions.className='route-card-actions';actions.append(up,down,copy,remove);li.append(pick,detail,actions);$('route-blocks').append(li);
     });
-    $('route-summary').textContent=summary();$('route-list-title').textContent=`技の並び · ${doc.blocks.length}技（${selected+1}番目を編集中）`;$('route-add').disabled=doc.blocks.length>=16;onChange?.(false);
+    $('route-summary').textContent=summary();$('route-list-title').textContent=`技の並び · ${doc.blocks.length}技`;$('route-add').disabled=doc.blocks.length>=16;onChange?.(false);
   }
-  function changeBase(base){const p=doc.blocks[selected].parts;if(editingBox===doc.blocks[selected])editingBox=null;p.base=base;
+  function changeBase(base){const p=doc.blocks[selected].parts;if(p.base===base)return;if(editingBox===doc.blocks[selected])editingBox=null;p.base=base;
     p.passes=Array.from({length:p.base==='box'?2:p.base==='double'?4:1},(_,i)=>p.passes[i]||p.passes[0]||'normal');persist();update();}
-  $('route-base').onchange=()=>changeBase($('route-base').value);
-  for(const [base,name] of Object.entries(names)){const b=button(name,()=>{if(!isBusy())changeBase(base);});b.dataset.base=base;$('route-base-choices').append(b);}
+  function openPicker(action){
+    if(isBusy()||(action==='add'&&doc.blocks.length>=16))return;
+    pickerAction=action;const adding=action==='add';
+    $('route-picker-title').textContent=adding?'次に追加する技を選ぶ':'ベースを変更';
+    $('route-picker-hint').textContent=adding?`${doc.blocks.length+1}番目の技として、並びの末尾に追加します。`:`${selected+1}番目の${names[doc.blocks[selected].parts.base]}を変更します。`;
+    $('route-base-choices').replaceChildren();
+    for(const base of ['high-low','shower','double','box']){
+      const name=names[base];
+      const info=baseInfo[base],current=!adding&&doc.blocks[selected].parts.base===base;
+      const b=button('',()=>chooseBase(base));b.dataset.base=base;b.className='base-choice';
+      const title=el('strong',name),ja=el('span',info.ja),detail=el('span',info.detail),fields=el('small',info.fields),actionLabel=el('span',current?'選択中':adding?'追加':'変更');
+      ja.className='base-japanese';detail.className='base-description';actionLabel.className='base-choice-action';
+      b.setAttribute('aria-label',`${name}（${info.ja}）${current?'・選択中':adding?'を追加':'に変更'}`);if(current)b.setAttribute('aria-current','true');
+      b.append(title,ja,detail,fields,actionLabel);$('route-base-choices').append(b);
+    }
+    $('route-base-picker').showModal();
+  }
+  function chooseBase(base){
+    if(isBusy())return;
+    if(pickerAction==='add'){
+      if(doc.blocks.length>=16)return;
+      doc.blocks.push({parts:{...clone(defaults),base,passes:Array(base==='box'?2:base==='double'?4:1).fill('normal')},repeats:1});
+      selected=doc.blocks.length-1;persist();update();
+    }else changeBase(base);
+    $('route-base-picker').close();showEditor();$('route-change-base').focus({preventScroll:true});
+    $('route-selection-status').textContent=`${selected+1}番目の技：${names[base]}`;
+  }
+  $('route-change-base').onclick=()=>openPicker('change');
   $('route-box-edit').onclick=()=>{if(isBusy())return;editingBox=doc.blocks[selected];onEditBox(clone(editingBox.parts));};
   function showEditor(){if(compact()){$('route-list').open=false;$('connect-panel').scrollTop=0;}}
   for(const [id,prop,convert] of [['columns','columns',String],['high-hand','highHand',Number],['alternate','alternateHigh',v=>v==='true'],['swap','swap',String],['high-path','highPath',String]])
@@ -64,7 +96,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
   $('route-repeats').onchange=()=>{if(!$('route-repeats').reportValidity())return;doc.blocks[selected].repeats=Number($('route-repeats').value);persist();update();};
   $('route-tempo').onchange=()=>{if(!$('route-tempo').reportValidity())return;doc.beatDuration=Number($('route-tempo').value)/2;persist();update();};
   $('route-mirror').onchange=()=>{doc.mirror=$('route-mirror').checked;persist();};
-  $('route-add').onclick=()=>{doc.blocks.push({parts:{...clone(defaults),base:'high-low',passes:['normal']},repeats:1});selected=doc.blocks.length-1;persist();update();showEditor();};
+  $('route-add').onclick=()=>openPicker('add');
   $('route-save').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(doc,null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download='juggling-route.json';a.click();URL.revokeObjectURL(url);};
   $('route-load').onchange=async()=>{try{const next=JSON.parse(await $('route-load').files[0].text());VRMJuggler.compileSyncBaseRoute(next);doc=next;selected=0;editingBox=null;persist();update();$('route-status').textContent='読み込みました。「この並びを再生」で反映します。';}catch(e){$('route-status').textContent=e.message;}finally{$('route-load').value='';}};
   async function play(){if(isBusy())return;try{const r=VRMJuggler.compileSyncBaseRoute(doc);persist();await onPlay(r,clone(doc));}catch(e){$('route-status').textContent=e.message;}}

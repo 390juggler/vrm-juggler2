@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-17",
+  "scope": "Separate changing a base from adding a new route block",
+  "syntaxCheck": "passed",
+  "existingUiTests": {"passed": 19, "failed": 0},
+  "browser": {
+    "environment": "In-app browser viewport overrides, not physical phone hardware",
+    "viewports": [[320,568],[390,844],[844,390],[1280,800]],
+    "checks": [
+      "Cancel leaves five existing route blocks and Box settings unchanged",
+      "Add Shower appends block 6 with one pass selector",
+      "Change block 6 to Double Box keeps block count, position and repeat count 2",
+      "Double Box exposes four pass selectors",
+      "Choosing the already selected Double Box retains independent pass choices",
+      "Escape cancels add dialog and restores focus to Add button",
+      "Test block restored after reload and removed using route UI",
+      "320px cards retain full content height and have no horizontal overflow",
+      "Cancel remains within viewport at 320x568 and 844x390",
+      "Desktop dialog is centered and contained in 1280x800 viewport",
+      "No captured browser console errors"
+    ],
+    "screenshot": "base-picker-mobile.png"
+  },
+  "compatibility": "Saved route schema and movement generation unchanged"
+}

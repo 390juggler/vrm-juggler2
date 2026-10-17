@@ -107,9 +107,9 @@
     </section>
     <section id="connect-panel" role="tabpanel" aria-labelledby="mode-connect" hidden>
       <section id="route-builder">
-        <details id="route-list" open><summary id="route-list-title">技の並び</summary><ol id="route-blocks" aria-label="技の並び"></ol><button id="route-add">＋ 次の技を追加</button><p class="hint">最後の技から先頭へ戻って繰り返します。</p></details>
+        <div class="route-navigation"><details id="route-list" open><summary id="route-list-title">技の並び</summary><ol id="route-blocks" aria-label="技の並び"></ol><p class="hint">最後の技から先頭へ戻って繰り返します。</p></details><button id="route-add" aria-haspopup="dialog">＋ 技を追加</button></div>
         <fieldset id="route-editor"><legend id="route-edit-heading">1番目の技を編集</legend>
-          <div id="route-base-choices" class="base-choices" role="group" aria-label="ベースパターン"></div><label hidden>ベース<select id="route-base"><option value="box">Box</option><option value="high-low">High-Low</option><option value="shower">Shower</option><option value="double">Double Box</option></select></label>
+          <div class="route-current-base"><div><strong id="route-base-name"></strong><small id="route-base-hint"></small></div><button id="route-change-base" aria-haspopup="dialog">ベースを変更</button></div>
           <p id="route-phase-guide" class="phase-guide"></p><div id="route-box-note" class="box-route-note" hidden><p id="route-box-summary"></p><button id="route-box-edit">基本モードでこのBoxを編集 →</button></div><div id="route-settings">
           <h3 id="route-layout-heading" class="form-step">1　高い球の動き</h3><label id="route-columns-label">コラムの配置<select id="route-columns"><option value="normal">Normal</option><option value="switched">Switched</option><option value="crossed">Cross / 左腕が上</option><option value="crossed-right">Cross / 右腕が上</option><option value="crossed-alternate">Cross / 上下交代</option><option value="underarm">Underarm</option></select></label>
           <div id="route-high-settings"><label><span id="route-hand-caption">ハイを投げる手</span><select id="route-high-hand"><option value="0">左手</option><option value="1">右手</option></select></label><label id="route-alternate-label">ハイの担当<select id="route-alternate"><option value="true">左右交代</option><option value="false">選んだ手に固定</option></select></label></div>
@@ -122,6 +122,11 @@
         <details id="route-storage"><summary>テンポ・保存・読み込み</summary><label>1セットの秒数（全ての技で共通）<input id="route-tempo" type="number" min="0.24" max="0.8" step="0.01" value="0.41"></label><label><input id="route-mirror" type="checkbox">全体を左右反転</label><button id="route-save">この並びをJSON保存</button><label>並びのJSONを読み込む<input id="route-load" type="file" accept=".json,application/json"></label></details>
         <p class="hint">Normal：下→下 ／ Shuffle：上→下 ／ Reverse Shuffle：下→上 ／ Inverted：上→上。手前・奥は2xの進行順です。境目の投げだけ、次の技へ向かう移行軌道になります。</p>
       </section>
+      <dialog id="route-base-picker" aria-labelledby="route-picker-title" aria-describedby="route-picker-hint">
+        <header><h2 id="route-picker-title">ベースを選ぶ</h2><p id="route-picker-hint"></p></header>
+        <div id="route-base-choices" aria-label="ベースパターン"></div>
+        <form method="dialog"><button>キャンセル</button></form>
+      </dialog>
       <details id="legacy-connect"><summary>登録済みの接続・1セットずつの詳細操作</summary>
       <section id="segment-builder">
         <section class="pattern-overview" aria-label="技の順番">
