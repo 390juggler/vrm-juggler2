@@ -13,7 +13,7 @@ https://390juggler.github.io/vrm-juggler2/ (GitHub Pages。master ブランチ�
 
 ## 同期パターンを組んでつなぐ
 
-[つなぐモード](https://390juggler.github.io/vrm-juggler2/sync-compose.html)で、Box・High-Low・Shower・Double Boxと2xを組み合わせて再生できます。技を並べると、境目の投球を次の技の投球位置へ合わせます。[使い方と定義](docs/sync-compose.md)。
+[パターン編集](https://390juggler.github.io/vrm-juggler2/sync-compose.html)の左タブ「基本モード」でBoxを作り、右タブ「つなぐモード」でHigh-Low・Shower・Double Boxや技の並びを編集できます。スマホでは上にプレビュー、下にスクロールする編集欄と固定の再生ボタンを表示します。技を並べると、境目の投球を次の技の投球位置へ合わせます。[使い方と定義](docs/sync-compose.md)。
 
 ローカルでは依存関係のインストール後に `start-sync-box.cmd` を実行し、表示されたURLを開きます。基本のサイトスワップ・リングなどの小道具は [ベース画面](https://390juggler.github.io/vrm-juggler2/) で選べます。
 

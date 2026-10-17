@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-17",
+  "scope": "Box basic tab and responsive base-route editing UI",
+  "automated": {
+    "typecheck": "passed",
+    "javascriptSyntax": "passed",
+    "syncComposeUiTests": {"passed": 19, "failed": 0}
+  },
+  "browser": {
+    "environment": "In-app browser with viewport overrides; no physical phone test",
+    "viewports": [[320, 568], [390, 844], [844, 390], [1280, 800]],
+    "checks": [
+      "Opens on left Basic tab, with existing Box draft restored",
+      "Box edited from route returns to same position without adding a block",
+      "Box update preserves repeat count of 3",
+      "High-Low high-hand, alternation, short pass and swap edit independently",
+      "Double Box third pass changed without changing the other three",
+      "Shower exposes high-hand and one short pass",
+      "Base buttons switch between one and four pass controls",
+      "Add, duplicate, move forward, move backward and delete operate correctly",
+      "Saved five-block route and modified selections restored after reload",
+      "Five-block route plays, including generated boundary throws",
+      "Fixed footer cancels generation while retaining selected settings",
+      "Preview expansion and playback-settings disclosure open and close",
+      "No page or active editor horizontal overflow at 320px",
+      "Landscape 844px uses side-by-side preview/editor with 202px editing viewport",
+      "No duplicate DOM ids or captured browser console errors"
+    ],
+    "screenshots": ["mobile-compose-box.png", "mobile-compose-double.png"]
+  },
+  "motionChanges": "None; existing movement generation and saved route schema preserved"
+}

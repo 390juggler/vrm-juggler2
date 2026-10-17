@@ -14,7 +14,7 @@
   let planningAbort=null;
   const ui=globalThis.SyncComposeUI;
   let routeBuilder;
-  let mode='connect',basicCheck=null,previewKind=null,routeDocument=null,partsApplying=false,connectionState={sources:0,count:0,closed:false,canClose:false};
+  let mode='basic',basicCheck=null,previewKind=null,routeDocument=null,partsApplying=false,connectionState={sources:0,count:0,closed:false,canClose:false};
   const templateItems=examples.map((s,i)=>({value:`example:${i}`,name:s.name,group:s.name.includes(' → ')?'接続の見本':VRMJuggler.analyzeSyncSequence(s).balls===4?'4球の見本':'3球の見本'}));
   const el=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
   const button=(text,fn,title)=>{const b=el('button',text);b.type='button';b.onclick=fn;if(title)b.title=title;return b;};
@@ -32,7 +32,7 @@
     mode=next==='connect'?'connect':'basic';
     for(const id of ['basic','connect']){const active=id===mode;$(`${id}-panel`).hidden=!active;$(`mode-${id}`).setAttribute('aria-selected',String(active));$(`mode-${id}`).tabIndex=active?0:-1;}
     if(previous!==mode)$(`${mode}-panel`).scrollTop=0;
-    if(focus){$('mode-'+mode).focus();$('mode-'+mode).scrollIntoView({block:'nearest'});}
+    if(focus){$('mode-'+mode).focus({preventScroll:true});}
     refreshPreviewNotice();refreshModeAction();
   }
   for(const id of ['basic','connect']){
@@ -41,14 +41,25 @@
   }
   $('connect-to-basic').onclick=()=>switchMode('basic');
   $('connect-next-pattern').onclick=()=>switchMode('basic');
-  $('quick-connect').onclick=()=>$('segment-register').click();
+  $('quick-connect').onclick=()=>{
+    if(busy||!initialized)return;
+    try{routeBuilder.addBox({base:'box',columns:$('parts-columns').value,passes:[$('parts-left').value,$('parts-right').value],highHand:0,alternateHigh:true,swap:'alternate',highPath:'vertical'});switchMode('connect');}
+    catch(e){$('box-route-context').hidden=false;$('box-route-context').textContent=e.message;}
+  };
+  $('preview-settings').onclick=()=>{const opened=document.querySelector('.transport').classList.toggle('settings-open');$('preview-settings').setAttribute('aria-expanded',String(opened));};
+  $('preview-size').onclick=()=>{const expanded=document.body.classList.toggle('preview-expanded');$('preview-size').setAttribute('aria-expanded',String(expanded));$('preview-size').textContent=expanded?'縮小':'拡大';$('preview-size').setAttribute('aria-label',expanded?'プレビューを小さくする':'プレビューを大きくする');};
   function refreshModeAction(){
     const action=$('mode-action');action.disabled=busy||!initialized;
-    $('quick-connect').hidden=mode!=='basic'||currentCheck()?.status!=='passed';$('quick-connect').disabled=busy||!initialized;
+    $('quick-connect').hidden=mode!=='basic'||$('parts-roles').value!=='alternate';
+    const editIndex=routeBuilder?.boxEditIndex()??-1;
+    $('quick-connect').textContent=editIndex>=0?'並びのBoxを更新':'＋ 並びへ追加';
+    $('box-route-context').hidden=editIndex<0;$('box-route-context').textContent=editIndex<0?'':`${editIndex+1}番目のBoxを編集中。下の「並びのBoxを更新」で反映します。`;$('quick-connect').disabled=busy||!initialized;
     if(mode==='basic'){action.textContent=busy?'動きを生成中…':'▶ 再生';action.disabled ||= !analysis?.ok;$('mode-action-status').textContent=currentCheck()?.status==='failed'?'受け渡しOK・動作は再現待ち':analysis?.ok?`${analysis.balls}球 · ${analysis.movementSets}セットで1周`:$('basic-verdict').textContent;}
     else{action.textContent=busy?'動きを生成中…':'▶ この並びを再生';$('mode-action-status').textContent=routeBuilder?.summary()||'ベースと2xを選ぶ';}
+    if(busy&&planningAbort){action.disabled=false;action.textContent='生成を中止';$('mode-action-status').textContent='動きを生成しています…';}
   }
   $('mode-action').onclick=()=>{
+    if(busy){planningAbort?.abort();return;}
     if(mode==='basic'){$('apply').click();return;}
     routeBuilder.play();
   };
@@ -436,7 +447,7 @@
   }
   async function apply(){
     if(busy||!initialized)return;busy=true;clearFailure();basicCheck={key:`${analysis.canonical}:${$('mirror').checked}`,status:'checking'};analyze();$('draft-status').textContent='球と腕を検査しています…';
-    planningAbort=new AbortController();
+    planningAbort=new AbortController();refreshModeAction();
     // Persist before the expensive work starts, including an immediately
     // preceding selection whose debounced save has not fired yet.
     try{localStorage.setItem(storageKey,JSON.stringify(draft));}catch{}
@@ -846,7 +857,7 @@
   refreshTemplateStart();render();app.setSpeed(.5);app.setBodyMotion(0);app.setCameraView('close');
   async function applyBaseRoute(route,document){
     if(busy||!initialized)return;busy=true;refreshModeAction();
-    planningAbort=new AbortController();$('route-cancel').hidden=false;
+    planningAbort=new AbortController();refreshModeAction();$('route-cancel').hidden=false;
     const controls=[...$('route-builder').querySelectorAll('input,select,button')].filter(e=>e.id!=='route-cancel').map(e=>[e,e.disabled]);
     controls.forEach(([e])=>e.disabled=true);$('route-status').textContent='境目の投げと腕の運びを生成しています…';
     try{
@@ -865,8 +876,12 @@
     finally{planningAbort=null;controls.forEach(([e,disabled])=>e.disabled=disabled);$('route-cancel').hidden=true;busy=false;refreshModeAction();}
   }
   $('route-cancel').onclick=()=>planningAbort?.abort();
-  routeBuilder=createSyncRouteBuilder({onPlay:applyBaseRoute,onChange:changed=>{refreshModeAction();if(changed&&previewKind==='connect'&&!busy){$('preview-difference').textContent='変更は「この並びを再生」で反映します。';$('preview-difference').hidden=false;}},isBusy:()=>busy||!initialized});
-  switchMode(params.has('preset')||params.has('example')?'basic':'connect',false);
+  routeBuilder=createSyncRouteBuilder({onPlay:applyBaseRoute,onEditBox:parts=>{
+    $('parts-roles').value='alternate';$('parts-columns').value=parts.columns;
+    if(parts.columns.startsWith('crossed'))$('parts-cross-order').value=parts.columns;
+    $('parts-left').value=parts.passes[0];$('parts-right').value=parts.passes[1];chooseParts();switchMode('basic');
+  },onChange:changed=>{refreshModeAction();if(changed&&previewKind==='connect'&&!busy){$('preview-difference').textContent='変更は「この並びを再生」で反映します。';$('preview-difference').hidden=false;}},isBusy:()=>busy||!initialized});
+  switchMode('basic',false);
   function tick(){
     const s=app.getMotionSnapshot();
     if(!initialized&&s.modelReady){initialized=true;if(mode==='connect')routeBuilder.play();else apply();}
