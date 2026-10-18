@@ -82,7 +82,7 @@ export const SYNC_BOX_PRESETS: SyncBoxConfig[] = [
 for (const switched of [false,true]) {
   for (const [style,label] of [['shuffle','Slam'],['reverse','Reverse Slam'],['inverted','Inverted switched']] as const)
     if (switched) SYNC_BOX_PRESETS.push(preset('switched-'+style,label,[style],'反対の手がコラムを担当する'+label+'。',{columns:'switched'}));
-  for (const [lane,label] of [['outside','外側'],['center','中央'],['cross-side','反対側']] as const)
+  for (const [lane,label] of [['outside','Inside（投げ手と同じ側の外側）'],['center','Center（2本の縦軌道の間）'],['cross-side','Outside（投げ手と反対側の外側）']] as const)
     for (const [style,direction] of [['vertical-up','上投げ'],['vertical-down','下投げ']] as const)
       if(switched || lane!=='center') SYNC_BOX_PRESETS.push(preset(`${switched?'switched-':''}${lane}-${style}`,`${switched?'Switched / ':''}${label}の縦2x・${direction}`,[style],`${label}を通る縦2x。投げと捕球の場所を同じ縦線上に置く。`,{columns:switched?'switched':'normal',shortMotions:[{lane}],experimental:true}));
 }
@@ -381,7 +381,7 @@ export function buildSyncBoxTracks(source: any, transform: SpaceTransform, confi
     }
     // A named vertical 2x keeps its lane and height. Only an arcing 2x rises
     // over the under arm to a central catch.
-    if (short && config.columns === 'underarm' && !style.startsWith('vertical-')) { start.y+=.24*scale;end.y+=.24*scale;end.x=side(ch)*.025*scale; }
+    if (short && config.columns === 'underarm' && !style.startsWith('vertical-')) { start.y+=.24*scale;end.y+=.24*scale;end.x=side(ch)*.025*scale*(options.lateral?-1:1); }
     // Underarm is an event constraint: it can apply to release, catch, or both.
     if (short && motion.release.relation==='underarm' && !handMotion?.definition) { start.x=-side(th)*.18*scale;start.y-=.16*scale;start.z=-.18*scale+placement[1]; }
     if (short && motion.catch.relation==='underarm' && !handMotion?.definition) { end.x=-side(ch)*.18*scale;end.y-=.16*scale;end.z=-.18*scale+placement[1]; }

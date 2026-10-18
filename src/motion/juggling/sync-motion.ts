@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 export type ShortStyle = 'normal' | 'shuffle' | 'reverse' | 'inverted' | 'vertical-up' | 'vertical-down';
+/** Saved IDs: outside is displayed as Inside (own side), cross-side as Outside (opposite side). */
 export type ShortLane = 'center' | 'outside' | 'cross-side';
 export type ArmOrder = 'none' | 'left-over' | 'right-over' | 'alternate';
 export type ArmRelation = 'free' | 'underarm';

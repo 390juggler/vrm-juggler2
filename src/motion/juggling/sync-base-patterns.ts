@@ -25,7 +25,7 @@ export function parseShortPart(key:string):{style:ShortStyle;options:ShortMotion
     options:{ballOrder:'style',lateral:true},name:labels[key.slice(8)]+' Lateral'};
   const vertical=/^(outside|center|cross-side)-vertical-(up|down)$/.exec(key);
   if(vertical)return {style:('vertical-'+vertical[2]) as ShortStyle,options:{lane:vertical[1] as ShortMotionOptions['lane']},
-    name:`${vertical[1]==='cross-side'?'Cross side':vertical[1]==='center'?'Center':'Outside'} column ${vertical[2]==='up'?'Up':'Down'}`};
+    name:`${vertical[1]==='cross-side'?'Outside':vertical[1]==='center'?'Center':'Inside'} column ${vertical[2]==='up'?'Up':'Down'}`};
   throw new Error('2xの投げ方を選んでください。');
 }
 const columnName:Record<BasicColumnStyle,string>={normal:'Normal',switched:'Switched',crossed:'Cross左上','crossed-right':'Cross右上','crossed-alternate':'Cross上下交代',underarm:'Underarm'};

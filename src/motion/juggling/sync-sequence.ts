@@ -368,9 +368,10 @@ export function sequenceFromPreset(id:string):SyncSequence{
 }
 
 export type BasicShortStyle='normal'|'shuffle'|'reverse'|'inverted';
+export type DoubleShortStyle=BasicShortStyle|`lateral-${BasicShortStyle}`;
 export type BasicColumnStyle='normal'|'switched'|'crossed'|'crossed-right'|'crossed-alternate'|'underarm';
 export interface DoubleSequenceParts {
-  crossSet:BasicShortStyle;selfSet:BasicShortStyle;
+  crossSet:DoubleShortStyle;selfSet:DoubleShortStyle;
   columns?:BasicColumnStyle;
   crossReleaseGrip?:HandGrip;selfReleaseGrip?:HandGrip;
   crossCatchGrip?:HandGrip;selfCatchGrip?:HandGrip;
@@ -381,7 +382,12 @@ export function sequenceFromDoubleParts(parts:DoubleSequenceParts):SyncSequence{
 export function sequenceWithDoubleParts(source:SyncSequence,parts:DoubleSequenceParts):SyncSequence{return applyDoubleParts(parts,source);}
 function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSequence{
   const labels={normal:'下→下',shuffle:'上→下',reverse:'下→上',inverted:'上→上'};
-  if(!parts||!Object.prototype.hasOwnProperty.call(labels,parts.crossSet)||!Object.prototype.hasOwnProperty.call(labels,parts.selfSet)||
+  const parse=(key:string)=>{
+    const lateral=typeof key==='string'&&key.startsWith('lateral-'),style=lateral?key.slice(8):key;
+    return Object.prototype.hasOwnProperty.call(labels,style)?{style:style as BasicShortStyle,lateral}:undefined;
+  };
+  const cross=parts&&parse(parts.crossSet),selfPass=parts&&parse(parts.selfSet);
+  if(!parts||!cross||!selfPass||
     [parts.crossReleaseGrip,parts.selfReleaseGrip,parts.crossCatchGrip,parts.selfCatchGrip].some(g=>g!==undefined&&g!=='underhand'&&g!=='overhand'))
     throw new Error('Doubleの4x側とコラム4側の2xを確認してください。');
   if(source&&(source.sets.length!==4||!source.sets.some(row=>row.throws.includes('4x'))||!source.sets.some(row=>row.throws.includes('4'))||source.sets.some(row=>{
@@ -389,28 +395,43 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
   })))throw new Error('編集元のDoubleは4または4xと2xの4セットで指定してください。');
   const s=source?structuredClone(source):sequenceFromPreset('double-box');
   s.sets.forEach(row=>{
-    const hand=row.throws.indexOf('2x'),self=row.throws[1-hand]==='4',style=self?parts.selfSet:parts.crossSet;
+    const hand=row.throws.indexOf('2x'),self=row.throws[1-hand]==='4',{style,lateral}=self?selfPass:cross;
     const releaseGrip=self?parts.selfReleaseGrip:parts.crossReleaseGrip,catchGrip=self?parts.selfCatchGrip:parts.crossCatchGrip;
     if(source){
       const current=row.motion.hands?.[hand],oldStyle=current?.style||row.motion.short?.[0]||'normal';
-      if(style!==oldStyle){
-        const options=structuredClone(current?.shortMotion||row.motion.shortMotions?.[0]||{});
+      const options=structuredClone(current?.shortMotion||row.motion.shortMotions?.[0]||{});
+      const flip=lateral!==!!options.lateral;
+      if(style!==oldStyle||flip){
         const authored=current?.definition||options.definition;
         if(authored){
           // A new height family must retain authored lanes (e.g. a centre
           // column). Replace its height/passage rule, not the whole base.
           const d=sequenceHandDefinition(row,hand),shape=shortDefinition(style,{},false,false);
-          d.release.y=shape.release.y;d.catch.y=shape.catch.y;d.passage={at:.5};
-          delete d.catchAtApex;delete d.flightFraction;
+          if(style!==oldStyle){d.release.y=shape.release.y;d.catch.y=shape.catch.y;d.passage={at:.5};delete d.catchAtApex;delete d.flightFraction;}
+          // Reflect only the short throw. A centre endpoint stays at zero,
+          // and the authored 4/4x lanes are never replaced by a generic Box.
+          if(flip){
+            d.release.x*=-1;d.catch.x*=-1;
+            if(d.passage.point)d.passage.point[0]*=-1;
+            for(const carry of [d.carry,...(d.emptyReturn?[d.emptyReturn]:[])]){
+              if(carry.route==='inside')carry.route='outside';else if(carry.route==='outside')carry.route='inside';
+              if(carry.offset)carry.offset[0]*=-1;
+              for(const knot of [carry.via||[],...(carry.detours||[])].flat())knot.offset[0]*=-1;
+            }
+          }
           options.definition=d;
         }
+        if(lateral)options.lateral=true;else delete options.lateral;
         options.ballOrder='style';
         row.motion.hands||=[];row.motion.hands[hand]={...current,style,shortMotion:options};
         delete row.motion.hands[hand]!.definition;
       }
       // Clearing a grip selection returns only this 2x to its automatic grip.
       if(row.motion.hands?.[hand]){delete row.motion.hands[hand]!.releaseGrip;delete row.motion.hands[hand]!.catchGrip;}
-    }else row.motion.short=[style];
+    }else{
+      row.motion.short=[style];
+      if(lateral)row.motion.shortMotions=[{lateral:true,ballOrder:'style'}];
+    }
     if(releaseGrip||catchGrip){
       row.motion.hands||=[];
       row.motion.hands[hand]={...row.motion.hands[hand],...(releaseGrip?{releaseGrip}:{}),...(catchGrip?{catchGrip}:{})};
@@ -418,7 +439,8 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
   });
   const columnLabel={normal:'Normal',switched:'Switched',crossed:'Cross 左上','crossed-right':'Cross 右上','crossed-alternate':'Cross 上下交代',underarm:'Underarm'};
   const layout=parts.columns&&parts.columns!=='normal'?`｜配置 ${columnLabel[parts.columns]}`:'';
-  s.name=`${source?source.name.split('｜配置 ')[0].split('｜2x ')[0]+layout+'｜2x ':'Double'+layout+' / '}4xと組む2x ${labels[parts.crossSet]}・4と組む2x ${labels[parts.selfSet]}`;
+  const passName=(p:NonNullable<typeof cross>)=>labels[p.style]+(p.lateral?' Lateral':'');
+  s.name=`${source?source.name.split('｜配置 ')[0].split('｜2x ')[0]+layout+'｜2x ':'Double'+layout+' / '}4xと組む2x ${passName(cross)}・4と組む2x ${passName(selfPass)}`;
   if(parts.crossReleaseGrip||parts.selfReleaseGrip){
     const gripLabel=(g?:HandGrip)=>g==='underhand'?'下から':g==='overhand'?'クロー':'標準';
     s.name+=` / 手向き ${gripLabel(parts.crossReleaseGrip)}・${gripLabel(parts.selfReleaseGrip)}`;
@@ -452,7 +474,7 @@ export function sequenceWithDoubleColumns(source:SyncSequence,columns:BasicColum
       // Across-body lanes use a narrower span, shared by both Double bases.
       // The centre stays at zero and undoing the assignment restores the span.
       const span=(across:boolean)=>across?-.6:1;
-      // Named vertical 2x lanes (Outside/Center/Cross side) are anatomical.
+      // Named vertical 2x lanes (Inside/Center/Outside) are anatomical.
       const ratio=vertical?1:span(short?crossed:newSwitched)/span(short?oldCross:oldSwitched);
       if(ratio!==1){
         d.release.x*=ratio;d.catch.x*=ratio;

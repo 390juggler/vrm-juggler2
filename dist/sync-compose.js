@@ -304,7 +304,7 @@
           }
           if(['2x','2T'].includes(row.throws[h])){
             const o=row.motion.hands?.[h]?.shortMotion||row.motion.shortMotions?.[0]||{};
-            const lane=select(more,'縦の短い投げが通る場所',[['center','中央'],['outside','外側'],['cross-side','反対側']],o.lane||'center',v=>{options(row,h).lane=v;modified();});
+            const lane=select(more,'縦の短い投げが通る場所',[['center','Center（2本の縦軌道の間）'],['outside','Inside（投げ手と同じ側の外側）'],['cross-side','Outside（投げ手と反対側の外側）']],o.lane||'center',v=>{options(row,h).lane=v;modified();});
             lane.disabled=!(row.motion.hands?.[h]?.style||row.motion.short?.[0]||'normal').startsWith('vertical-');
             select(more,'捕ってから運ぶ経路',[['auto','動作に合わせる'],...routes],row.motion.hands?.[h]?.definition?current.carry.route:o.carry||'auto',v=>{
               const m=hand(row,h);
@@ -317,7 +317,7 @@
               }else{const op=options(row,h);if(v==='auto')delete op.carry;else op.carry=v;}
               modified();
             });
-            const l=el('label'),c=el('input');c.type='checkbox';c.checked=!!o.lateral;c.onchange=()=>{options(row,h).lateral=c.checked;modified();};l.append(c,document.createTextNode('体の反対側から投げる / lateral'));more.append(l);
+            const l=el('label'),c=el('input');c.type='checkbox';c.checked=!!o.lateral;c.onchange=()=>{options(row,h).lateral=c.checked;modified();};l.append(c,document.createTextNode('投げ・捕りの左右を反転 / Lateral'));more.append(l);
           }
           if(row.motion.arrangement!=='inline')positionEditor(more,row,h);
           p.append(more);
@@ -381,7 +381,12 @@
   const basicStyles=styles.slice(0,4),heightLabels=['Normal','Shuffle','Reverse Shuffle','Inverted'],partsCells=[],partsChecks=new Map();
   const partsCheckKey=canonical=>`${$('mirror').checked?'mirror:':'normal:'}${canonical}`;
   const partsKnownNames=new Map([...presets.map(p=>VRMJuggler.syncSequenceFromPreset(p.id)),...examples].map(s=>[VRMJuggler.analyzeSyncSequence(s).canonical,s.name]));
-  for(const id of ['parts-double-cross','parts-double-self'])basicStyles.forEach(([value,label])=>$(id).add(new Option(label,value)));
+  for(const id of ['parts-double-cross','parts-double-self']){
+    for(const lateral of [false,true]){
+      const group=el('optgroup');group.label=lateral?'Lateral — 投げ・捕りの左右を反転':'基本の2x';
+      ui.shortChoices.filter(c=>!c.style.startsWith('vertical-')&&!!c.options.lateral===lateral).forEach(c=>group.append(new Option(c.name,c.id)));$(id).append(group);
+    }
+  }
   for(const id of ['parts-left','parts-right','parts-high-low-pass']){
     for(const group of [...new Set(ui.shortChoices.map(c=>c.group))]){const optgroup=el('optgroup');optgroup.label=group;ui.shortChoices.filter(c=>c.group===group).forEach(c=>optgroup.append(new Option(c.name,c.id)));$(id).append(optgroup);}
   }
@@ -430,6 +435,7 @@
     $('column-choices').parentElement.hidden=fixed;
     for(const pick of $('column-choices').children)pick.setAttribute('aria-pressed',String(pick.dataset.column===(crossed?'crossed':$('parts-columns').value)));
     for(const side of ['left','right'])$('parts-'+side+'-hint').textContent=ui.shortChoices.find(c=>c.id===$('parts-'+side).value)?.hint||'';
+    for(const part of ['cross','self'])$('parts-double-'+part+'-hint').textContent=ui.shortChoices.find(c=>c.id===$('parts-double-'+part).value)?.hint||'';
     $('parts-left-label').hidden=four||highLow||double||fixed&&hand!==0;$('parts-right-label').hidden=four||highLow||double||fixed&&hand!==1;$('parts-matrix').hidden=four||highLow||fixed||double;$('parts-matrix').closest('details').hidden=four||highLow||fixed||double;
     $('parts-four-passes').hidden=!four;$('parts-high-low-settings').hidden=!highLow;$('parts-high-low-pass-label').hidden=!highLow;
     for(let i=0;i<4;i++){$('parts-four-hint-'+i).textContent=ui.shortChoices.find(c=>c.id===$('parts-four-'+i).value)?.hint||'';if(four){const label=`${i+1}セット目 · ${draft.sets[i].throws.indexOf('2x')?'右':'左'}手の2x`;$('parts-four-'+i).parentElement.firstChild.textContent=label;$('parts-four-'+i).setAttribute('aria-label',label);}}
@@ -456,7 +462,7 @@
     $('parts-roles').value=isDouble?'double':rows.every(r=>r.throws.includes('4x'))?'fixed':'alternate';
     for(const h of [0,1]){const row=rows.find(r=>r.throws[h]==='2x');if(row&&ui.shortChoices.some(c=>c.id===ui.shortKey(row,h)))$('parts-'+(h?'right':'left')).value=ui.shortKey(row,h);}
     if($('parts-roles').value==='fixed')$('parts-hand').value=String(rows[0].throws.indexOf('2x'));
-    if(isDouble)for(const [high,key] of [['4x','cross'],['4','self']]){const row=rows.find(r=>r.throws.includes(high)),h=row.throws.indexOf('2x');$('parts-double-'+key).value=row.motion.hands?.[h]?.style||row.motion.short?.[0]||'normal';$('parts-double-'+key+'-grip').value=row.motion.hands?.[h]?.releaseGrip||'';$('parts-double-'+key+'-catch').value=row.motion.hands?.[h]?.catchGrip||'';}
+    if(isDouble)for(const [high,key] of [['4x','cross'],['4','self']]){const row=rows.find(r=>r.throws.includes(high)),h=row.throws.indexOf('2x');$('parts-double-'+key).value=ui.shortKey(row,h);$('parts-double-'+key+'-grip').value=row.motion.hands?.[h]?.releaseGrip||'';$('parts-double-'+key+'-catch').value=row.motion.hands?.[h]?.catchGrip||'';}
     if($('basic-pattern').value==='box-four')rows.forEach((row,i)=>$('parts-four-'+i).value=ui.shortKey(row,row.throws.indexOf('2x')));
     if($('basic-pattern').value==='high-low'){
       const highs=rows.filter(r=>r.throws.some(t=>/^6x?$/.test(t))),first=highs[0],h=first.throws.findIndex(t=>/^6x?$/.test(t));

@@ -3,11 +3,12 @@ globalThis.SyncComposeUI = (() => {
   const height = {normal:'手前の球の下 → 奥の球の下',shuffle:'手前の球の上 → 奥の球の下',reverse:'手前の球の下 → 奥の球の上',inverted:'手前の球の上 → 奥の球の上','vertical-up':'縦の上投げ','vertical-down':'縦の下投げ'};
   const styleNames={normal:'Normal',shuffle:'Shuffle',reverse:'Reverse Shuffle',inverted:'Inverted','vertical-up':'Up','vertical-down':'Down'};
   const columns = {normal:'Normal',switched:'Switched',underarm:'Underarm',crossed:'Cross'};
-  const laneNames={outside:'Outside',center:'Center','cross-side':'Cross side'};
+  // Keep saved lane IDs and fitted tracks; visible names follow the thrower's side.
+  const laneNames={outside:'Inside',center:'Center','cross-side':'Outside'};
   const shortChoices=[
     ...['normal','shuffle','reverse','inverted'].map(style=>({id:style,style,name:styleNames[style],group:'基本の2x',hint:height[style],options:{}})),
-    ...['normal','shuffle','reverse','inverted'].map(style=>({id:'lateral-'+style,style,name:styleNames[style]+' Lateral',group:'Lateral — 体の反対側から',hint:height[style]+'・反対側から投げる',options:{lateral:true}})),
-    ...['outside','center','cross-side'].flatMap(lane=>['vertical-up','vertical-down'].map(style=>({id:lane+'-'+style,style,name:laneNames[lane]+' column '+(style==='vertical-up'?'Up':'Down'),group:'縦の2x',hint:({outside:'外側',center:'中央','cross-side':'反対側'})[lane]+'で'+(style==='vertical-up'?'上へ投げる':'下へ送る'),options:{lane}})))
+    ...['normal','shuffle','reverse','inverted'].map(style=>({id:'lateral-'+style,style,name:styleNames[style]+' Lateral',group:'Lateral — 投げ・捕りの左右を反転',hint:height[style]+'・2xの投げ位置と捕り位置を左右反転',options:{lateral:true}})),
+    ...['outside','center','cross-side'].flatMap(lane=>['vertical-up','vertical-down'].map(style=>({id:lane+'-'+style,style,name:laneNames[lane]+' column '+(style==='vertical-up'?'Up':'Down'),group:'縦の2x',hint:({outside:'2本の縦軌道より投げ手と同じ側の外側',center:'2本の縦軌道の間','cross-side':'2本の縦軌道より投げ手と反対側の外側'})[lane]+'で'+(style==='vertical-up'?'上へ投げる':'下へ送る'),options:{lane}})))
   ];
   function shortKey(row,hand){
     const h=row.motion.hands?.[hand]||{},o=h.shortMotion||row.motion.shortMotions?.[0]||{},style=h.style||row.motion.short?.[0]||'normal';

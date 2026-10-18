@@ -28,7 +28,11 @@ describe('named component selection',()=>{
   });
   it('names Lateral and vertical lanes separately from the height family',()=>{
     expect(ui.describeSequence(sequenceFromPreset('lateral-inverted')).fields).toContainEqual(['左手の2','2x Inverted Lateral']);
-    expect(ui.describeSequence(sequenceFromPreset('outside-vertical-up')).fields).toContainEqual(['右手の2','2x Outside column Up']);
+    expect(ui.describeSequence(sequenceFromPreset('outside-vertical-up')).fields).toContainEqual(['右手の2','2x Inside column Up']);
+    expect(ui.describeSequence(sequenceFromPreset('cross-side-vertical-up')).fields).toContainEqual(['右手の2','2x Outside column Up']);
+    expect(ui.shortChoices.some((c:any)=>c.name.includes('Cross side'))).toBe(false);
+    expect(ui.shortChoices.find((c:any)=>c.name==='Inside column Up').hint).toContain('投げ手と同じ側の外側');
+    expect(ui.shortChoices.find((c:any)=>c.name==='Outside column Up').hint).toContain('投げ手と反対側の外側');
     expect(ui.describeSequence(sequenceFromPreset('switched-cross-side-vertical-down')).title).toContain('Switched');
   });
   it('keeps the throw schedule valid for all named left/right combinations without claiming a playable motion',()=>{

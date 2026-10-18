@@ -10,7 +10,7 @@
   let batchRunning = false;
   let selection = 0;
   const styles=[['normal','Normal / 下→下'],['shuffle','Shuffle / 上→下'],['reverse','Reverse / 下→上'],['inverted','Inverted / 上→上'],['vertical-up','縦2x / 上投げ'],['vertical-down','縦2x / 下投げ']];
-  const lanes=[['center','中央'],['outside','外側'],['cross-side','反対側']];
+  const lanes=[['center','Center（2本の縦軌道の間）'],['outside','Inside（投げ手と同じ側の外側）'],['cross-side','Outside（投げ手と反対側の外側）']];
   const relations=[['free','指定なし'],['underarm','反対の腕の下']];
   const routes=[['auto','動作に合わせる'],['direct','直接運ぶ'],['outside','外側を回る'],['inside','内側を回る'],['front','前を回る'],['back','奥を回る']];
   const addSelect=(parent,id,label,items)=>{
@@ -21,7 +21,7 @@
     const f=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent=i?'戻りの2x':'片方向の2x';f.append(legend);
     addSelect(f,id,'投げる高さ → 捕る高さ',styles);
     addSelect(f,id+'-lane','縦2xが通る場所',lanes);
-    const lateral=document.createElement('label');lateral.innerHTML=`<input id="${id}-lateral" type="checkbox">体の反対側から投げる（lateral）`;f.append(lateral);
+    const lateral=document.createElement('label');lateral.innerHTML=`<input id="${id}-lateral" type="checkbox">投げ・捕りの左右を反転（Lateral）`;f.append(lateral);
     addSelect(f,id+'-release','投げるときの腕との関係',relations);
     addSelect(f,id+'-catch','捕るときの腕との関係',relations);
     addSelect(f,id+'-carry','捕ってから次の投げへ',routes);
