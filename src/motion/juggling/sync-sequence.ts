@@ -368,7 +368,7 @@ export function sequenceFromPreset(id:string):SyncSequence{
 }
 
 export type BasicShortStyle='normal'|'shuffle'|'reverse'|'inverted';
-export type DoubleShortStyle=BasicShortStyle|`lateral-${BasicShortStyle}`;
+export type DoubleShortStyle=BasicShortStyle|`lateral-${BasicShortStyle}`|`${'outside'|'center'|'cross-side'}-vertical-${'up'|'down'}`;
 export type BasicColumnStyle='normal'|'switched'|'crossed'|'crossed-right'|'crossed-alternate'|'underarm';
 export interface DoubleSequenceParts {
   crossSet:DoubleShortStyle;selfSet:DoubleShortStyle;
@@ -384,7 +384,9 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
   const labels={normal:'下→下',shuffle:'上→下',reverse:'下→上',inverted:'上→上'};
   const parse=(key:string)=>{
     const lateral=typeof key==='string'&&key.startsWith('lateral-'),style=lateral?key.slice(8):key;
-    return Object.prototype.hasOwnProperty.call(labels,style)?{style:style as BasicShortStyle,lateral}:undefined;
+    const vertical=typeof key==='string'&&/^(outside|center|cross-side)-vertical-(up|down)$/.exec(key);
+    if(vertical)return {style:('vertical-'+vertical[2]) as 'vertical-up'|'vertical-down',lateral:false,lane:vertical[1] as 'outside'|'center'|'cross-side'};
+    return Object.prototype.hasOwnProperty.call(labels,style)?{style:style as BasicShortStyle,lateral,lane:undefined}:undefined;
   };
   const cross=parts&&parse(parts.crossSet),selfPass=parts&&parse(parts.selfSet);
   if(!parts||!cross||!selfPass||
@@ -395,15 +397,19 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
   })))throw new Error('編集元のDoubleは4または4xと2xの4セットで指定してください。');
   const s=source?structuredClone(source):sequenceFromPreset('double-box');
   s.sets.forEach(row=>{
-    const hand=row.throws.indexOf('2x'),self=row.throws[1-hand]==='4',{style,lateral}=self?selfPass:cross;
+    const hand=row.throws.indexOf('2x'),self=row.throws[1-hand]==='4',{style,lateral,lane}=self?selfPass:cross;
     const releaseGrip=self?parts.selfReleaseGrip:parts.crossReleaseGrip,catchGrip=self?parts.selfCatchGrip:parts.crossCatchGrip;
     if(source){
       const current=row.motion.hands?.[hand],oldStyle=current?.style||row.motion.short?.[0]||'normal';
       const options=structuredClone(current?.shortMotion||row.motion.shortMotions?.[0]||{});
       const flip=lateral!==!!options.lateral;
-      if(style!==oldStyle||flip){
+      if(style!==oldStyle||flip||lane!==options.lane){
         const authored=current?.definition||options.definition;
-        if(authored){
+        if(lane||oldStyle.startsWith('vertical-')){
+          // A named vertical pass owns its lane. Retain the high throws, but
+          // discard the preceding short throw's authored endpoints and timing.
+          delete options.definition;
+        }else if(authored){
           // A new height family must retain authored lanes (e.g. a centre
           // column). Replace its height/passage rule, not the whole base.
           const d=sequenceHandDefinition(row,hand),shape=shortDefinition(style,{},false,false);
@@ -422,7 +428,8 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
           options.definition=d;
         }
         if(lateral)options.lateral=true;else delete options.lateral;
-        options.ballOrder='style';
+        if(lane)options.lane=lane;else delete options.lane;
+        if(lane)delete options.ballOrder;else options.ballOrder='style';
         row.motion.hands||=[];row.motion.hands[hand]={...current,style,shortMotion:options};
         delete row.motion.hands[hand]!.definition;
       }
@@ -430,7 +437,7 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
       if(row.motion.hands?.[hand]){delete row.motion.hands[hand]!.releaseGrip;delete row.motion.hands[hand]!.catchGrip;}
     }else{
       row.motion.short=[style];
-      if(lateral)row.motion.shortMotions=[{lateral:true,ballOrder:'style'}];
+      if(lateral||lane)row.motion.shortMotions=[lane?{lane}:{lateral:true,ballOrder:'style'}];
     }
     if(releaseGrip||catchGrip){
       row.motion.hands||=[];
@@ -439,7 +446,7 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
   });
   const columnLabel={normal:'Normal',switched:'Switched',crossed:'Cross 左上','crossed-right':'Cross 右上','crossed-alternate':'Cross 上下交代',underarm:'Underarm'};
   const layout=parts.columns&&parts.columns!=='normal'?`｜配置 ${columnLabel[parts.columns]}`:'';
-  const passName=(p:NonNullable<typeof cross>)=>labels[p.style]+(p.lateral?' Lateral':'');
+  const passName=(p:NonNullable<typeof cross>)=>p.lane?`${{outside:'Inside',center:'Center','cross-side':'Outside'}[p.lane]} column ${p.style==='vertical-up'?'Up':'Down'}`:labels[p.style as BasicShortStyle]+(p.lateral?' Lateral':'');
   s.name=`${source?source.name.split('｜配置 ')[0].split('｜2x ')[0]+layout+'｜2x ':'Double'+layout+' / '}4xと組む2x ${passName(cross)}・4と組む2x ${passName(selfPass)}`;
   if(parts.crossReleaseGrip||parts.selfReleaseGrip){
     const gripLabel=(g?:HandGrip)=>g==='underhand'?'下から':g==='overhand'?'クロー':'標準';
@@ -449,6 +456,7 @@ function applyDoubleParts(parts:DoubleSequenceParts,source?:SyncSequence):SyncSe
     const gripLabel=(g?:HandGrip)=>g==='underhand'?'下から':g==='overhand'?'クロー':'標準';
     s.name+=` / 捕り ${gripLabel(parts.crossCatchGrip)}・${gripLabel(parts.selfCatchGrip)}`;
   }
+  s.name=s.name.slice(0,100);
   return parts.columns===undefined?s:sequenceWithDoubleColumns(s,parts.columns);
 }
 /** Reassign the authored Double lanes without changing its throw schedule.

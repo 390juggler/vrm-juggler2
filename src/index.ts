@@ -192,7 +192,9 @@ export default class VRMJuggler {
         },
         (progress: ProgressEvent) => {
           if (loadId !== this.loadId || !progress.total || this.messageKind === 'error') return;
-          const percent = Math.floor((progress.loaded / progress.total) * 100);
+          // Content-Length can describe compressed bytes while loaded counts
+          // decoded bytes. It must never produce a percentage above 100.
+          const percent = Math.max(0,Math.min(100,Math.floor((progress.loaded / progress.total) * 100)));
           this.showMessage(`モデルを読み込んでいます… ${percent}%`);
         },
         onError
@@ -276,25 +278,43 @@ export default class VRMJuggler {
         try{
           const initial=this.juggling.getSyncMovement()!;
           const choices=lockLayout?[{kind:'direct' as const,movement:initial.movement}]:constructiveMovements(initial);
-          let best=choices[0],bestCost=Infinity;
           const count=Math.min(80,Math.max(24,Math.ceil(initial.period*24)));
-          for(const candidate of choices){
-            this.juggling.replanSyncMovement(candidate.movement);
-            const g=this.juggling.getSyncBoxReport()!;
-            if(g.ownershipConflicts)throw new Error('球の受け渡しが重複しています。');
-            let sum=0,max=0,reach=0;
+          // Use the playback stance, including its shoulder positions, even on
+          // the first worker request before any avatar frame has been rendered.
+          this.body!.update(this.juggling.update(0),0);
+          const ranked=choices.map(candidate=>{
+            const tracks=this.juggling.replanSyncMovement(candidate.movement);
+            if(this.juggling.getSyncBoxReport()!.ownershipConflicts)throw new Error('球の受け渡しが重複しています。');
+            let sum=0,max=0;
             for(let i=0;i<count;i++){
-              this.juggling.seek(i/count);const frame=this.juggling.update(0),cost=this.body!.syncPosePenalty(frame);sum+=cost;max=Math.max(max,cost);reach=Math.max(reach,this.body!.syncReachError(frame));
+              this.juggling.seek(i/count);const cost=this.body!.syncPosePenalty(this.juggling.update(0));sum+=cost;max=Math.max(max,cost);
             }
-            const cost=sum/count+2*max+Math.max(0,reach-.004)*10000;
-            if(cost<bestCost){best=candidate;bestCost=cost;}
-            if(bestCost<1e-9)break;
+            // Include the actual grip offset at every sample. Keep 4 mm below
+            // the display's 12 mm limit without replaying the rendered VRM.
+            const reach=this.body!.syncTracksReachError(tracks,SYNC_RADIUS);
+            return {candidate,reach,cost:sum/count+2*max+Math.max(0,reach-.004)*10000,placement:[0,0] as [number,number],attempts:1};
+          }).sort((a,b)=>a.cost-b.cost);
+          // Prefer a reachable original layout. Otherwise fit each hand route
+          // separately: an unreachable detour must not mask a reachable one.
+          let selected=ranked.find(c=>c.reach<.008);
+          if(!selected&&!lockLayout)for(const item of ranked){
+            let tracks=this.juggling.replanSyncMovement(item.candidate.movement);
+            for(let attempt=1;attempt<5;attempt++){
+              const delta=this.body!.syncReachTranslation(tracks,SYNC_RADIUS);
+              item.placement=[item.placement[0]+delta[0],item.placement[1]+delta[1]];
+              if(!item.placement.every(Number.isFinite)||Math.hypot(...item.placement)>.4)break;
+              tracks=this.juggling.replanSyncMovement(item.candidate.movement,item.placement);
+              item.attempts=attempt+1;
+              if(this.body!.syncTracksReachError(tracks,SYNC_RADIUS)<.008){selected=item;break;}
+            }
+            if(selected)break;
           }
-          const tracks=this.juggling.replanSyncMovement(best.movement);
-          tracks.constraintPlanned=best.movement.length>0;
+          if(!selected)throw new Error('投げ・捕りと手の運びをモデルの腕が届く範囲に収められませんでした。');
+          const tracks=this.juggling.replanSyncMovement(selected.candidate.movement,selected.placement);
+          tracks.constraintPlanned=selected.candidate.movement.length>0||selected.attempts>1;
           tracks.contactFallback=true;
           this.body!.prepareConstructiveCycle(p=>{this.juggling.seek(p);return this.juggling.update(0);},tracks.period);
-          Object.assign(this.body!.syncPlanInfo,{construction:best.kind,candidates:choices.length});
+          Object.assign(this.body!.syncPlanInfo,{construction:selected.candidate.kind,candidates:choices.length,placementAttempts:selected.attempts});
           this.juggling.commitSyncPlan();this.options.siteswapNums=result.siteswap;this.juggling.seek(0);
           this.gui?.hide();this.showGui=false;this.syncTempo();this.clearMessage();this.updateGui();this.emitState();
           return result;

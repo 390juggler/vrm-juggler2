@@ -214,6 +214,25 @@ export default class Body {
     return worst;
   }
 
+  /** Project the working plane into the shared reach of both wrists. Only a
+   * common Y/Z translation is allowed, so lanes and relative heights survive. */
+  syncReachTranslation(tracks:Tracks,radius:number):[number,number]{
+    const disks:{y:number;z:number;r:number}[]=[];
+    for(let i=0;i<tracks.numSteps;i++)for(const [h,arm] of this.arms.entries()){
+      const t=tracks.hands[h],plan=this.planArm(arm,{position:t.positions[i],palmNormal:t.palmNormals[i],
+        fingerDir:t.fingerDirs?.[i]||new THREE.Vector3(),holding:t.holding[i]},radius,'ball');
+      const v=plan.wristTarget.clone().sub(plan.shoulder),reach=arm.upperLength+arm.lowerLength-.004;
+      disks.push({y:-v.y,z:-v.z,r:Math.sqrt(Math.max(0,reach*reach-v.x*v.x))});
+    }
+    let y=0,z=0;
+    // Fixed projection passes, independent of the technique or cycle length.
+    for(let pass=0;pass<12;pass++)for(const disk of disks){
+      const dy=y-disk.y,dz=z-disk.z,d=Math.hypot(dy,dz);
+      if(d>disk.r){const ratio=disk.r/d;y=disk.y+dy*ratio;z=disk.z+dz*ratio;}
+    }
+    return [y,z];
+  }
+
   /** Search guidance includes the transfers between poses and the cycle seam. */
   syncCyclePenalty(sample:(phase:number)=>JugglingFrame,phases:number[],period:number){
     const nodes=phases.map(phase=>{
@@ -786,7 +805,7 @@ export default class Body {
     const elbow = shoulder.clone().addScaledVector(dir, a).addScaledVector(polePerp, hgt);
     const wrist = shoulder.clone().addScaledVector(dir, d);
     const preferredElbow = new THREE.Vector3(shoulder.x*.75,shoulder.y-L1*.92,shoulder.z-.025);
-    return { handDelta, shoulder, elbow, wrist, reachError:wrist.distanceTo(wristTarget), preferredElbow, anatomy:this.armAnatomy(arm,fingerDir), pole: polePerp, axis: dir,
+    return { handDelta, shoulder, elbow, wrist, wristTarget, reachError:wrist.distanceTo(wristTarget), preferredElbow, anatomy:this.armAnatomy(arm,fingerDir), pole: polePerp, axis: dir,
       rotationsAt:(e:THREE.Vector3)=>this.armRotations(arm,{shoulder,elbow:e,wrist,handDelta,pole:polePerp}),
       center: shoulder.clone().addScaledVector(dir, a), radius: hgt };
   }

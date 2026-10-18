@@ -381,13 +381,7 @@
   const basicStyles=styles.slice(0,4),heightLabels=['Normal','Shuffle','Reverse Shuffle','Inverted'],partsCells=[],partsChecks=new Map();
   const partsCheckKey=canonical=>`${$('mirror').checked?'mirror:':'normal:'}${canonical}`;
   const partsKnownNames=new Map([...presets.map(p=>VRMJuggler.syncSequenceFromPreset(p.id)),...examples].map(s=>[VRMJuggler.analyzeSyncSequence(s).canonical,s.name]));
-  for(const id of ['parts-double-cross','parts-double-self']){
-    for(const lateral of [false,true]){
-      const group=el('optgroup');group.label=lateral?'Lateral — 投げ・捕りの左右を反転':'基本の2x';
-      ui.shortChoices.filter(c=>!c.style.startsWith('vertical-')&&!!c.options.lateral===lateral).forEach(c=>group.append(new Option(c.name,c.id)));$(id).append(group);
-    }
-  }
-  for(const id of ['parts-left','parts-right','parts-high-low-pass']){
+  for(const id of ['parts-left','parts-right','parts-high-low-pass','parts-double-cross','parts-double-self']){
     for(const group of [...new Set(ui.shortChoices.map(c=>c.group))]){const optgroup=el('optgroup');optgroup.label=group;ui.shortChoices.filter(c=>c.group===group).forEach(c=>optgroup.append(new Option(c.name,c.id)));$(id).append(optgroup);}
   }
   for(let i=0;i<4;i++){
