@@ -1,6 +1,6 @@
 /* Presentation only: these descriptions never change or validate motion. */
 globalThis.SyncComposeUI = (() => {
-  const height = {normal:'手前の球の下 → 奥の球の下',shuffle:'手前の球の上 → 奥の球の下',reverse:'手前の球の下 → 奥の球の上',inverted:'手前の球の上 → 奥の球の上','vertical-up':'縦の上投げ','vertical-down':'縦の下投げ'};
+  const height = {normal:'高い球の軌道より下を通る',shuffle:'投げる側で軌道の上 → 受け取る側で下（軌道が交差）',reverse:'投げる側で軌道の下 → 受け取る側で上（軌道が交差）',inverted:'高い球の軌道より上を通る','vertical-up':'縦の上投げ','vertical-down':'縦の下投げ'};
   const styleNames={normal:'Normal',shuffle:'Shuffle',reverse:'Reverse Shuffle',inverted:'Inverted','vertical-up':'Up','vertical-down':'Down'};
   const columns = {normal:'Normal',switched:'Switched',underarm:'Underarm',crossed:'Cross'};
   // Keep saved lane IDs and fitted tracks; visible names follow the thrower's side.

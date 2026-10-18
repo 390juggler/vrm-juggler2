@@ -6,19 +6,62 @@ export interface BallOrderConstraint {
   otherProp:number;
   above:boolean;
   height:number;
+  /** An envelope of a high arc, rather than a ball's instantaneous height. */
+  reference?:'trajectory';
 }
 
-/** Intersections of horizontal lanes in space AND time. Depth separation does
- * not turn a pass above another ball into a pass below it. Vertical passes and
- * explicitly authored motions opt out; their passage has a different meaning. */
+/** A relative 2x uses the high arc's horizontal span. Extrapolating a short
+ * pass far beyond a narrow arc multiplies the required endpoint heights.
+ * Keep interior/central catches and the direction; only retract overhangs. */
+export function arcPassLanes(short:SyncFlight,flights:SyncFlight[],period:number):[number,number]{
+  const sLo=Math.min(short.start.x,short.end.x),sHi=Math.max(short.start.x,short.end.x);
+  const arcs=flights.filter(f=>f.value>2&&f.prop!==short.prop&&Math.abs(f.end.x-f.start.x)>1e-7&&
+    Math.min(sHi,Math.max(f.start.x,f.end.x))-Math.max(sLo,Math.min(f.start.x,f.end.x))>1e-7&&
+    [-period,0,period].some(w=>f.release+w<=short.release+short.duration&&f.release+w+f.duration>=short.release));
+  if(!arcs.length)return [short.start.x,short.end.x];
+  const lo=Math.min(...arcs.flatMap(f=>[f.start.x,f.end.x])),hi=Math.max(...arcs.flatMap(f=>[f.start.x,f.end.x]));
+  return [short.start.x,short.end.x].map(x=>Math.max(lo,Math.min(hi,x))) as [number,number];
+}
+
+/** Compare a pass with the high arc in the direction the 2x travels. Shuffle
+ * crosses from above to below; Reverse crosses from below to above. For equal
+ * signs, a tangent bounds the whole quadratic, not just its two endpoints. */
+function arcOrderConstraints(short:SyncFlight,arc:SyncFlight):BallOrderConstraint[]{
+  const dx=short.end.x-short.start.x,ax=arc.end.x-arc.start.x;
+  if(Math.abs(dx)<1e-8||Math.abs(ax)<1e-8)return [];
+  const ends=[(arc.start.x-short.start.x)/dx,(arc.end.x-short.start.x)/dx].sort((a,b)=>a-b);
+  const lo=Math.max(0,ends[0]),hi=Math.min(1,ends[1]);
+  if(hi-lo<1e-7)return [];
+  const ratio=dx/ax,offset=(short.start.x-arc.start.x)/ax;
+  const lift=(u:number)=>GRAVITY*short.duration**2*u*(1-u)/2;
+  const reference=(u:number)=>{
+    const v=offset+ratio*u;
+    return arc.start.y+(arc.end.y-arc.start.y)*v+GRAVITY*arc.duration**2*v*(1-v)/2-lift(u);
+  };
+  const above=[['shuffle','inverted'].includes(short.style),['reverse','inverted'].includes(short.style)];
+  const curvature=GRAVITY*(short.duration**2-arc.duration**2*ratio**2)/2;
+  const mid=(lo+hi)/2,value=reference(mid),slope=(reference(hi)-reference(lo))/(hi-lo);
+  const envelope=above[0]===above[1]&&(above[0]?curvature<0:curvature>0);
+  return [lo,hi].map((u,i)=>({at:u,otherProp:arc.prop,above:above[i],reference:'trajectory',
+    height:(envelope?value+slope*(u-mid):reference(u))+lift(u)}));
+}
+
+/** Vertical columns are encountered in space and time; a high crossing arc is
+ * a spatial trajectory. Depth separation cannot reverse either relationship.
+ * Vertical 2x and explicitly authored passages opt out at the caller. */
 export function ballOrderConstraints(short:SyncFlight,flights:SyncFlight[],period:number):BallOrderConstraint[]{
-  const constraints:BallOrderConstraint[]=[];
+  const constraints:BallOrderConstraint[]=[],arcs:BallOrderConstraint[]=[];
   for(const column of flights){
     if(column.value<=2||column.prop===short.prop)continue;
+    let arcChecked=false;
     for(const wrap of [-period,0,period]){
       const begin=column.release+wrap-short.release;
       const lo=Math.max(0,begin),hi=Math.min(short.duration,begin+column.duration);
       if(hi<lo-1e-8)continue;
+      if(Math.abs(column.end.x-column.start.x)>1e-7){
+        if(!arcChecked)arcs.push(...arcOrderConstraints(short,column));
+        arcChecked=true;continue;
+      }
       const speed=short.velocity.x-column.velocity.x;
       if(Math.abs(speed)<1e-8)continue;
       const t=(column.start.x-column.velocity.x*begin-short.start.x)/speed;
@@ -29,6 +72,7 @@ export function ballOrderConstraints(short:SyncFlight,flights:SyncFlight[],perio
         height:column.start.y+column.velocity.y*local-GRAVITY*local*local/2});
     }
   }
+  if(arcs.length)return [...arcs,...constraints].sort((a,b)=>a.at-b.at);
   constraints.sort((a,b)=>a.at-b.at);
   const order=[...new Set(constraints.map(c=>c.otherProp))];
   // A vertical/inside pass may never traverse both column lanes. Do not

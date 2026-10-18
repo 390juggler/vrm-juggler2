@@ -35,7 +35,7 @@ export interface MotionDefinition {
   emptyReturnExact?: boolean;
 }
 export interface ShortMotionOptions {
-  /** Resolve above/below against the other balls at lane crossings, not a fixed floor height. */
+  /** Resolve above/below against column encounters or high arcs, not a fixed floor height. */
   ballOrder?: 'style';
   lane?: ShortLane;
   lateral?: boolean;

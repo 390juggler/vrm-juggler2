@@ -14,12 +14,12 @@ function build(s:any,t=transform,mirror=false){const config={...compileSequence(
  const source=CreateSiteswap(config.siteswap,{...new Options().siteswap,beatDuration:syncBeat(config),dwellRatio:syncDwell(config),props:[{type:'ball',color:'red',radius:SYNC_RADIUS,C:.9}]});
  return buildSyncBoxTracks(source,t,config);
 }
-it('plays both Double layouts with Switched, Underarm and every Cross order, including mirrored direct routes',async()=>{
+it.each(['switched','crossed','crossed-right','crossed-alternate','underarm'] as const)('plays both Double layouts with %s, including mirrored direct routes',async(columns)=>{
  const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
  api.syncPlanningMode='constructive';
  const sources=[sequenceFromPreset('double-box'),SEQUENCE_EXAMPLES.find(s=>s.name.startsWith('Extended Box /'))!];
  try{
-  for(const columns of ['switched','crossed','crossed-right','crossed-alternate','underarm'] as const)for(const mirror of [false,true]){
+  for(const mirror of [false,true]){
    for(const source of sources){
     const s=sequenceWithDoubleParts(source,{columns,crossSet:'shuffle',selfSet:'inverted'});s.allowBallContact=true;
     const result=api.setSyncSequence(s,mirror);
@@ -88,11 +88,13 @@ it('Double has four independent 2x phases and vertical or crossing high flights'
  expect(flights.every(f=>Math.abs(f.start.x-f.end.x)<1e-8)).toBe(highPath==='vertical');
  }
 });
-it('Shower high flights reverse the 2x lanes including lateral',()=>{
+it('Shower high flights pair horizontal lanes while the 2x stays below the reference arc, including lateral',()=>{
  for(const pass of ['normal','lateral-normal'])for(const highHand of [0,1] as const){
  const s=sequenceFromBaseParts({...defaults,base:'shower',passes:[pass],highHand});
  const f=build(s).flights,high=f.find(f=>f.value===4)!,low=f.find(f=>f.value===2)!;
- expect(high.start.distanceTo(low.end)).toBeLessThan(1e-8);expect(high.end.distanceTo(low.start)).toBeLessThan(1e-8);
+ expect(high.start.x).toBeCloseTo(low.end.x,8);expect(high.end.x).toBeCloseTo(low.start.x,8);
+ expect(high.start.z).toBeCloseTo(low.end.z,8);expect(high.end.z).toBeCloseTo(low.start.z,8);
+ expect(high.start.y).toBeGreaterThan(low.end.y);expect(high.end.y).toBeGreaterThan(low.start.y);
  }
 });
 it('keeps Double 4x vertical or in a Shower arc after preparing playback, including mirroring',async()=>{
@@ -143,10 +145,10 @@ it('combines all four bases as a closed three-ball schedule',()=>{
  expect(analyzeSequence(result.sequence)).toMatchObject({ok:true,balls:3});
  expect(result.sequence.sets.length).toBe(result.requestedSets+result.addedSets);
 });
-it('generates each named pass on every base and plays a mixed direct route',async()=>{
+it.each(['box','high-low','shower','double'] as const)('generates each named pass on %s',async(base)=>{
  const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
  api.syncPlanningMode='constructive';const failures:any[]=[];
- for(const base of ['box','high-low','shower','double'] as const)for(const {id} of (globalThis as any).SyncComposeUI.shortChoices){
+ for(const {id} of (globalThis as any).SyncComposeUI.shortChoices){
    const parts={...defaults,base,passes:Array(base==='double'?4:base==='box'?2:1).fill(id)};
    const route=compileBaseRoute({kind:'sync-base-route',version:1,beatDuration:.205,mirror:false,blocks:[{parts,repeats:1}]});
    try{const prepared=api.prepareDirectSyncSequence(route.sequence);
@@ -154,6 +156,11 @@ it('generates each named pass on every base and plays a mixed direct route',asyn
    if(!result.ok||report.maxGripError>=.012)failures.push({base,id,message:result.message,grip:report.maxGripError});}catch(e){failures.push({base,id,message:String(e)});}
  }
  expect(failures).toEqual([]);
+ (api as any).juggling.dispose();
+},120000);
+it('plays a mixed direct route across all four bases',async()=>{
+ const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
+ api.syncPlanningMode='constructive';
  const blocks=['box','high-low','shower','double'].map(base=>({parts:{...defaults,base,passes:Array(base==='double'?4:base==='box'?2:1).fill('lateral-normal')},repeats:1}));
  for(const mirror of [false,true]){
  const route=compileBaseRoute({kind:'sync-base-route',version:1,beatDuration:.205,mirror,blocks});

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GRAVITY, LEFT, RIGHT, SpaceTransform, Tracks, HandTrack, computeGazeTrack } from './tracks';
 import { ShortStyle, ShortMotionOptions, ArmOrder, MotionDefinition, CarryDefinition, shortDefinition, handFrame, handRotationBetween, carryOffset, validateDefinition } from './sync-motion';
 import { SYNC_SPATIAL_PROFILES } from './sync-spatial-presets';
-import {ballOrderConstraints,resolveBallOrder,BallOrderConstraint} from './sync-ball-order';
+import {arcPassLanes,ballOrderConstraints,resolveBallOrder,BallOrderConstraint} from './sync-ball-order';
 export type { ShortStyle, ShortMotionOptions, MotionDefinition } from './sync-motion';
 
 export type ColumnMode = 'normal' | 'switched' | 'crossed' | 'underarm';
@@ -482,6 +482,10 @@ export function buildSyncBoxTracks(source: any, transform: SpaceTransform, confi
   // Solve against the complete flight schedule, including columns thrown in
   // the previous set. A style is a relative passage, not an absolute y offset.
   for(const f of orderedFlights){
+    const [startX,endX]=arcPassLanes(f,flights,period);
+    f.motion.release.x+=(startX-f.start.x)/(side(f.throwHand)*scale);
+    f.motion.catch.x+=(endX-f.end.x)/(side(f.throwHand)*scale);
+    f.start.x=startX;f.end.x=endX;f.velocity.x=(endX-startX)/f.duration;
     f.preferredStart=f.start.clone();f.preferredEnd=f.end.clone();
     f.ballOrder=ballOrderConstraints(f,flights,period);
     // Contact permission removes the diameter requirement, not the above/below

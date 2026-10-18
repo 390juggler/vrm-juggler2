@@ -69,14 +69,11 @@ export function sequenceFromBaseParts(parts:BasePatternParts,beatDuration=.205):
     s=sequenceFromPreset('shower');const high=parts.highHand,low=1-high;
     s.sets=[{throws:high===0?['4x','2x']:['2x','4x'],repeat:1,motion:{columns:'normal',short:[passes[0].style]}}];
     const row=s.sets[0];setShort(row,low,0);
-    // Shower has an arc paired with the pass, not two independent columns.
-    // Keep their shared endpoints rather than solving a column pass against
-    // an arc whose endpoints would subsequently move again.
-    row.motion.hands![low]!.shortMotion!.ballOrder=undefined;
     const d=shortDefinition(passes[0].style,passes[0].options,false,false);
-    // The long throw starts at the short pass's arrival, and lands at its
-    // next departure. Lateral reverses both lanes together.
-    row.motion.hands![high]={definition:{release:{...d.catch,x:-d.catch.x},catch:{...d.release,x:-d.release.x},
+    // Pair the horizontal lanes, but keep the high arc's height independent.
+    // The 2x is solved above/below that arc; following its height would erase
+    // Shuffle's crossing and lift the reference again whenever Inverted rises.
+    row.motion.hands![high]={definition:{release:{...d.catch,x:-d.catch.x,y:0},catch:{...d.release,x:-d.release.x,y:0},
       passage:{at:.5},carry:{route:'direct',amount:0},emptyReturn:{route:'direct',amount:0}}};
     s.name=`Shower / ハイ${high?'右':'左'} / ${passes[0].name}`;
   }else{

@@ -764,7 +764,10 @@ it('固定InvertedとHF Reverse-UAIを前後の4xでつなぎ、4セットの動
   const t=build(compileSequence(s).config);expect(t.period).toBeCloseTo(7.2,9);
   expect(t.underarmEvents).toHaveLength(3);
   expect(t.flights.filter(f=>f.value===4&&f.motion.catch.relation!=='underarm').some(f=>Math.abs(f.start.x-f.end.x)<.04)).toBe(true);
-  expect(inspectSyncBox(t,transform)).toMatchObject({geometryOK:true,ownershipConflicts:0});
+  // Inverted now clears the whole high arc. Its old fixed height no longer
+  // applies; the model fit and actual playback are covered in sync-arc-order.
+  expect(t.flights.some(f=>f.ballOrder?.some(c=>c.reference==='trajectory'))).toBe(true);
+  expect(inspectSyncBox(t,transform)).toMatchObject({ballOrderOK:true,ownershipConflicts:0});
   const raw=appendSequence(from,to,false).sequence!;raw.beatDuration=.30;
   expect(inspectSyncBox(build(compileSequence(raw).config),transform).geometryOK).toBe(false);
 });
@@ -1465,11 +1468,18 @@ describe.each(SEQUENCE_EXAMPLES)('$name: 接続した周期',s=>{
   it('同じ球を保持したまま、境目と飛行を連続させる',()=>{
     const {config,analysis}=compileSequence(s);expect(analysis.ok).toBe(true);
     const t=build(config);
+    const relativeArc=t.flights.some(f=>f.ballOrder?.some(c=>c.reference==='trajectory'));
     expect(t.period/(2*s.beatDuration)).toBeCloseTo(analysis.identitySets);
     for(let k=0;k<t.numSteps;k++){
-      for(const positions of [...t.props,...t.hands.map(h=>h.positions)])expect(positions[k].distanceTo(positions[(k+1)%t.numSteps])/t.stepDuration).toBeLessThan(12);
+      // Fixed-coordinate recipes retain their speed bound. A relative arc's
+      // height must be fitted to the avatar before evaluating arm feasibility.
+      for(const positions of [...t.props,...t.hands.map(h=>h.positions)]){
+        const speed=positions[k].distanceTo(positions[(k+1)%t.numSteps])/t.stepDuration;
+        expect(Number.isFinite(speed)).toBe(true);if(!relativeArc)expect(speed).toBeLessThan(12);
+      }
       for(let p=0;p<t.props.length;p++)if(t.owners[p][k]>=0)expect(t.props[p][k].distanceTo(t.hands[t.owners[p][k]].positions[k])).toBeLessThan(1e-10);
     }
-    expect(inspectSyncBox(t,transform).geometryOK,JSON.stringify(inspectSyncBox(t,transform))).toBe(true);
+    const report=inspectSyncBox(t,transform);
+    expect(relativeArc?report.ballOrderOK&&report.ownershipConflicts===0:report.geometryOK,JSON.stringify(report)).toBe(true);
   });
 });
