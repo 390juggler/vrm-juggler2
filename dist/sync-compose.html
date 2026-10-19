@@ -16,7 +16,7 @@
       <div class="line"><button id="play">一時停止</button><button id="step">コマ送り</button><select id="view" aria-label="視点"><option value="close">上半身</option><option value="front">正面</option><option value="diagonal">斜め</option><option value="side">横</option></select><button id="preview-settings" aria-expanded="false" aria-controls="transport-extra">設定・状態</button></div>
       <div id="transport-extra"><button id="reset">先頭に戻す</button>
       <label>周期内の位置 <output id="position">—</output><input id="phase" type="range" min="0" max="1000" value="0"></label>
-      <div class="line"><label>再生速度 <select id="speed"><option value="0.25">0.25×</option><option value="0.5" selected>0.50×</option><option value="1">1.00×</option></select></label><label><input id="paths" type="checkbox" checked>飛行軌道</label></div>
+      <div class="line"><label>再生速度 <select id="speed"><option value="0.25">0.25×</option><option value="0.5" selected>0.50×</option><option value="1">1.00×</option></select></label><label><input id="paths" type="checkbox" checked>飛行軌道</label><label title="見た目だけ通常版の大きさにします。球同士・腕との間隔の検査は実際の大きさで行います。"><input id="large-balls" type="checkbox">球を大きく表示</label></div>
       <div id="timeline" class="timeline" aria-label="再生中のセット"></div>
       <p id="audit" role="status">モデル読込後に球・手・腕を確認します。</p>
       <p id="arm-playback-status" role="status" hidden></p>

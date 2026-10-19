@@ -857,6 +857,11 @@
   $('play').onclick=()=>app.togglePause();$('step').onclick=()=>app.step();$('reset').onclick=()=>app.seekPhase(0);
   $('view').onchange=()=>app.setCameraView($('view').value);$('speed').onchange=()=>app.setSpeed(Number($('speed').value));
   $('phase').oninput=()=>app.seekPhase(Number($('phase').value)/1000);$('paths').onchange=()=>app.setMotionPaths($('paths').checked);
+  // Larger balls are for appearance only; clearance checks keep the real size.
+  const largeBallsKey='vrm-sync-large-balls';
+  try{$('large-balls').checked=localStorage.getItem(largeBallsKey)==='1';}catch{}
+  app.setLargeSyncBalls($('large-balls').checked);
+  $('large-balls').onchange=()=>{app.setLargeSyncBalls($('large-balls').checked);try{localStorage.setItem(largeBallsKey,$('large-balls').checked?'1':'0');}catch{}};
   $('stage').addEventListener('statechange',e=>{$('play').textContent=e.detail.paused?'再生':'一時停止';});
   $('save').onclick=()=>{const a=el('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(draft,null,2)],{type:'application/json'}));a.download=(draft.name||'sync-pattern').replace(/[\\/:*?"<>|]/g,'_')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
   function loadJSON(text){const parsed=JSON.parse(text),a=VRMJuggler.analyzeSyncSequence(parsed);if(!a.documentOK)throw new Error(a.issues.map(i=>i.message).join('\n'));draft=parsed;modified(true);}

@@ -170,3 +170,17 @@ it('plays a mixed direct route across all four bases',async()=>{
  }
  (api as any).juggling.dispose();
 },120000);
+it('draws Box balls at the regular size without moving them or changing the checks',async()=>{
+ const f=readFileSync('dist/models/default.vrm'),api=await VRMJuggler.createSyncPlanner(f.buffer.slice(f.byteOffset,f.byteOffset+f.byteLength));
+ const juggling=(api as any).juggling,scales=()=>juggling.propMeshes.flat().map((m:any)=>m.scale.x);
+ try{
+  expect(api.setSyncSequence(sequenceFromPreset('box')).ok).toBe(true);
+  juggling.update(0);const positions=juggling.getMotionSnapshot().balls,report=api.inspectSyncCycle();
+  api.setLargeSyncBalls(true);juggling.update(0);
+  for(const scale of scales())expect(scale).toBeCloseTo(.05/SYNC_RADIUS,9);
+  expect(juggling.getMotionSnapshot().balls).toEqual(positions);
+  expect(api.inspectSyncCycle()).toEqual(report);
+  api.setLargeSyncBalls(false);juggling.update(0);
+  expect(scales().every((s:number)=>s===1)).toBe(true);
+ }finally{juggling.dispose();}
+},60000);

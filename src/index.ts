@@ -498,6 +498,8 @@ export default class VRMJuggler {
   }
 
   setMotionPaths(visible: boolean) { this.juggling.setPathsVisible(visible); }
+  /** Draw Box-mode balls at the regular simulator's size. Checks keep the real radius. */
+  setLargeSyncBalls(enabled: boolean) { this.juggling.setLargeSyncBalls(enabled); }
 
   /** Resolve the complete ball schedule before joining catches to later releases. */
   setSyncSequence(sequence: SyncSequence, mirror = false,lockLayout=false,refineBridge=false) {

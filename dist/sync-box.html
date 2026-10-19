@@ -22,7 +22,7 @@
     <div class="buttons"><button id="play" class="primary">一時停止</button><button id="step">コマ送り</button><button id="reset">先頭</button></div>
     <label>速度 <output id="speed-value">0.50×</output><input id="speed" type="range" min="0.1" max="1.5" value="0.5" step="0.05" /></label>
     <label>周期内の位置 <output id="phase-value">0%</output><input id="phase" type="range" min="0" max="1000" value="0" step="1" /></label>
-    <div class="checks"><label><input id="paths" type="checkbox" checked />飛行軌道</label><label><input id="mirror" type="checkbox" />左右反転</label></div>
+    <div class="checks"><label><input id="paths" type="checkbox" checked />飛行軌道</label><label title="見た目だけ通常版の大きさにします。球同士・腕との間隔の検査は実際の大きさで行います。"><input id="large-balls" type="checkbox" />球を大きく表示</label><label><input id="mirror" type="checkbox" />左右反転</label></div>
     <div class="buttons" id="views"><button data-view="front">正面</button><button data-view="diagonal">斜め</button><button data-view="side">横</button><button data-view="close">寄り</button></div>
     <details id="custom"><summary>投げ・通過・捕り・運びを編集</summary>
       <label>4の担当<select id="columns"><option value="normal">同じ側のコラム</option><option value="switched">反対側のコラム（Switched）</option><option value="underarm">コラムのアンダーアーム</option></select></label>

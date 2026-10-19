@@ -60,6 +60,8 @@ export interface JugglingFrame {
 
 // 手のひらと握る位置の距離(クラブのハンドル・リングの縁の太さ)
 const GRIP_RADIUS: { [type: string]: number } = { club: 0.018, ring: 0.01, pancake: 0.01 };
+// 通常版の球の半径。同期モードの小さい球も、見た目だけこの大きさで描ける
+const LARGE_BALL_RADIUS = 0.05;
 
 const RANDOM_COLORS = ['red', 'blue', 'green', 'black', 'yellow', 'purple'];
 
@@ -84,6 +86,7 @@ export default class Juggling {
   private tracks!: Tracks;
   private syncTracks?: SyncBoxTracks;
   private syncReplay?:SyncReplay;
+  private largeSyncBalls = false;
   private pathGroup = new THREE.Group();
   private showPaths = false;
   private metrics: AvatarMetrics = DEFAULT_METRICS;
@@ -243,6 +246,18 @@ export default class Juggling {
   setPathsVisible(visible: boolean) {
     this.showPaths = visible;
     this.pathGroup.visible = visible&&!this.syncReplay;
+  }
+
+  /** 同期モードの球を通常版の大きさで描く。位置・間隔の検査・腕の計画は実際の半径のまま */
+  setLargeSyncBalls(enabled: boolean) {
+    this.largeSyncBalls = enabled;
+    this.scaleSyncBalls();
+  }
+
+  private scaleSyncBalls() {
+    const prop = this.siteswap.props[0], radius = Number(prop?.radius) || 0.05;
+    const scale = this.largeSyncBalls && (this.syncTracks || this.syncReplay) && prop?.type === 'ball' ? Math.max(1, LARGE_BALL_RADIUS / radius) : 1;
+    this.propMeshes.forEach((meshes) => meshes.forEach((mesh) => mesh.scale.setScalar(scale)));
   }
 
   private drawPaths() {
@@ -479,6 +494,8 @@ export default class Juggling {
 
   /** 毎フレーム呼ぶ。delta は秒 */
   update(delta: number): JugglingFrame {
+    // 通常の譜面と同期モードを切り替えても、表示の大きさが追従する
+    this.scaleSyncBalls();
     if(this.syncReplay){
       this.time=((this.time+delta*this.speed)%this.syncReplay.period+this.syncReplay.period)%this.syncReplay.period;
       this.frame=this.syncReplay.sample(this.time);

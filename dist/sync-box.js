@@ -92,6 +92,11 @@
   $('speed').oninput = () => { app.setSpeed(Number($('speed').value)); $('speed-value').textContent = Number($('speed').value).toFixed(2) + '×'; };
   $('phase').oninput = () => app.seekPhase(Number($('phase').value) / 1000);
   $('paths').onchange = () => app.setMotionPaths($('paths').checked);
+  // Larger balls are for appearance only; clearance checks keep the real size.
+  const largeBallsKey = 'vrm-sync-large-balls';
+  try { $('large-balls').checked = localStorage.getItem(largeBallsKey) === '1'; } catch {}
+  app.setLargeSyncBalls($('large-balls').checked);
+  $('large-balls').onchange = () => { app.setLargeSyncBalls($('large-balls').checked); try { localStorage.setItem(largeBallsKey, $('large-balls').checked ? '1' : '0'); } catch {} };
   $('mirror').onchange = () => select(current);
   $('inspect').onclick = () => {
     const r = app.inspectSyncCycle();
