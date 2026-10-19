@@ -34,3 +34,11 @@ it('edits left-right-left-right independently without collapsing the four choice
   const edited=bases.fourParts(api,ui,rotated,'normal',['normal','shuffle','reverse','inverted']);
   expect(edited.sets.map((r:any)=>r.throws.indexOf('2x'))).toEqual([1,0,1,0]);
 });
+it('starts Shower from the same parts the 2x editor builds, so an untouched Shower has no per-set note',()=>{
+  const s=bases.create(api,'shower'),parts=sequenceFromBaseParts({...bases.defaults,base:'shower',passes:['normal'],highHand:0});
+  parts.allowBallContact=true;
+  // The old preset placed its arc differently from the editor's Shower.
+  expect(analyzeSequence(sequenceFromPreset('shower')).canonical).not.toBe(analyzeSequence(parts).canonical);
+  expect(ui.matchingPartsCanonical({analyzeSyncSequence:analyzeSequence},s,parts)).toBe(analyzeSequence(parts).canonical);
+  expect(bases.kind(api,s)).toBe('shower');
+});

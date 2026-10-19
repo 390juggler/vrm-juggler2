@@ -10,7 +10,7 @@
 <body>
   <main class="preview">
     <div id="stage" aria-label="作成した同期パターンの3D表示"></div>
-    <header class="stage-heading"><span>VRM JUGGLER / COMPOSER</span><h1>動きのプレビュー</h1><p class="preview-note">接触を許す簡易再生</p><p id="preview-origin">モデル読込中</p><p id="playing-name">モデルを読み込んでいます…</p><p id="current-section"></p><p id="preview-difference" role="status"></p></header>
+    <header class="stage-heading"><span>VRM JUGGLER / COMPOSER</span><h1>動きのプレビュー</h1><p id="preview-note" class="preview-note" hidden></p><p id="preview-origin">モデル読込中</p><p id="playing-name">モデルを読み込んでいます…</p><p id="current-section"></p><p id="preview-difference" role="status"></p></header>
     <button id="preview-size" aria-expanded="false" aria-label="プレビューを大きくする">拡大</button>
     <div class="transport">
       <div class="line"><button id="play">一時停止</button><button id="step">コマ送り</button><select id="view" aria-label="視点"><option value="close">上半身</option><option value="front">正面</option><option value="diagonal">斜め</option><option value="side">横</option></select><button id="preview-settings" aria-expanded="false" aria-controls="transport-extra">設定・状態</button></div>
@@ -43,7 +43,7 @@
         </details>
       </div>
       <p id="basic-pattern-hint" class="intro">下の項目で、選んだ技のコラムと左右の2xを編集できます。左右は演者から見た向きです。</p><p id="box-route-context" class="context-note" hidden></p>
-      <div id="planning-state" role="status" hidden><p id="planning-detail"></p><button id="planning-cancel" type="button">生成を中止</button></div>
+      <div id="planning-state" role="status" hidden><p id="planning-detail"></p></div>
     <details id="parts-builder" open><summary>コラム × 2x</summary>
       <div class="parts-options">
 
@@ -56,7 +56,7 @@
         <label id="parts-right-label">右手の2x<select id="parts-right"></select><span id="parts-right-hint" class="choice-hint"></span></label>
         <label id="parts-double-cross-label" hidden>4xと同時に投げる2x<select id="parts-double-cross"></select><span id="parts-double-cross-hint" class="choice-hint"></span></label>
         <label id="parts-double-self-label" hidden>コラム4と同時に投げる2x<select id="parts-double-self"></select><span id="parts-double-self-hint" class="choice-hint"></span></label>
-        <p class="hint">縦の2xは球の縦軌道「│ │」が境界。Inside＝投げ手と同じ側の外側、Center＝2本の間、Outside＝投げ手と反対側の外側。</p>
+        <p id="parts-vertical-hint" class="hint" hidden>縦の2xは球の縦軌道「│ │」が境界。Inside＝投げ手と同じ側の外側、Center＝2本の間、Outside＝投げ手と反対側の外側。</p>
         <label id="parts-double-cross-grip-label" hidden>4xと組む2xの投げる手向き<select id="parts-double-cross-grip"><option value="">標準 / 選んだ投げ方に合わせる</option><option value="underhand">下から支えて投げる</option><option value="overhand">クローで投げる</option></select></label>
         <label id="parts-double-self-grip-label" hidden>コラム4と組む2xの投げる手向き<select id="parts-double-self-grip"><option value="">標準 / 選んだ投げ方に合わせる</option><option value="underhand">下から支えて投げる</option><option value="overhand">クローで投げる</option></select></label>
         <label id="parts-double-cross-catch-label" hidden>4xと組む2xを捕る手向き<select id="parts-double-cross-catch"><option value="">標準 / 球の到着方向に合わせる</option><option value="underhand">下から受ける</option><option value="overhand">クローで捕る</option></select></label>
@@ -65,7 +65,7 @@
       <details class="parts-table"><summary>基本2xの組合せを表で選ぶ</summary><table id="parts-matrix"><caption>左の2x × 右の2xで選ぶ</caption><thead></thead><tbody></tbody></table>
       <p id="parts-check-legend" class="hint">○ 未再生 · ✓ 再生確認済み · ! 動作の生成が未対応。技の可否を示す表ではありません。</p></details>
       <p id="parts-preview" class="combination-formula" role="status"></p>
-      <button id="parts-replace" hidden>選んだ組合せに戻す</button><p id="parts-origin" class="hint" hidden></p><details><summary>旧方式の4x・手向き編集</summary><p class="hint">Shower・Double Boxの軌道は「つなぐモード」で選べます。</p><label class="parts-roles">4側と2側の役割<select id="parts-roles"><option value="alternate">左右で交代 / コラム4と2x</option><option value="fixed">同じ役割を続ける / 4xと2x</option><option value="double">Double / 4x→4を続けてから左右交代</option></select></label></details>
+      <button id="parts-replace" hidden>選んだ組合せに戻す</button><p id="parts-origin" class="hint" hidden></p>
     </details>
       <section class="pattern-overview" aria-label="編集中の動作">
         <span class="eyebrow">この組合せの名前</span><h3 id="basic-title"></h3>
@@ -76,10 +76,9 @@
       <section id="basic-validity" class="validity" data-state="pending" aria-label="再生の状態">
         <div class="validity-heading"><strong id="basic-verdict" role="status">未検査</strong><span id="draft-status"></span></div>
         <p id="basic-next" class="next-action"></p>
-        <div class="line"><button id="apply" hidden disabled>再生</button><details class="legacy-register"><summary>旧方式の登録庫へ追加</summary><button id="segment-register" disabled>この技を登録してつなげる →</button></details></div>
+        <button id="apply" hidden disabled>再生</button>
     <details id="diagnostics"><summary>詳しい理由・判定の内訳</summary><ul id="basic-checks" class="check-list"></ul><p id="error" role="alert"></p>
     <section id="failure" aria-label="接続できない箇所" aria-live="polite" hidden></section></details>
-        <p id="basic-register-status" class="hint" role="status"></p>
       </section>
 
       <details class="secondary-options"><summary>接触の扱い・生成方法</summary>      <p class="hint">短時間で動きを生成します。共通の円運動・引いて差し込む動きで避け、接触が残っても再生を続けます。</p>
@@ -93,13 +92,17 @@
     <div class="cycle-options"><label><input id="mirror-repeat" type="checkbox">この列の後に、左右の役割を入れ替えた列を足す</label><label>1セットの時間 <input id="tempo" type="number" min="0.24" max="0.8" step="any"> 秒</label></div>
     <p class="hint">時間を変えると飛行の高さも変わります。動作を観察するスロー再生は左下の「再生速度」です。</p>
       <label class="hint"><input id="mirror" type="checkbox">この基本パターンを左右反転する</label>
-      </details><details id="set-editor"><summary>1セットずつ編集する</summary>
+      </details>
+    <details><summary>保存・読み込み</summary><p class="hint">編集内容はこのブラウザーに自動保存します。JSONファイルでは名前と全セットを持ち出せます。</p><div class="line"><button id="save">JSONを保存</button><label class="file-button">JSONを読み込む<input id="import" type="file" accept=".json,application/json"></label><button id="restore">自動保存を戻す</button></div></details>
+      <details id="basic-expert"><summary>上級者向け：1セットずつの編集・構造コード・旧方式</summary>
+        <p class="hint">ふだんの編集は上の「コラム × 2x」で足ります。ここでは1セット単位の調整、構造コードの確認、旧方式の登録庫を扱います。</p>
+      <details id="set-editor"><summary>1セットずつ編集する</summary>
         <p class="hint">投げる位置 → 通る位置 → 捕る位置 → 次の投げる位置。手の向きと腕の上下関係も、各セットで指定できます。</p>
         <div id="section-outline" class="hint" aria-label="元の見本とセット範囲"></div>
     <div id="sets"></div>
     <div class="line"><button id="add-set">＋ 左右を入れ替えて追加</button><button id="add-blank">＋ ボックスの1セット</button></div>
       </details>
-      <details id="advanced-basic"><summary>詳細：投げの記号・構造コード・移行の手動編集</summary>
+      <section id="advanced-basic" class="expert-group" aria-labelledby="advanced-basic-title"><h4 id="advanced-basic-title">投げの記号・構造コード・移行の手動編集</h4>
         <p id="notation" class="notation"></p><p id="pattern-code" class="hint"></p>
         <p class="hint">構造コードは保存内容を比較するための識別子です。動作の呼び名・成立判定は上に表示しています。</p>
         <label>構造コード<textarea id="canonical" readonly rows="3"></textarea></label>
@@ -110,8 +113,13 @@
     <section id="connection-suggestions" aria-label="対応する接続見本" hidden></section>
     <div class="line"><button id="inline-transitions">In-lineの入口・出口を補う</button></div>
     <p id="transition-status" class="hint" role="status">通常のBoxとIn-line 3をつないだ列に使います。入口・出口と投球間隔をまとめて設定します。</p>
+      </section>
+      <section class="expert-group" aria-labelledby="legacy-basic-title"><h4 id="legacy-basic-title">旧方式</h4>
+        <label class="parts-roles">4側と2側の役割<select id="parts-roles"><option value="alternate">左右で交代 / コラム4と2x</option><option value="fixed">同じ役割を続ける / 4xと2x</option><option value="double">Double / 4x→4を続けてから左右交代</option></select></label>
+        <p class="hint">Shower・Double Boxの軌道は「つなぐモード」で選べます。</p>
+        <button id="segment-register" disabled>この技を旧方式の登録庫へ追加 →</button><p id="basic-register-status" class="hint" role="status"></p>
+      </section>
       </details>
-    <details><summary>保存・読み込み</summary><p class="hint">編集内容はこのブラウザーに自動保存します。JSONファイルでは名前と全セットを持ち出せます。</p><div class="line"><button id="save">JSONを保存</button><label class="file-button">JSONを読み込む<input id="import" type="file" accept=".json,application/json"></label><button id="restore">自動保存を戻す</button></div></details>
       <button id="open-segment-builder" class="mode-link">つなぐモードへ →</button>
     </section>
     <section id="connect-panel" role="tabpanel" aria-labelledby="mode-connect" hidden>
@@ -120,7 +128,7 @@
         <fieldset id="route-editor"><legend id="route-edit-heading">1番目の技を編集</legend>
           <div class="route-current-base"><div><strong id="route-base-name"></strong><small id="route-base-hint"></small></div><button id="route-change-base" aria-haspopup="dialog">ベースを変更</button></div>
           <p id="route-phase-guide" class="phase-guide"></p><div id="route-box-note" class="box-route-note" hidden><p id="route-box-summary"></p><button id="route-box-edit">基本モードでこのBoxを編集 →</button></div><div id="route-settings">
-          <h3 id="route-layout-heading" class="form-step">1　高い球の動き</h3><label id="route-columns-label">コラムの配置<select id="route-columns"><option value="normal">Normal</option><option value="switched">Switched</option><option value="crossed">Cross / 左腕が上</option><option value="crossed-right">Cross / 右腕が上</option><option value="crossed-alternate">Cross / 上下交代</option><option value="underarm">Underarm</option></select></label>
+          <h3 id="route-layout-heading" class="form-step">1　高い球の動き</h3><label id="route-columns-label">コラムの配置<select id="route-columns"><option value="normal">Normal</option><option value="switched">Switched</option><option value="crossed">Cross / 左腕が上</option><option value="crossed-right">Cross / 右腕が上</option><option value="crossed-alternate">Cross / 上下交代</option><option value="underarm">Underarm</option></select><span id="route-columns-icon" class="choice-icon" aria-hidden="true"></span></label>
           <div id="route-high-settings"><label><span id="route-hand-caption">ハイを投げる手</span><select id="route-high-hand"><option value="0">左手</option><option value="1">右手</option></select></label><label id="route-alternate-label">ハイの担当<select id="route-alternate"><option value="true">左右交代</option><option value="false">選んだ手に固定</option></select></label></div>
 
           <section id="route-high-path-label">
@@ -133,7 +141,7 @@
           <h3 class="form-step" id="route-pass-heading">2　2xの投げ方</h3><div id="route-passes"></div><div id="route-swap-section"><h3 class="form-step">3　スワップ</h3>          <label id="route-swap-label">スワップで上を通る2x<select id="route-swap"><option value="left-over">左の2xが上</option><option value="right-over">右の2xが上</option><option value="alternate">左上・右上を交代</option></select><small>両手が同時に2xを渡すときの上下です。</small></label></div></div><label class="repeat-label">この技を繰り返す回数<input id="route-repeats" type="number" min="1" max="8" step="1" value="1"></label>
         </fieldset>
         <details><summary>このベースの動き方</summary><p id="route-definition" class="hint"></p></details>
-        <p id="route-summary"></p><p id="route-selection-status" class="hint" role="status"></p><p id="route-status" role="status">下の「この並びを再生」で反映します。</p><button id="route-cancel" hidden>生成を中止</button>
+        <p id="route-summary"></p><p id="route-selection-status" class="hint" role="status"></p><p id="route-status" role="status">下の「この並びを再生」で反映します。</p>
         <details id="route-storage"><summary>テンポ・保存・読み込み</summary><label>1セットの秒数（全ての技で共通）<input id="route-tempo" type="number" min="0.24" max="0.8" step="0.01" value="0.41"></label><label><input id="route-mirror" type="checkbox">全体を左右反転</label><button id="route-save">この並びをJSON保存</button><label>並びのJSONを読み込む<input id="route-load" type="file" accept=".json,application/json"></label></details>
         <p class="hint">Normal：下→下 ／ Shuffle：上→下 ／ Reverse Shuffle：下→上 ／ Inverted：上→上。手前・奥は2xの進行順です。境目の投げだけ、次の技へ向かう移行軌道になります。</p>
       </section>
@@ -142,7 +150,7 @@
         <div id="route-base-choices" aria-label="ベースパターン"></div>
         <form method="dialog"><button>キャンセル</button></form>
       </dialog>
-      <details id="legacy-connect"><summary>登録済みの接続・1セットずつの詳細操作</summary>
+      <details id="legacy-connect"><summary>上級者向け：登録庫・移行の手動準備（旧方式）</summary>
       <section id="segment-builder">
         <section class="pattern-overview" aria-label="技の順番">
           <span class="eyebrow">技の順番</span><h3 id="route-title">動作を選んでください</h3>
@@ -162,7 +170,7 @@
       <fieldset><legend>接続できる動作をまとめて用意</legend>
         <label>準備する部品<select id="segment-prepare-family"><option value="basic">高低・空間経路・Double / 90動作</option><option value="hf-underarm">HFの腕下・クロー・役割固定 / 11動作</option></select></label>
         <p id="segment-prepare-hint" class="hint">通常・Switched・腕下の各16通り、クロスの8通り、縦2xなどの18経路、基本Doubleの16通りを合わせた90動作を準備します。登録庫が空なら1セット0.41秒、登録済みならそのテンポを使います。</p>
-        <p class="hint">現在のモデルと左右反転で検査します。数分かかる場合があります。同じ部品は再利用し、すべて通った時だけ追加します。</p>
+        <p class="hint">現在のモデルと左右反転で検査します。11動作は数分、90動作は左右それぞれ20分以上かかることがあります。途中で中止できます。同じ部品は再利用し、すべて通った時だけ追加します。</p>
         <div class="line"><button id="segment-prepare">選んだ部品と移行をまとめて準備</button><button id="segment-prepare-cancel" hidden>準備を中止</button></div>
         <progress id="segment-prepare-progress" max="1" value="0" aria-label="基本部品の準備" hidden></progress>
         <p id="segment-prepare-status" class="hint" role="status">準備した後は「次の動作を追加」で順に並べ、「先頭への戻りを補う」で周期を閉じます。</p>

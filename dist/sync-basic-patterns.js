@@ -19,10 +19,13 @@ globalThis.SyncBasicPatterns=(()=>{
     if(id==='double-fixed')s=structuredClone(api.syncSequenceExamples.find(s=>s.name.startsWith('Extended Box /')));
     else if(id==='double-shower')s=api.syncSequenceFromPreset('double-box');
     else if(id==='high-low')s=api.syncSequenceFromBaseParts({...defaults,base:'high-low',passes:['normal']});
+    // Start from the same Shower that the 2x editor builds, so an untouched
+    // Shower is not reported as carrying per-set changes.
+    else if(id==='shower')s=api.syncSequenceFromBaseParts({...defaults,base:'shower',passes:['normal'],highHand:0});
     else if(id==='box-four'){
       s=api.syncSequenceFromPreset('box');const start=s.sets.findIndex(r=>r.throws[0]==='2x'),rows=s.sets;
       s.sets=Array.from({length:4},(_,i)=>structuredClone(rows[(start+i)%2]));
-    }else s=api.syncSequenceFromPreset(id==='shower'?'shower':'box');
+    }else s=api.syncSequenceFromPreset('box');
     s.name=names[id];s.editorBase=id;s.allowBallContact=true;return s;
   }
   function fourParts(api,ui,source,columns,passes){

@@ -4,7 +4,36 @@ import {sequenceFromBasicParts,sequenceFromPreset,sequenceFromDoubleParts,analyz
 import {SYNC_BOX_PRESETS} from '../src/motion/juggling/sync-box';
 
 const ui=(globalThis as any).SyncComposeUI;
-const api={syncSequenceFromBasicParts:sequenceFromBasicParts,syncSequenceFromPreset:sequenceFromPreset,syncBoxPresets:SYNC_BOX_PRESETS};
+const api={syncSequenceFromBasicParts:sequenceFromBasicParts,syncSequenceFromPreset:sequenceFromPreset,syncBoxPresets:SYNC_BOX_PRESETS,analyzeSyncSequence:analyzeSequence};
+describe('basic parts identity',()=>{
+  const boxParts=()=>ui.namedParts(api,{roles:'alternate',shortHand:1,columns:'normal',left:'normal',right:'normal'});
+  it('recognizes an untouched Box despite missing style markers without editing either input',()=>{
+    const preset=sequenceFromPreset('box'),parts=boxParts(),before=structuredClone([preset,parts]);
+    expect(analyzeSequence(preset).canonical).not.toBe(analyzeSequence(parts).canonical);
+    expect(ui.matchingPartsCanonical(api,preset,parts)).toBe(analyzeSequence(parts).canonical);
+    expect(ui.matchingPartsCanonical(api,parts,preset)).toBe(analyzeSequence(preset).canonical);
+    expect([preset,parts]).toEqual(before);
+    const mixed=structuredClone(preset);mixed.sets[0].motion.shortMotions=[{ballOrder:'style'}];
+    expect(ui.matchingPartsCanonical(api,mixed,parts)).toBe(analyzeSequence(parts).canonical);
+  });
+  it.each([false,true])('records preset playback under the matrix candidate key (mirror=%s)',mirror=>{
+    const preset=sequenceFromPreset('box'),parts=boxParts(),key=(canonical:string)=>`${mirror?'mirror:':'normal:'}${canonical}`;
+    const candidate=sequenceFromBasicParts({roles:'alternate',shortHand:1,columns:'normal',left:'normal',right:'normal'});
+    const checks=new Map([[key(ui.matchingPartsCanonical(api,preset,parts)),true]]);
+    expect(checks.get(key(analyzeSequence(candidate).canonical))).toBe(true);
+    expect(checks.get(`${mirror?'normal:':'mirror:'}${analyzeSequence(candidate).canonical}`)).toBeUndefined();
+  });
+  it.each(['pass','carry','grip','position','tempo','contact'])('keeps a custom %s distinct from the selected parts',change=>{
+    const draft=sequenceFromPreset('box'),parts=boxParts(),motion=draft.sets[0].motion;
+    if(change==='pass')motion.short=['inverted'];
+    if(change==='carry')motion.shortMotions=[{ballOrder:'style',carry:'front'}];
+    if(change==='grip')motion.hands=[{catchGrip:'overhand'}];
+    if(change==='position')motion.hands=[{heightOffset:.05}];
+    if(change==='tempo')draft.beatDuration+=.01;
+    if(change==='contact')draft.allowBallContact=true;
+    expect(ui.matchingPartsCanonical(api,draft,parts)).toBeNull();
+  });
+});
 it('discloses approximate arm playback without claiming clearance or a reach failure',()=>{
  const report={skeletonOK:false,playbackOK:true,minArmDistance:.02,minBallArmDistance:.08,postureOK:false,maxGripError:0,maxElbowSpeed:5,maxJointAngularSpeed:40};
  const text=ui.armPlaybackSummary(report);
@@ -127,4 +156,15 @@ describe('composer descriptions and decision states',()=>{
     ]);
     expect(ui.routeGroups({...doc,route:[{source:0,set:0},{source:0,set:0}]},[{sets:2}])).toHaveLength(2);
   });
+});
+it('draws a diagram for every 2x choice and every column layout',()=>{
+  for(const choice of ui.shortChoices){
+    const svg=ui.passDiagram(choice.id);
+    expect(svg,choice.id).toMatch(/^<svg[^>]*>.*<\/svg>$/);
+    expect(svg).toContain(choice.style.startsWith('vertical-')?'pd-lane':'pd-ball');
+    expect(svg.includes('⇄')).toBe(!!choice.options.lateral);
+    expect(ui.passDiagram(choice.id,true)).toContain('matrix(-1 0 0 1 72 0)');
+  }
+  expect(ui.passDiagram('unknown')).toBe('');
+  for(const columns of ['normal','switched','crossed','crossed-right','crossed-alternate','underarm'])expect(ui.columnIcon(columns),columns).toContain('ci-arm');
 });

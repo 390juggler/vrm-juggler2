@@ -37,6 +37,43 @@ globalThis.SyncComposeUI = (() => {
     });
     return order(s);
   }
+  function matchingPartsCanonical(api,sequence,parts){
+    // Presets can omit the basic parts' style-relative 2x marker. Compare copies
+    // so this UI equivalence never changes the motion submitted for playback.
+    const relativeKey=s=>{
+      const copy=structuredClone(s);
+      for(const row of copy.sets)row.motion.shortMotions=(row.motion.shortMotions||[{}]).map(o=>({...o,ballOrder:o.ballOrder??'style'}));
+      return api.analyzeSyncSequence(copy).canonical;
+    };
+    return relativeKey(sequence)===relativeKey(parts)?api.analyzeSyncSequence(parts).canonical:null;
+  }
+  // Small schematic of a 2x seen from the front: the thrower is the filled
+  // dot, the receiver the open one. Basic passes go above or below the two
+  // high balls they meet; vertical passes sit in a lane beside the columns.
+  const passCurves={normal:'M8 33C24 26 48 26 64 33',inverted:'M8 33C16-2 56-2 64 33',
+    shuffle:'M8 33C12 0 30 2 37 18S54 38 64 33',reverse:'M8 33C18 38 28 34 35 20S50-2 64 33'};
+  function passDiagram(id,mirror=false){
+    const choice=shortChoices.find(c=>c.id===id);if(!choice)return '';
+    let body;
+    if(choice.style.startsWith('vertical-')){
+      const x={outside:16,center:37,'cross-side':58}[choice.options.lane],up=choice.style==='vertical-up';
+      body=`<path class="pd-lane" d="M30 4V36M44 4V36"/><path class="pd-path" d="M${x} ${up?34:6}V${up?8:32}"/>`+
+        `<path class="pd-path" d="M${x-4} ${up?13:27}L${x} ${up?8:32}L${x+4} ${up?13:27}"/>`;
+    }else body=`<circle class="pd-ball" cx="28" cy="20" r="4.5"/><circle class="pd-ball" cx="46" cy="20" r="4.5"/><path class="pd-path" d="${passCurves[choice.style]}"/>`+
+      (choice.options.lateral?'<text class="pd-mark" x="36" y="39" text-anchor="middle">⇄</text>':'');
+    body+='<circle class="pd-hand" cx="6" cy="34" r="3"/><circle class="pd-catch" cx="66" cy="34" r="3"/>';
+    return `<svg viewBox="0 0 72 40" aria-hidden="true">${mirror?`<g transform="matrix(-1 0 0 1 72 0)">${body}</g>`:body}</svg>`;
+  }
+  // Forearms seen from the front. The arm drawn last passes over the other.
+  function columnIcon(columns){
+    const arm=(d,over)=>(over?`<path class="ci-gap" d="${d}"/>`:'')+`<path class="ci-arm" d="${d}"/>`;
+    const kind=columns.startsWith('crossed')?'crossed':columns;
+    const body={normal:arm('M12 28V11')+arm('M36 28V11')+'<circle class="ci-ball" cx="12" cy="5" r="3.5"/><circle class="ci-ball" cx="36" cy="5" r="3.5"/>',
+      switched:arm('M12 28V11')+arm('M36 28V11')+'<path class="ci-move" d="M19 21H29M22 18L19 21L22 24M26 18L29 21L26 24"/><circle class="ci-ball" cx="12" cy="5" r="3.5"/><circle class="ci-ball" cx="36" cy="5" r="3.5"/>',
+      crossed:arm('M38 28L11 9')+arm('M10 28L37 9',true)+'<circle class="ci-ball" cx="8" cy="5" r="3.5"/><circle class="ci-ball" cx="40" cy="5" r="3.5"/>',
+      underarm:arm('M38 27L9 19')+arm('M14 29V10',true)+'<circle class="ci-ball" cx="14" cy="4.5" r="3.5"/><circle class="ci-ball" cx="5" cy="14" r="3.5"/>'}[kind];
+    return body?`<svg viewBox="0 0 48 32" aria-hidden="true">${body}</svg>`:'';
+  }
   const order = {'left-over':'左腕が上','right-over':'右腕が上',alternate:'上下を交代'};
   const route = {direct:'直接',outside:'外側',inside:'内側',front:'前',back:'奥'};
   const unique = values => [...new Set(values)];
@@ -141,5 +178,5 @@ globalThis.SyncComposeUI = (() => {
     if(report.maxElbowSpeed>=12||report.maxJointAngularSpeed>=90)issues.push('速い腕の切り替え');
     return `簡易再生：${issues.join('・')||'接触回避の近似'}あり。再生を優先しています。`;
   }
-  return {describeSequence,basicVerdict,connectionVerdict,routeGroups,shortChoices,shortKey,namedParts,appendConnected,closeConnected,ballContactSummary,armPlaybackSummary};
+  return {describeSequence,basicVerdict,connectionVerdict,routeGroups,shortChoices,shortKey,namedParts,passDiagram,columnIcon,matchingPartsCanonical,appendConnected,closeConnected,ballContactSummary,armPlaybackSummary};
 })();

@@ -23,7 +23,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
   function summary(){try{const r=VRMJuggler.compileSyncBaseRoute(doc);return `${doc.blocks.length}技・${r.requestedSets}セット${r.addedSets?`＋受け渡し${r.addedSets}セット`:'・追加セットなし'}`;}catch(e){return e.message;}}
   function update(){
     const p=doc.blocks[selected].parts;
-    $('route-columns').value=p.columns;$('route-high-hand').value=String(p.highHand);
+    $('route-columns').value=p.columns;$('route-columns-icon').innerHTML=SyncComposeUI.columnIcon(p.columns);$('route-high-hand').value=String(p.highHand);
     $('route-alternate').value=String(p.alternateHigh);$('route-swap').value=p.swap;$('route-high-path').value=p.highPath;
     for(const b of $('route-double-paths').children)b.setAttribute('aria-pressed',String(b.dataset.path===p.highPath));
     $('route-repeats').value=String(doc.blocks[selected].repeats);$('route-tempo').value=String(doc.beatDuration*2);$('route-mirror').checked=doc.mirror;
@@ -44,7 +44,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
       select.setAttribute('aria-label',title);let group;
       for(const choice of SyncComposeUI.shortChoices){if(group?.label!==choice.group){group=el('optgroup');group.label=choice.group;select.append(group);}group.append(new Option(choice.name,choice.id));}
       select.value=value;const hint=el('small',SyncComposeUI.shortChoices.find(c=>c.id===value)?.hint);
-      select.onchange=()=>{p.passes[i]=select.value;persist();update();};label.append(select,hint);$('route-passes').append(label);
+      select.onchange=()=>{p.passes[i]=select.value;persist();update();};const diagram=el('span');diagram.className='pass-diagram';diagram.setAttribute('aria-hidden','true');diagram.innerHTML=SyncComposeUI.passDiagram(value,label.dataset.hand==='right');label.append(select,diagram,hint);$('route-passes').append(label);
     });
     $('route-blocks').replaceChildren();doc.blocks.forEach((b,i)=>{
       const li=el('li');li.className=i===selected?'selected':'';
@@ -58,7 +58,7 @@ globalThis.createSyncRouteBuilder=({onPlay,onChange,onEditBox,isBusy})=>{
       const remove=button('削除',()=>{if(editingBox===b)editingBox=null;doc.blocks.splice(i,1);selected=Math.min(selected,doc.blocks.length-1);persist();update();});remove.disabled=doc.blocks.length===1;remove.setAttribute('aria-label',`${i+1}番目の技を削除`);
       const actions=el('div');actions.className='route-card-actions';actions.append(up,down,copy,remove);li.append(pick,detail,actions);$('route-blocks').append(li);
     });
-    $('route-summary').textContent=summary();$('route-list-title').textContent=`技の並び · ${doc.blocks.length}技`;$('route-add').disabled=doc.blocks.length>=16;onChange?.(false);
+    $('route-summary').textContent=summary();$('route-list-title').textContent=`技の並び（${doc.blocks.length}）${doc.blocks.map(b=>names[b.parts.base]+(b.repeats>1?` ×${b.repeats}`:'')).join(' → ')}`;$('route-add').disabled=doc.blocks.length>=16;onChange?.(false);
   }
   function changeBase(base){const p=doc.blocks[selected].parts;if(p.base===base)return;if(editingBox===doc.blocks[selected])editingBox=null;p.base=base;
     p.passes=Array.from({length:p.base==='box'?2:p.base==='double'?4:1},(_,i)=>p.passes[i]||p.passes[0]||'normal');persist();update();}

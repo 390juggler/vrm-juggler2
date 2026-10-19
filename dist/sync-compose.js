@@ -14,7 +14,7 @@
   let planningAbort=null;
   const ui=globalThis.SyncComposeUI;
   const bases=globalThis.SyncBasicPatterns;
-  let routeBuilder;
+  let routeBuilder,routeResult='';
   let mode='basic',basicCheck=null,previewKind=null,routeDocument=null,partsApplying=false,connectionState={sources:0,count:0,closed:false,canClose:false};
   const templateItems=examples.map((s,i)=>({value:`example:${i}`,name:s.name,group:s.name.includes(' → ')?'接続の見本':VRMJuggler.analyzeSyncSequence(s).balls===4?'4球の見本':'3球の見本'}));
   const el=(tag,text,className)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;};
@@ -26,12 +26,15 @@
     const l=el('label',label),n=el('input');n.type='number';n.value=String(value);n.min=min;n.max=max;n.step=step;n.setAttribute('aria-label',label);n.onchange=()=>{if(n.checkValidity()&&Number.isFinite(n.valueAsNumber))onchange(n.valueAsNumber);else n.reportValidity();};l.append(n);parent.append(l);return n;
   }
   function hand(row,h){row.motion.hands ||= [];return row.motion.hands[h] ||= {};}
+  // The heading notice appears only when the inspected cycle approximates contact or posture.
+  function showArmPlayback(skeleton){const approximate=!skeleton?.skeletonOK;for(const id of ['arm-playback-status','preview-note']){$(id).hidden=!approximate;$(id).textContent=approximate?'簡易再生：接触・姿勢の近似を許可中':'';$(id).title=ui.armPlaybackSummary(skeleton);}}
   function showBallContact(report){const status=$('ball-contact-status');status.textContent=ui.ballContactSummary(report);status.hidden=!report.ballContactAllowed&&!report.ballContact;status.dataset.contact=String(!!report.ballContact);}
   function options(row,h){const m=hand(row,h);if(!m.shortMotion){m.shortMotion=clone(row.motion.shortMotions?.[0]||{});delete m.shortMotion.definition;}delete m.definition;return m.shortMotion;}
   function switchMode(next,focus=true){
     const previous=mode;
     mode=next==='connect'?'connect':'basic';
     for(const id of ['basic','connect']){const active=id===mode;$(`${id}-panel`).hidden=!active;$(`mode-${id}`).setAttribute('aria-selected',String(active));$(`mode-${id}`).tabIndex=active?0:-1;}
+    $(`${mode}-panel`).append($('composer-help'));
     if(previous!==mode)$(`${mode}-panel`).scrollTop=0;
     if(focus){$('mode-'+mode).focus({preventScroll:true});}
     refreshPreviewNotice();refreshModeAction();
@@ -57,7 +60,7 @@
     $('quick-connect').textContent=editIndex>=0?'並びのBoxを更新':'＋ 並びへ追加';
     $('box-route-context').hidden=editIndex<0;$('box-route-context').textContent=editIndex<0?'':`${editIndex+1}番目のBoxを編集中。下の「並びのBoxを更新」で反映します。`;$('quick-connect').disabled=busy||!initialized;
     if(mode==='basic'){action.textContent=busy?'動きを生成中…':'▶ 再生';action.disabled ||= !analysis?.ok;$('mode-action-status').textContent=currentCheck()?.status==='failed'?'受け渡しOK・動作は再現待ち':analysis?.ok?`${analysis.balls}球 · ${analysis.movementSets}セットで1周`:$('basic-verdict').textContent;}
-    else{action.textContent=busy?'動きを生成中…':'▶ この並びを再生';$('mode-action-status').textContent=routeBuilder?.summary()||'ベースと2xを選ぶ';}
+    else{action.textContent=busy?'動きを生成中…':'▶ この並びを再生';$('mode-action-status').textContent=routeResult||routeBuilder?.summary()||'ベースと2xを選ぶ';}
     if(busy&&planningAbort){action.disabled=false;action.textContent='生成を中止';$('mode-action-status').textContent='動きを生成しています…';}
   }
   $('mode-action').onclick=()=>{
@@ -65,7 +68,7 @@
     if(mode==='basic'){$('apply').click();return;}
     routeBuilder.play();
   };
-  function showSet(index){switchMode('basic',false);$('set-editor').open=true;const card=$('sets').children[index];if(card){card.scrollIntoView({block:'start'});card.focus({preventScroll:true});}}
+  function showSet(index){switchMode('basic',false);$('basic-expert').open=true;$('set-editor').open=true;const card=$('sets').children[index];if(card){card.scrollIntoView({block:'start'});card.focus({preventScroll:true});}}
   function describeInto(id,sequence){
     const description=ui.describeSequence(sequence),dl=el('dl');
     for(const [name,value] of description.fields){dl.append(el('dt',name),el('dd',value));}
@@ -390,8 +393,18 @@
     hint.id='parts-four-hint-'+i;pick.onchange=chooseParts;label.append(pick,hint);$('parts-four-passes').append(label);
   }
   for(const [value,name,hint] of [['normal','Normal','同じ側のコラム'],['switched','Switched','反対側のコラム'],['crossed','Cross','腕を交差する'],['underarm','Underarm','反対の腕の下で捕る']]){
-    const pick=button('',()=>{$('parts-columns').value=value==='crossed'?$('parts-cross-order').value:value;chooseParts();});pick.dataset.column=value;pick.append(el('strong',name),el('small',hint));$('column-choices').append(pick);
+    const pick=button('',()=>{$('parts-columns').value=value==='crossed'?$('parts-cross-order').value:value;chooseParts();});pick.dataset.column=value;const icon=el('span');icon.className='choice-icon';icon.innerHTML=ui.columnIcon(value);pick.append(icon,el('strong',name),el('small',hint));$('column-choices').append(pick);
   }
+  // Each 2x select shows how its pass runs past the high balls.
+  const passDiagrams=['parts-left','parts-right','parts-high-low-pass','parts-double-cross','parts-double-self',...[0,1,2,3].map(i=>'parts-four-'+i)].map(id=>{
+    const diagram=el('span');diagram.className='pass-diagram';diagram.setAttribute('aria-hidden','true');$(id).after(diagram);return [id,diagram];});
+  function toggleTip(tip){const open=tip.classList.toggle('open');tip.setAttribute('aria-expanded',String(open));}
+  for(const tip of document.querySelectorAll('.editor p.hint:not([id]):not([role])')){
+    if(tip.textContent.trim().length<44)continue;
+    tip.classList.add('tip');tip.tabIndex=0;tip.setAttribute('role','button');tip.setAttribute('aria-expanded','false');
+  }
+  document.addEventListener('click',e=>{const tip=e.target.closest?.('.tip');if(tip)toggleTip(tip);});
+  document.addEventListener('keydown',e=>{const tip=e.target.closest?.('.tip');if(tip&&(e.key==='Enter'||e.key===' ')){e.preventDefault();toggleTip(tip);}});
   $('parts-cross-order').onchange=()=>{$('parts-columns').value=$('parts-cross-order').value;chooseParts();};
   const matrixHead=el('tr');matrixHead.append(el('th','左 ↓ / 右 →'));
   heightLabels.forEach(label=>{const cell=el('th',label);cell.scope='col';matrixHead.append(cell);});$('parts-matrix').tHead.append(matrixHead);
@@ -436,6 +449,8 @@
     $('basic-pattern-hint').textContent=({box:'コラムと、左右それぞれの2xを選びます。左右は演者から見た向きです。',shower:'高い弧に対して、2xが上・下を通るか、どちら側から交差するかを選びます。','double-fixed':'中央の4xは縦のまま。コラムの担当・Crossの上下と、2xを選びます。','double-shower':'4xは弧で渡し、4は縦に。コラムの担当・Crossの上下と、2xを選びます。','high-low':'ハイ＋2xと、両手のスワップを交互に行います。','box-four':'左 → 右 → 左 → 右。4セットそれぞれの2xを選びます。'})[base]||'選んだ技の各セットを編集できます。';
     for(const part of ['cross','self','cross-grip','self-grip','cross-catch','self-catch']){$(`parts-double-${part}-label`).hidden=!double;$(`parts-double-${part}`).disabled=!double;}
     $('parts-check-legend').hidden=fixed||double;
+    for(const [id,diagram] of passDiagrams){const four=/^parts-four-(\d)$/.exec(id);diagram.innerHTML=ui.passDiagram($(id).value,id==='parts-right'||!!four&&draft.sets[Number(four[1])]?.throws.indexOf('2x')===1);}
+    $('parts-vertical-hint').hidden=![...document.querySelectorAll('.parts-options select')].some(e=>!e.closest('[hidden]')&&e.value.includes('vertical'));
     partsCells.forEach(({left,right,pick})=>{const selected=left===$('parts-left').value&&right===$('parts-right').value;
       const candidate=VRMJuggler.syncSequenceFromBasicParts({roles:'alternate',shortHand:1,columns:$('parts-columns').value,left,right}),checked=partsChecks.get(partsCheckKey(VRMJuggler.analyzeSyncSequence(candidate).canonical));
       pick.setAttribute('aria-pressed',String(selected));pick.dataset.check=checked===true?'passed':checked===false?'adjust':'unknown';pick.textContent=checked===true?'✓':checked===false?'!':selected?'●':'○';pick.title=checked===true?`現在のモデル・1セット${Number((candidate.beatDuration*2).toFixed(6))}秒で検査済み`:checked===false?'位置や運びの調整が必要':'作成後に成立を確認して再生で検査';
@@ -465,7 +480,7 @@
       $('parts-swap').value=upper(swaps[0])!==upper(swaps[1])?'alternate':upper(swaps[0])===0?'left-over':'right-over';
     }
     refreshParts();
-    const differs=VRMJuggler.analyzeSyncSequence(basicParts()).canonical!==VRMJuggler.analyzeSyncSequence(draft).canonical;
+    const differs=ui.matchingPartsCanonical(VRMJuggler,draft,basicParts())===null;
     $('parts-origin').hidden=!differs;$('parts-origin').textContent='セットごとの指定も含む技です。上で選び直すと、その組合せで作り直します。';
   }
   ['parts-roles','parts-hand','parts-left','parts-right','parts-columns','parts-double-cross','parts-double-self','parts-double-cross-grip','parts-double-self-grip','parts-double-cross-catch','parts-double-self-catch','parts-high-hand','parts-alternate','parts-swap','parts-high-low-pass'].forEach(id=>{$(id).onchange=chooseParts;});refreshParts();
@@ -493,31 +508,30 @@
     // Persist before the expensive work starts, including an immediately
     // preceding selection whose debounced save has not fired yet.
     try{localStorage.setItem(storageKey,JSON.stringify(draft));}catch{}
-    const controls=[...$('basic-panel').querySelectorAll('input,select,button,textarea')].filter(e=>e.id!=='planning-cancel').map(e=>[e,e.disabled]);
-    controls.forEach(([e])=>{e.disabled=true;});$('planning-state').hidden=false;$('planning-cancel').hidden=false;let cancelled=false;
+    const controls=[...$('basic-panel').querySelectorAll('input,select,button,textarea')].map(e=>[e,e.disabled]);
+    controls.forEach(([e])=>{e.disabled=true;});$('planning-state').hidden=false;let cancelled=false;
     const started=performance.now();let caption='計算の準備をしています…';
     const showProgress=()=>{$('planning-detail').textContent=`${caption} ${Math.floor((performance.now()-started)/1000)}秒 · 中止できます。`;};
     showProgress();const progressTimer=setInterval(showProgress,1000);
     try{
+      const checkKey=partsCheckKey(ui.matchingPartsCanonical(VRMJuggler,draft,basicParts())??analysis.canonical);
       const result=await app.setSyncSequenceAsync(clone(draft),$('mirror').checked,{signal:planningAbort.signal,onProgress:message=>{caption=message;showProgress();}});
-      if(!result.ok){partsChecks.set(partsCheckKey(analysis.canonical),false);refreshParts();$('error').textContent=result.failure?'':result.message;showFailure(result);if(!applied&&!replayApplied){app.pause();$('playing-name').textContent='選んだ動きはまだ再現できていません';$('preview-origin').textContent='再生待ち';$('audit').textContent='現在の動作生成では再現できませんでした。';}return;}
+      if(!result.ok){partsChecks.set(checkKey,false);refreshParts();$('error').textContent=result.failure?'':result.message;showFailure(result);if(!applied&&!replayApplied){app.pause();$('playing-name').textContent='選んだ動きはまだ再現できていません';$('preview-origin').textContent='再生待ち';$('audit').textContent='現在の動作生成では再現できませんでした。';}return;}
       const geometry=app.getSyncBoxReport(),skeleton=app.inspectSyncCycle();
       if(!skeleton?.playbackOK){
-        partsChecks.set(partsCheckKey(analysis.canonical),false);refreshParts();
+        partsChecks.set(checkKey,false);refreshParts();
         const phase=!skeleton?.plannedCycle?skeleton?.planInfo?.phase:!skeleton.postureOK?skeleton.posturePhase:
           skeleton.maxGripError>=.012?skeleton.gripPhase:skeleton.minArmDistance<=.065?skeleton.armPhase:skeleton.minBallArmDistance<=.065?skeleton.ballArmPhase:undefined;
         showFailure({failure:{period:geometry.period,issues:[{kind:'arm-path',phase,message:'再生中の腕の間隔・曲げ方・動く速さを1周期にわたって保てません。投げ・捕り・手の運びを調整してください。'}]}});
         if(applied)app.setSyncSequence(applied.sequence,applied.mirror);app.pause();$('error').textContent='腕の周期検査に通らないため停止しました。投げ・捕り・運びの位置を調整してください。';$('draft-status').textContent='腕の経路を調整してください';return;
       }
-      partsChecks.set(partsCheckKey(analysis.canonical),true);refreshParts();
+      partsChecks.set(checkKey,true);refreshParts();
       applied={sequence:clone(draft),analysis:result.analysis,mirror:$('mirror').checked};dirty=false;basicCheck={key:`${analysis.canonical}:${$('mirror').checked}`,status:'passed'};previewKind='basic';$('preview-origin').textContent='基本モードで確認した動き';app.setMotionPaths($('paths').checked);app.play();
       applied.labels=draft.sets.flatMap(r=>Array(r.repeat).fill(r.motion.arrangement==='inline'?'In-line 3 / 常に縦一列':r.motion.transition?`入口・出口 / 縦配置 ${Math.round((r.motion.inlineBlend||0)*100)}%`:`${r.sourceName?r.sourceName+' / ':''}左 ${r.throws[0]} / 右 ${r.throws[1]}`));
       if(draft.mirrorRepeat)applied.labels.push(...applied.labels);
       $('playing-name').textContent=draft.name||result.analysis.notation;$('draft-status').textContent='この列を再生中';$('error').textContent='';
       $('audit').textContent=`${geometry.balls}球。${ui.armPlaybackSummary(skeleton)}${ui.ballContactSummary(geometry)}`;
-      $('arm-playback-status').hidden=!!skeleton.skeletonOK;
-      $('arm-playback-status').textContent=skeleton.skeletonOK?'':'簡易再生：接触・姿勢の近似を許可中';
-      $('arm-playback-status').title=ui.armPlaybackSummary(skeleton);
+      showArmPlayback(skeleton);
       showBallContact(geometry);
       $('audit').dataset.report=JSON.stringify({name:draft.name,analysis:result.analysis,geometry,skeleton});
       $('timeline').replaceChildren();for(let i=0;i<result.analysis.movementSets;i++)$('timeline').append(button(`${i+1}`,()=>app.seekPhase(i*2*applied.sequence.beatDuration/app.getMotionSnapshot().period),`セット${i+1}へ`));
@@ -526,9 +540,8 @@
       if(e.name==='AbortError'){cancelled=true;basicCheck=null;$('error').textContent='';}
       else{basicCheck={key:`${analysis.canonical}:${$('mirror').checked}`,status:'failed'};$('error').textContent=e.message||String(e);$('draft-status').textContent='検査できませんでした';}
     }
-    finally{clearInterval(progressTimer);planningAbort=null;$('planning-state').hidden=!cancelled;$('planning-cancel').hidden=true;if(cancelled)$('planning-detail').textContent='生成を中止しました。選んだ組合せは保持しています。';controls.forEach(([e,disabled])=>{e.disabled=disabled;});busy=false;$('apply').disabled=!analysis?.ok;refreshBasicStatus();}
+    finally{clearInterval(progressTimer);planningAbort=null;$('planning-state').hidden=!cancelled;if(cancelled)$('planning-detail').textContent='生成を中止しました。選んだ組合せは保持しています。';controls.forEach(([e,disabled])=>{e.disabled=disabled;});busy=false;$('apply').disabled=!analysis?.ok;refreshBasicStatus();}
   }
-  $('planning-cancel').onclick=()=>planningAbort?.abort();
   $('apply').onclick=apply;$('mirror').onchange=()=>{modified();refreshParts();};
   $('allow-ball-contact').onchange=()=>{draft.allowBallContact=$('allow-ball-contact').checked;modified();refreshParts();};
   let segmentRoute=[],segmentHistory=[],replayApplied=null,pendingTransition=null,pendingTransitionDraft=null,connectionReport=null;
@@ -780,7 +793,7 @@
   };
   $('segment-transition-edit').onclick=()=>{
     if(busy||!pendingTransitionDraft)return;
-    switchMode('basic',false);$('set-editor').open=true;
+    switchMode('basic',false);$('basic-expert').open=true;$('set-editor').open=true;
     draft=clone(pendingTransitionDraft.sequence);$('mirror').checked=!!pendingTransitionDraft.mirror;modified(true);
     if(pendingTransitionDraft.failure)showFailure(pendingTransitionDraft);
     $('draft-status').textContent='移行の調整中 / この候補は未再生';showSet(0);
@@ -832,9 +845,7 @@
       $('playing-name').textContent=$('segment-name').value||$('route-title').textContent;$('current-section').textContent='';
       const skeleton=app.inspectSyncCycle();
       $('audit').textContent=`${replayApplied.sets}セットの周期。${ui.armPlaybackSummary(skeleton)}${ui.ballContactSummary(replayApplied)}`;
-      $('arm-playback-status').hidden=!!skeleton?.skeletonOK;
-      $('arm-playback-status').textContent=skeleton?.skeletonOK?'':'簡易再生：接触・姿勢の近似を許可中';
-      $('arm-playback-status').title=ui.armPlaybackSummary(skeleton);
+      showArmPlayback(skeleton);
       $('audit').dataset.report=JSON.stringify({skeleton});
       showBallContact(replayApplied);
       $('program').replaceChildren();$('timeline').replaceChildren();
@@ -899,8 +910,8 @@
   refreshTemplateStart();render();app.setSpeed(.5);app.setBodyMotion(0);app.setCameraView('close');
   async function applyBaseRoute(route,document){
     if(busy||!initialized)return;busy=true;refreshModeAction();
-    planningAbort=new AbortController();refreshModeAction();$('route-cancel').hidden=false;
-    const controls=[...$('route-builder').querySelectorAll('input,select,button')].filter(e=>e.id!=='route-cancel').map(e=>[e,e.disabled]);
+    planningAbort=new AbortController();routeResult='';refreshModeAction();
+    const controls=[...$('route-builder').querySelectorAll('input,select,button')].map(e=>[e,e.disabled]);
     controls.forEach(([e])=>e.disabled=true);$('route-status').textContent='境目の投げと腕の運びを生成しています…';
     try{
       const result=await app.setSyncSequenceAsync(route.sequence,document.mirror,{directBoundaries:true,signal:planningAbort.signal,onProgress:message=>$('route-status').textContent=message});
@@ -910,20 +921,20 @@
       replayApplied=null;previewKind='connect';$('preview-origin').textContent='つなぐモード / テンポを保って直接移行';
       $('playing-name').textContent=document.blocks.map(b=>({box:'Box','high-low':'High-Low',shower:'Shower',double:'Double Box'})[b.parts.base]).join(' → ');
       $('audit').dataset.report=JSON.stringify({name:sequence.name,analysis:result.analysis,geometry,skeleton,boundaries:route.boundaries,redirectedThrows:result.redirectedThrows});
-      $('arm-playback-status').hidden=!!skeleton.skeletonOK;$('arm-playback-status').textContent='簡易再生：接触・姿勢の近似を許可中';$('arm-playback-status').title=ui.armPlaybackSummary(skeleton);showBallContact(geometry);
+      showArmPlayback(skeleton);showBallContact(geometry);
       $('timeline').replaceChildren();for(let i=0;i<result.analysis.movementSets;i++)$('timeline').append(button(String(i+1),()=>app.seekPhase(i*2*sequence.beatDuration/app.getMotionSnapshot().period),applied.labels[i]));
       $('route-status').textContent=`再生中：${route.requestedSets}セット${route.addedSets?`＋球の受け渡し ${route.addedSets}セット`:'・追加セットなし'}。1セット ${(document.beatDuration*2).toFixed(2)}秒。\n同じ球の配置まで ${result.analysis.identitySets}セット。${result.redirectedThrows}投を、次の技の投球位置へ合わせました。`;
+      routeResult=`✓ 再生中 · ${route.requestedSets+route.addedSets}セットで1周${result.redirectedThrows?` · 境目の${result.redirectedThrows}投を次の技へ`:''}`;
       $('error').textContent='';app.setMotionPaths($('paths').checked);app.play();showProgram();refreshPreviewNotice();
-    }catch(e){$('route-status').textContent=e.name==='AbortError'?'生成を中止しました。選択は保持しています。':e.message;}
-    finally{planningAbort=null;controls.forEach(([e,disabled])=>e.disabled=disabled);$('route-cancel').hidden=true;busy=false;refreshModeAction();}
+    }catch(e){$('route-status').textContent=e.name==='AbortError'?'生成を中止しました。選択は保持しています。':e.message;routeResult=e.name==='AbortError'?'生成を中止しました。':e.message;}
+    finally{planningAbort=null;controls.forEach(([e,disabled])=>e.disabled=disabled);busy=false;refreshModeAction();}
   }
-  $('route-cancel').onclick=()=>planningAbort?.abort();
   routeBuilder=createSyncRouteBuilder({onPlay:applyBaseRoute,onEditBox:parts=>{
     $('basic-pattern').value='box';
     $('parts-roles').value='alternate';$('parts-columns').value=parts.columns;
     if(parts.columns.startsWith('crossed'))$('parts-cross-order').value=parts.columns;
     $('parts-left').value=parts.passes[0];$('parts-right').value=parts.passes[1];chooseParts();switchMode('basic');
-  },onChange:changed=>{refreshModeAction();if(changed&&previewKind==='connect'&&!busy){$('preview-difference').textContent='変更は「この並びを再生」で反映します。';$('preview-difference').hidden=false;}},isBusy:()=>busy||!initialized});
+  },onChange:changed=>{if(changed)routeResult='';refreshModeAction();if(changed&&previewKind==='connect'&&!busy){$('preview-difference').textContent='変更は「この並びを再生」で反映します。';$('preview-difference').hidden=false;}},isBusy:()=>busy||!initialized});
   switchMode('basic',false);
   function tick(){
     const s=app.getMotionSnapshot();
